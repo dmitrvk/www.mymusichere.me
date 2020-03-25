@@ -9,8 +9,8 @@ def index(request):
     }
     return render(request, 'scores/index.html', context)
 
-def score_view(request, title):
-    score = get_object_or_404(Score, title=title)
+def score_view(request, alias):
+    score = get_object_or_404(Score, alias=alias)
     context = {
         'score': score
     }

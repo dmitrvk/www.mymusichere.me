@@ -75,12 +75,12 @@ h1 {
         {% for score in scores %}
           <div class="col-md-4">
             <div class="card text-center hvr-grow border-0" style="width:300px; margin-top:16px;">
-              <a href="{% url 'score_view' score.title %}" class="stretched-link">
+              <a href="{% url 'scores:score_view' score.alias %}" class="stretched-link">
               <img src="{% static "scores/harmonica-thumb.png" %}"
               class="card-img-top mx-auto" alt="Score thumb" style="height:200px; width:140px;"/></a>
               <div class="card-body">
                 <h4 class="card-title">{{ score.title }}</h4>
-                <p class="card-text">{{ score.path_to_file }}</p>
+                <p class="card-text">{{ score.description }}</p>
               </div>
             </div>
           </div>
