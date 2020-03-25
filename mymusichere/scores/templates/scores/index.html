@@ -75,7 +75,7 @@ h1 {
         {% for score in scores %}
           <div class="col-md-4">
             <div class="card text-center hvr-grow border-0" style="width:300px; margin-top:16px;">
-              <a href="/harmonica" class="stretched-link">
+              <a href="{% url 'score_view' score.title %}" class="stretched-link">
               <img src="{% static "scores/harmonica-thumb.png" %}"
               class="card-img-top mx-auto" alt="Score thumb" style="height:200px; width:140px;"/></a>
               <div class="card-body">
