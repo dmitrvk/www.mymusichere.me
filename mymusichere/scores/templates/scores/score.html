@@ -42,9 +42,7 @@
         </div>
       </div>
 
-      <img src="{% static "scores/harmonica1.png" %}" class="img-fluid" alt="Score">
-      <hr>
-      <img src="{% static "scores/harmonica2.png" %}" class="img-fluid" alt="Score">
+      <img src="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.png' %}" class="img-fluid" alt="Score">
     </div>
 
   </body>
