@@ -13,8 +13,7 @@ def index(request):
 def score_view(request, title):
     score = get_object_or_404(Score, title=title)
     context = {
-        'score_title': score.title,
-        'score_path_to_file': score.path_to_file
+        'score': score
     }
     response = render(request, 'scores/score.html', context)
     return response
