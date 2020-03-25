@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+if [ ! "$MYMUSICHERE_REPO" ]; then
+    echo 'Error: $MYMUSICHERE_REPO is not defined.'
+    exit 1
+fi
+
+if [ ! -d "$MYMUSICHERE_REPO" ]; then
+    cd "$(dirname "$MYMUSICHERE_REPO")"
+    git clone 'https://github.com/dmitrvk/mymusichere'
+fi
+
+cd "$MYMUSICHERE_REPO" && make
+
+cd "$VIRTUAL_ENV/../mymusichere/scores/static/"
+rm -r scores
+mkdir scores
+cp -rv "$MYMUSICHERE_REPO/out/." "$VIRTUAL_ENV/../mymusichere/scores/static/scores/"
