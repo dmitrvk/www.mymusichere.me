@@ -4,9 +4,8 @@ from django.http import HttpResponse, Http404
 from .models import Score
 
 def index(request):
-    scores_count = len(Score.objects.all())
     context = {
-        'scores_count': scores_count
+        'scores': Score.objects.all()
     }
     return render(request, 'scores/index.html', context)
 
