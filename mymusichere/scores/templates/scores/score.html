@@ -36,7 +36,7 @@
     <div class="container-fluid text-center p-0">
       <div class="navbar navbar-light bg-light">
         <div style="margin:auto;">
-          <a href="#" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
+          <a href="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.pdf' %}" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
           <a href="#" class="btn btn-link icon"><i class="fas fa-link"></i></a>
           <a href="{{ score.github_link }}" class="btn btn-link icon" target="_blank"><i class="fab fa-github"></i></a>
         </div>
@@ -49,7 +49,7 @@
 
     <footer class="text-muted">
       <div class="container-fluid text-center">
-        <a href="#" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
+        <a href="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.pdf' %}" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
         <a href="#" class="btn btn-link icon"><i class="fas fa-link"></i></a>
         <a href="https://github.com/dmitrvk/mymusichere/tree/harmonica/harmonica" class="btn btn-link icon"><i class="fab fa-github"></i></a>
         <p><small>&copy; 2020</small></p>
