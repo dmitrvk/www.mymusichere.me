@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404
 
 from .models import Score
@@ -11,14 +11,11 @@ def index(request):
     return render(request, 'scores/index.html', context)
 
 def score_view(request, title):
-    try:
-        score = Score.objects.get(title=title)
-        context = {
-                'score_title': score.title,
-                'score_path_to_file': score.path_to_file
-        }
-        response = render(request, 'scores/score.html', context)
-        return response
-    except Score.DoesNotExist:
-        raise Http404("Score '%s' not found" % title)
+    score = get_object_or_404(Score, title=title)
+    context = {
+        'score_title': score.title,
+        'score_path_to_file': score.path_to_file
+    }
+    response = render(request, 'scores/score.html', context)
+    return response
 
