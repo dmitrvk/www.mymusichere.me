@@ -25,11 +25,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
-
-ALLOWED_HOSTS.extend(
-        ['192.168.{}.{}'.format(i, j) for i in range(256) for j in range(256)]
-)
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
