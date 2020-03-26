@@ -1,42 +1,62 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>MyMusicHere</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>MyMusicHere</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-    <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
 
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,500&display=swap&subset=cyrillic-ext" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
 
 <style>
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
-  font-size: 20px;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   font-weight: 300;
+  background-color: #FAFAFA;
+  margin-bottom: 60px;
 }
 
 h1 {
-  font-weight: 300;
+  font-weight: 700;
 }
 
-.icon {
-  color: dimgray;
-  font-size: 32px;
+.navbar-brand {
+  font-weight: 700;
+  color: white;
 }
 
-.icon:hover {
-  color: black;
+.lead {
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
-.card-title {
-  font-weight: 300;
+.score {
+  margin-bottom: 12px;
 }
 
-/* Grow */
+h5 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+}
+
+/* Grow effect */
 .hvr-grow {
   display: inline-block;
   vertical-align: middle;
@@ -48,56 +68,48 @@ h1 {
   -webkit-transition-property: transform;
   transition-property: transform;
 }
+
 .hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
 }
 </style>
 
+  {% load static %}
+</head>
+<body>
+    <header>
+      <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">MyMusicHere</a>
+      </nav>
+    </header>
 
-    {% load static %}
-  </head>
-  <body>
-    <div class="container-fluid p-0">
-      <section class="jumbotron text-center">
-        <div class="container">
-          <h1 class="jumbotron-heading">MyMusicHere</h1>
-        <p class="lead text-muted">Here you will find music scores which are free to download and share. All scores are typeset with the LilyPond system.</p>
-          <div>
-            <a href="https://github.com/dmitrvk/mymusichere/tree/harmonica/harmonica" class="btn btn-link icon"><i class="fab fa-github"></i></a>
-          </div>
-        </div>
-      </section>
+    <main role="main" class="container text-center">
+      <p class="lead">Collection of sheet music. Free to download and share.</p>
 
-      <div class="container text-center">
+      <div class="container">
         <div class="row">
-
-        {% for score in scores %}
-          <div class="col-md-4">
-            <div class="card text-center hvr-grow border-0" style="width:300px; margin-top:16px;">
+          {% for score in scores %}
+            <div class="col-md-3 hvr-grow score">
               <a href="{% url 'scores:score_view' score.alias %}" class="stretched-link">
-                <img src="{% static 'scores/'|add:score.alias|add:'/thumbnail.png' %}"
-              class="card-img-top mx-auto" alt="Score thumb" style="height:200px; width:140px;"/></a>
-              <div class="card-body">
-                <h4 class="card-title">{{ score.title }}</h4>
-                <p class="card-text">{{ score.description }}</p>
-              </div>
+                <img class="img-fluid" src="{% static 'scores/'|add:score.alias|add:'/thumbnail.png' %}" alt="{{ score.title }}">
+              </a>
+              <h5>{{ score.title }}</h5>
             </div>
-          </div>
-        {% endfor %}
-
+          {% endfor %}
         </div>
       </div>
-    </div>
+    </main>
 
-  </body>
-
-    <footer class="text-muted">
-      <div class="container-fluid text-center">
-        <p><small>&copy; 2020</small></p>
+    <footer class="footer bg-dark">
+      <div class="container text-center">
+        <span class="navbar-brand">MyMusicHere</span>
       </div>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </html>
