@@ -1,62 +1,137 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>MyMusicHere</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap&subset=cyrillic-ext" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
 
-    <title>{{ score.title }}</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
 
-    <style>
-      body {
-        font-size: 20px;
-        font-family: 'Roboto', sans-serif;
-        font-weight: 300;
-      }
+<style>
+html {
+  position: relative;
+  min-height: 100%;
+}
 
-      .icon {
-        color: dimgray;
-        font-size: 32px;
-      }
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 300;
+  background-color: #FAFAFA;
+  margin-bottom: 60px;
+}
 
-      .btn:hover {
-        color: black;
-      }
+h1 {
+  font-weight: 700;
+}
 
-    </style>
+.icon {
+  color: lightgray;
+}
 
-    {% load static %}
-  </head>
-  <body class="bg-light">
-    <div class="container-fluid text-center p-0">
-      <div class="navbar navbar-light bg-light">
-        <div style="margin:auto;">
-          <a href="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.pdf' %}" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
-          <a href="#" class="btn btn-link icon"><i class="fas fa-link"></i></a>
-          <a href="{{ score.github_link }}" class="btn btn-link icon" target="_blank"><i class="fab fa-github"></i></a>
+.icon:hover {
+  color: dimgray;
+}
+
+.nav-link {
+  font-weight: 700;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.lead {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.score {
+  margin-bottom: 12px;
+}
+
+h5 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+}
+
+/* Grow effect */
+.hvr-grow {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+}
+
+.hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+}
+</style>
+
+  {% load static %}
+</head>
+<body>
+    <header>
+      <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
+        <div class="collapse navbar-collapse justify-content-md-center">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">download</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">share</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">view source</a>
+            </li>
+          </ul>
         </div>
-      </div>
+      </nav>
+    </header>
 
+    <main role="main" class="container text-center">
       <img src="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.png' %}" class="img-fluid" alt="Score">
-    </div>
+    </main>
 
-  </body>
-
-    <footer class="text-muted">
-      <div class="container-fluid text-center">
-        <a href="{% static 'scores/'|add:score.alias|add:'/'|add:score.alias|add:'.pdf' %}" class="btn btn-link icon"><i class="far fa-file-pdf"></i></a>
-        <a href="#" class="btn btn-link icon"><i class="fas fa-link"></i></a>
-        <a href="https://github.com/dmitrvk/mymusichere/tree/harmonica/harmonica" class="btn btn-link icon"><i class="fab fa-github"></i></a>
-        <p><small>&copy; 2020</small></p>
-      </div>
+    <footer>
+      <nav class="footer navbar navbar-expand navbar-dark bg-dark">
+        <div class="collapse navbar-collapse justify-content-md-center">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">download</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">share</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">view source</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     </footer>
+  </div>
+</body>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </html>
+
