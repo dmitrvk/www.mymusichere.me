@@ -1,19 +1,16 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.views import generic
 
 from .models import Score
 
-def index(request):
-    context = {
-        'scores': Score.objects.all()
-    }
-    return render(request, 'scores/index.html', context)
 
-def score_view(request, alias):
-    score = get_object_or_404(Score, alias=alias)
-    context = {
-        'score': score
-    }
-    response = render(request, 'scores/score.html', context)
-    return response
+class IndexView(generic.ListView):
+    template_name = 'scores/index.html'
 
+    def get_queryset(self):
+        return Score.objects.all()
+
+
+class ScoreView(generic.DetailView):
+    model = Score
+    template_name = 'scores/score.html'

@@ -104,10 +104,10 @@ h5 {
 
       <div class="container">
         <div class="row">
-          {% for score in scores %}
+          {% for score in score_list %}
             <div class="col-md-3 hvr-grow score">
-              <a href="{% url 'scores:score_view' score.alias %}" class="stretched-link">
-                <img class="img-fluid" src="{% static 'scores/'|add:score.alias|add:'/thumbnail.png' %}" alt="{{ score.title }}">
+              <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
+                <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}">
               </a>
               <h5>{{ score.title }}</h5>
             </div>
