@@ -14,7 +14,7 @@
 
   {% load static %}
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'scores/style.css' %}">
 </head>
 <body>
     <header>
@@ -37,7 +37,14 @@
     </header>
 
     <main role="main" class="container text-center">
-      <img src="{% static 'scores/'|add:score.slug|add:'/'|add:score.slug|add:'.png' %}" class="img-fluid" alt="Score">
+      {% for page in score.get_paths_to_pages %}
+      <img src="{% static page %}" class="img-fluid" alt="Score">
+      {% if not forloop.last %}
+      <hr>
+      {% endif %}
+      {% empty %}
+      <p>Sorry, sheet music for this piece is not available.</p>
+      {% endfor %}
     </main>
 
     <footer>
