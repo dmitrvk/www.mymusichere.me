@@ -26,6 +26,7 @@
     <main role="main" class="container text-center">
       <p class="lead">Collection of sheet music. Free for download and share.</p>
 
+      {% if score_list %}
       <div class="container">
         <div class="row">
           {% for score in score_list %}
@@ -38,6 +39,9 @@
           {% endfor %}
         </div>
       </div>
+      {% else %}
+      <p>No scores available.</p>
+      {% endif %}
     </main>
 
     <footer class="footer bg-dark">
