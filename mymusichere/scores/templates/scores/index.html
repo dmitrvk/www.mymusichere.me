@@ -12,85 +12,9 @@
 
   <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
 
-<style>
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-weight: 300;
-  background-color: #FAFAFA;
-  margin-bottom: 60px;
-}
-
-h1 {
-  font-weight: 700;
-}
-
-.navbar-brand {
-  font-weight: 700;
-  color: white;
-}
-
-.lead {
-  margin-top: 12px;
-  margin-bottom: 12px;
-}
-
-.score {
-  margin-bottom: 12px;
-}
-
-h5 {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  color: white;
-}
-
-.footer-brand {
-  font-weight: 700;
-  font-size: 18px;
-  color: white;
-}
-
-.icon {
-  color: lightgray;
-}
-
-.icon:hover {
-  color: dimgray;
-}
-
-/* Grow effect */
-.hvr-grow {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-property: transform;
-  transition-property: transform;
-}
-
-.hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
-  -webkit-transform: scale(1.05);
-  transform: scale(1.05);
-}
-</style>
-
   {% load static %}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}">
 </head>
 <body>
     <header>
