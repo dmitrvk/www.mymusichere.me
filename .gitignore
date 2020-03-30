@@ -140,6 +140,7 @@ cython_debug/
 
 # static files generated from Django application using `collectstatic`
 media
+mymusichere/static
 
 mymusichere/scores/static/scores/
 !mymusichere/scores/static/scores/style.css
