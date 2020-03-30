@@ -19,7 +19,7 @@ class Score(models.Model):
             if settings.DEBUG:
                 pages_dir = os.path.join(settings.BASE_DIR, 'scores', 'static', 'scores', self.slug)
             else:
-                pages_dir = os.path.join(settings.STATIC_ROOT, 'scores/%s' % self.slug)
+                pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
 
             return [os.path.join('scores', self.slug, page.name)
                     for page in os.scandir(pages_dir)
@@ -31,7 +31,7 @@ class Score(models.Model):
         if settings.GITHUB_SCORES_SOURCE_REPO:
             if self.slug:
                 return settings.GITHUB_SCORES_SOURCE_REPO \
-                        + 'tree/master/%s/' % self.slug
+                        + '/tree/master/%s/' % self.slug
             else:
                 return settings.GITHUB_SCORES_SOURCE_REPO
         else:

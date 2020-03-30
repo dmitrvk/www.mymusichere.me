@@ -23,7 +23,7 @@ class ScoreModelTest(TestCase):
     def test_source_link_if_score_has_no_slug(self):
         score = Score(title="My Score", slug='')
         link = score.get_link_to_source()
-        self.assertEqual(link, "https://github.com/dmitrvk/mymusichere/")
+        self.assertEqual(link, "https://github.com/dmitrvk/mymusichere")
 
 
 class ScoreIndexViewTest(TestCase):

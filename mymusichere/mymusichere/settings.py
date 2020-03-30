@@ -124,4 +124,8 @@ STATIC_URL = '/static/'
 
 
 
-GITHUB_SCORES_SOURCE_REPO = "https://github.com/dmitrvk/mymusichere/"
+GITHUB_SCORES_SOURCE_REPO = os.environ['MYMUSICHERE_REMOTE']
+
+SCORES_BUILD_SCRIPT_PATH = os.path.join(os.path.dirname(BASE_DIR), 'build')
+
+MYMUSICHERE_REPO_DIR = os.environ['MYMUSICHERE_REPO_DIR']

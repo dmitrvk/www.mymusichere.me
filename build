@@ -1,18 +1,32 @@
 #!/bin/bash -e
 
-if [ ! "$MYMUSICHERE_REPO" ]; then
-    echo 'Error: $MYMUSICHERE_REPO is not defined.'
+if [ -z "$MYMUSICHERE_REMOTE" ]; then
+    echo '$MYMUSICHERE_REMOTE is not set'
     exit 1
 fi
 
-if [ ! -d "$MYMUSICHERE_REPO" ]; then
-    cd "$(dirname "$MYMUSICHERE_REPO")"
-    git clone 'https://github.com/dmitrvk/mymusichere'
+if [ -z "$MYMUSICHERE_REPO_DIR" ]; then
+    echo '$MYMUSICHERE_REPO_DIR is not set'
+    exit 1
 fi
 
-cd "$MYMUSICHERE_REPO" && make
+if [ -z "$MYMUSICHERE_ARTIFACTS_DIR" ]; then
+    echo '$MYMUSICHERE_ARTIFACTS_DIR is not set'
+    exit 1
+fi
 
-cd "$VIRTUAL_ENV/../mymusichere/scores/static/"
-rm -r scores
-mkdir scores
-cp -rv "$MYMUSICHERE_REPO/out/." "$VIRTUAL_ENV/../mymusichere/scores/static/scores/"
+if [ -d "$MYMUSICHERE_REPO_DIR" ]; then
+    cd "$MYMUSICHERE_REPO_DIR"
+    git pull
+    make
+    find $MYMUSICHERE_ARTIFACTS_DIR/* -type d -exec rm -r {} +
+    mv out/* $MYMUSICHERE_ARTIFACTS_DIR/
+else
+    cd "$(dirname $MYMUSICHERE_REPO_DIR)"
+    git clone "$MYMUSICHERE_REMOTE"
+    cd "mymusichere"
+    make
+    find $MYMUSICHERE_ARTIFACTS_DIR/* -type d -exec rm -r {} +
+    mv out/* $MYMUSICHERE_ARTIFACTS_DIR/
+fi
+
