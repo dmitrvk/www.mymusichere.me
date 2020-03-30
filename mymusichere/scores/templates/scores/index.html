@@ -28,16 +28,16 @@
 
       {% if score_list %}
       <div class="container">
+        {% for score in score_list %}
         <div class="row">
-          {% for score in score_list %}
-            <div class="col-md-3 hvr-grow score">
+            <div class="col hvr-grow score">
               <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
                 <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}">
               </a>
               <h5>{{ score.title }}</h5>
             </div>
-          {% endfor %}
         </div>
+        {% endfor %}
       </div>
       {% else %}
       <p>No scores are available.</p>
