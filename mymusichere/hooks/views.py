@@ -7,7 +7,7 @@ from mymusichere import settings
 from scores.models import Score
 
 def build(request):
-    exitcode = os.system('%s' % settings.SCORES_BUILD_SCRIPT_PATH)
+    exitcode = os.system('%s' % settings.DEPLOY_SCORES_SCRIPT_PATH)
     if exitcode == 0:
         try:
             Score.objects.all().delete()
