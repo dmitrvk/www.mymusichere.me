@@ -27,9 +27,8 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        cd mymusichere
         python manage.py test
-        coverage run --source='.' manage.py test
+        coverage run --source=hooks,mymusichere,scores manage.py test
       env:
         SECRET_KEY: none
         MYMUSICHERE_REMOTE: https://github.com/dmitrvk/mymusichere
@@ -38,5 +37,5 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        file: ./mymusichere/.coverage
+        file: .coverage
         name: codecov-mymusichere
