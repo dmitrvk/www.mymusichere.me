@@ -24,12 +24,10 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        make install
     - name: Run Tests
       run: |
-        python manage.py test
-        coverage run --source=hooks,mymusichere,scores manage.py test
-        coverage xml
+        make test
       env:
         SECRET_KEY: none
         MYMUSICHERE_REMOTE: https://github.com/dmitrvk/mymusichere
