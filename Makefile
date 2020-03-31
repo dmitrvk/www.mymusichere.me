@@ -13,6 +13,9 @@ static: scss
 scss:
 	pysassc $(SCSS)/style.scss $(STATIC)/style.css -s compressed
 
+watch-scss:
+	watchmedo shell-command --patterns=*.scss --recursive --command="make scss" $(SCSS)
+
 run:
 	./manage.py runserver 0:8000
 
