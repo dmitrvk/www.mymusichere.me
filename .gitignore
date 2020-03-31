@@ -143,7 +143,6 @@ media
 mymusichere/static
 
 scores/static/scores/
-!scores/static/scores/style.css
 
 # npm
 node_modules/
