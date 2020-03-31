@@ -29,7 +29,7 @@
         <div class="row">
             <div class="col hvr-grow score">
               <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-                <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}">
+                <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="200">
               </a>
               <h5>
                 {{ score.title }}
