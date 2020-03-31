@@ -24,7 +24,7 @@
       </nav>
     </header>
 
-    <main role="main" class="container text-center">
+    <main role="main" class="container-fluid text-center">
       {% for page in score.get_paths_to_pages %}
       <img src="{% static page %}" class="img-fluid" alt="Score">
       {% if not forloop.last %}
