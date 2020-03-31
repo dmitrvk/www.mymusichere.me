@@ -1,7 +1,7 @@
 STATIC = scores/static/scores
 SCSS = scores/scss
 
-.PHONY: collectstatics scss run install test ci
+.PHONY: install static scss watch-scss run install test migrations-check
 
 install:
 	@pip install -r requirements.txt
@@ -19,6 +19,9 @@ watch-scss:
 run:
 	./manage.py runserver 0:8000
 
-test:
+test: migrations-check
 	@coverage run --source=hooks,mymusichere,scores manage.py test --verbosity 2
 	@coverage xml
+
+migrations-check:
+	@./manage.py makemigrations --check --dry-run
