@@ -142,7 +142,8 @@ cython_debug/
 media
 mymusichere/static
 
-scores/static/scores/
+scores/static/scores/*
+!scores/static/scores/.README
 
 # npm
 node_modules/
