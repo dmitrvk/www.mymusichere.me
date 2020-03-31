@@ -142,5 +142,5 @@ cython_debug/
 media
 mymusichere/static
 
-mymusichere/scores/static/scores/
-!mymusichere/scores/static/scores/style.css
+scores/static/scores/
+!scores/static/scores/style.css
