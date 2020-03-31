@@ -24,6 +24,7 @@ def build(request):
                     for line in open(path_to_source):
                         if 'title' in line:
                             s.title = line.split('"')[1]
+                            break
 
                     s.save()
 
