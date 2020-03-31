@@ -7,6 +7,7 @@ from mymusichere import settings
 class Score(models.Model):
     title = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
+    is_finished = models.BooleanField(default=True)
 
     def get_path_to_pdf(self):
         if self.slug:

@@ -26,6 +26,13 @@ def build(request):
                             s.title = line.split('"')[1]
                             break
 
+                    for line in open(path_to_source):
+                        if 'status' in line:
+                            status = line.split('"')[1]
+                            if status == "unfinished":
+                                s.is_finished = False
+                            break
+
                     s.save()
 
             response = '{ code: 200 }'

@@ -20,6 +20,9 @@
     <header>
       <nav class="navbar navbar-expand navbar-dark bg-dark">
         <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
+        {% if not score.is_finished %}
+        <span class="badge badge-light" data-toggle="tooltip" data-placement="bottom" title="Work in progress">WIP</span>
+        {% endif %}
         <div class="collapse navbar-collapse justify-content-md-center">
           <ul class="navbar-nav">
             <li class="nav-item">
