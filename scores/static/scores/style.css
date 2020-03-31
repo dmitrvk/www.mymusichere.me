@@ -7,7 +7,7 @@ body {
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 300;
   background-color: #FAFAFA;
-  margin-bottom: 140px;
+  margin-bottom: 160px;
 }
 
 h1 {
@@ -44,7 +44,7 @@ h5 {
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 140px;
+  height: 160px;
   color: white;
 }
 
