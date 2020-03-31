@@ -1,0 +1,7 @@
+{
+  "name": "mymusichere-app",
+  "description": "Web app for sharing personal sheet music collection",
+  "dependencies": {
+    "bootstrap": "^4.4.1"
+  }
+}
