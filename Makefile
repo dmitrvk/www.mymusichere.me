@@ -8,7 +8,7 @@ install:
 	@npm install
 
 static: scss
-	./manage.py collectstatic --noinput
+	./manage.py collectstatic --clear --noinput
 
 scss:
 	pysassc $(SCSS)/style.scss $(STATIC)/style.css -s compressed
