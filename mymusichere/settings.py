@@ -124,4 +124,4 @@ GITHUB_SCORES_SOURCE_REPO = os.environ['MYMUSICHERE_REMOTE']
 
 DEPLOY_SCORES_SCRIPT_PATH = os.path.join(BASE_DIR, 'deploy-scores')
 
-MYMUSICHERE_REPO_DIR = os.environ['MYMUSICHERE_REPO_DIR']
+MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
