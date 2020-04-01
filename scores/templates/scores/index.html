@@ -25,21 +25,21 @@
 
       {% if score_list %}
       <div class="container">
-        {% for score in score_list %}
         <div class="row">
-            <div class="col hvr-grow score">
-              <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-                <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="200">
-              </a>
-              <h5>
-                {{ score.title }}
-                {% if not score.is_finished %}
-                <span class="badge badge-dark">WIP</span>
-                {% endif %}
-              </h5>
-            </div>
-        </div>
+        {% for score in score_list %}
+          <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
+            <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
+              <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
+            </a>
+            <h5>
+              {{ score.title }}
+              {% if not score.is_finished %}
+              <span class="badge badge-dark">WIP</span>
+              {% endif %}
+            </h5>
+          </div>
         {% endfor %}
+        </div>
       </div>
       {% else %}
       <p>No scores are available.</p>
