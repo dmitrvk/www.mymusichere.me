@@ -1,7 +1,8 @@
 $theme-colors: (
   "primary": #c9c9d6,
+  "secondary": #550000,
   "dark": #3e3e4a,
-  "light": #f0f0f0
+  "light": #f0f0f0,
 );
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
@@ -31,6 +32,14 @@ h1 {
   font-weight: 700;
   margin-left: 8px;
   margin-right: 8px;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+li a {
+    color: white !important;
 }
 
 .container-fluid {
