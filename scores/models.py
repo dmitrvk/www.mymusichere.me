@@ -21,7 +21,8 @@ class Score(models.Model):
 
             return [os.path.join('scores', self.slug, page.name)
                     for page in os.scandir(pages_dir)
-                    if page.name.startswith('%s-page' % self.slug)]
+                    if page.name.startswith('%s-page' % self.slug)
+                    or page.name == '%s.png' % self.slug]
         else:
             return ''
 
