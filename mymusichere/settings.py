@@ -112,6 +112,10 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+STATICFILES_DIRS = [
+    '%s/scores/lilypond/out' % BASE_DIR
+]
+
 STATIC_URL = '/static/'
 
 

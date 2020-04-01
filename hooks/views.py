@@ -6,16 +6,13 @@ import os
 from mymusichere import settings
 from scores.models import Score
 
-def build(request):
+def deploy(request):
     exitcode = os.system('%s' % settings.DEPLOY_SCORES_SCRIPT_PATH)
     if exitcode == 0:
         try:
             Score.objects.all().delete()
 
-            if settings.DEBUG:
-                scores_dir = os.path.join(settings.BASE_DIR, 'scores', 'static', 'scores')
-            else:
-                scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
+            scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
 
             for f in os.scandir(scores_dir):
                 if f.is_dir():
@@ -35,9 +32,9 @@ def build(request):
 
                     s.save()
 
-            response = '{ code: 200 }'
-        except:
-            response = '{ code: 500 }'
+            response = '{ "code": 200, "message": "OK" }'
+        except Exception as err:
+            response = '{ "code": 500, "message": "Failed to update database.  Error: %s" }' % err
     else:
-        response = '{ code: 500 }'
+        response = '{ "code": 500, "message": "Failed to execute deploy script" }'
     return HttpResponse(response)

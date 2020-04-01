@@ -5,5 +5,5 @@ from . import views
 app_name = 'hooks'
 
 urlpatterns = [
-    path('build', views.build, name='build')
+    path('deploy', views.deploy, name='deploy')
 ]

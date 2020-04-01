@@ -5,28 +5,19 @@ if [ -z "$MYMUSICHERE_REMOTE" ]; then
     exit 1
 fi
 
-if [ -z "$MYMUSICHERE_REPO_DIR" ]; then
-    echo '$MYMUSICHERE_REPO_DIR is not set'
-    exit 1
-fi
-
-if [ -z "$MYMUSICHERE_ARTIFACTS_DIR" ]; then
-    echo '$MYMUSICHERE_ARTIFACTS_DIR is not set'
-    exit 1
-fi
-
-if [ -d "$MYMUSICHERE_REPO_DIR" ]; then
-    cd "$MYMUSICHERE_REPO_DIR"
+if [ -d scores/lilypond ]; then
+    cd scores/lilypond
     git pull
+    make clean
     make
-    find $MYMUSICHERE_ARTIFACTS_DIR/* -type d -exec rm -r {} +
-    mv out/* $MYMUSICHERE_ARTIFACTS_DIR/
+    cd ../..
+    make static
 else
-    cd "$(dirname $MYMUSICHERE_REPO_DIR)"
-    git clone "$MYMUSICHERE_REMOTE"
-    cd "mymusichere"
+    cd scores
+    git clone "$MYMUSICHERE_REMOTE" lilypond
+    cd lilypond
     make
-    find $MYMUSICHERE_ARTIFACTS_DIR/* -type d -exec rm -r {} +
-    mv out/* $MYMUSICHERE_ARTIFACTS_DIR/
+    cd ../..
+    make static
 fi
 

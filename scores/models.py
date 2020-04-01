@@ -17,10 +17,7 @@ class Score(models.Model):
 
     def get_paths_to_pages(self):
         if self.slug:
-            if settings.DEBUG:
-                pages_dir = os.path.join(settings.BASE_DIR, 'scores', 'static', 'scores', self.slug)
-            else:
-                pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
+            pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
 
             return [os.path.join('scores', self.slug, page.name)
                     for page in os.scandir(pages_dir)
