@@ -6,6 +6,7 @@
   <title>{{ score.title }}</title>
 
   <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
+  <script src="https://github.com/crabbly/Print.js/releases/download/v1.0.61/print.min.js"></script>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
 
@@ -34,7 +35,7 @@
               <a class="nav-link" href="#">play</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">print</a>
+              <a class="nav-link" href="#" onclick="printJS('{% static score.get_path_to_pdf %}'); return false">print</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ score.get_link_to_source }}">view source</a>
