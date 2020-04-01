@@ -31,12 +31,12 @@
             <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
               <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
             </a>
-            <h5>
+            <h6>
               {{ score.title }}
               {% if not score.is_finished %}
               <span class="badge badge-dark">WIP</span>
               {% endif %}
-            </h5>
+            </h6>
           </div>
         {% endfor %}
         </div>
