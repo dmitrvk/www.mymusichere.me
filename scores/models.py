@@ -18,10 +18,14 @@ class Score(models.Model):
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
 
-            return [os.path.join('scores', self.slug, page.name)
+            paths_to_pages = [os.path.join('scores', self.slug, page.name)
                     for page in os.scandir(pages_dir)
                     if page.name.startswith('%s-page' % self.slug)
                     or page.name == '%s.png' % self.slug]
+
+            paths_to_pages.sort(key=lambda path : path.split('page')[1].split('.')[0])
+
+            return paths_to_pages
         else:
             return ''
 
