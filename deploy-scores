@@ -1,23 +1,27 @@
 #!/bin/bash -e
 
+if [ -z "BASE_DIR" ]; then
+    echo '$BASE_DIR is not set'
+    exit 1
+fi
+
 if [ -z "$MYMUSICHERE_REMOTE" ]; then
     echo '$MYMUSICHERE_REMOTE is not set'
     exit 1
 fi
 
-if [ -d scores/lilypond ]; then
-    cd scores/lilypond
+if [ -d $BASE_DIR/scores/lilypond ]; then
+    cd $BASE_DIR/scores/lilypond
     git pull
     make clean
     make
     cd ../..
     make static
 else
-    cd scores
+    cd $BASE_DIR/scores
     git clone "$MYMUSICHERE_REMOTE" lilypond
     cd lilypond
     make
     cd ../..
     make static
 fi
-
