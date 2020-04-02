@@ -23,7 +23,8 @@ class Score(models.Model):
                     if page.name.startswith('%s-page' % self.slug)
                     or page.name == '%s.png' % self.slug]
 
-            paths_to_pages.sort(key=lambda path : path.split('page')[1].split('.')[0])
+            if len(paths_to_pages) > 1:
+                paths_to_pages.sort(key=lambda path : path.split('page')[1].split('.')[0])
 
             return paths_to_pages
         else:
