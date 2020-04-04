@@ -14,34 +14,38 @@
   <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}">
 </head>
 <body class="bg-light">
-    <header>
-      <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">MyMusicHere</a>
-      </nav>
-    </header>
+  <header>
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">MyMusicHere</a>
+    </nav>
+  </header>
 
-    <main role="main" class="container text-center">
-      <p class="lead">Collection of sheet music. All scores are free to download and share.</p>
-
-      {% if score_list %}
-      <div class="container">
-        <div class="row">
-        {% for score in score_list %}
-          <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
-            <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-              <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
-            </a>
-            <h6>{{ score.title }}</h6>
-          </div>
-        {% endfor %}
+  <section class="jumbotron text-left">
+        <div class="container" style="height: 200px;">
         </div>
-      </div>
-      {% else %}
-      <p>No scores are available.</p>
-      {% endif %}
-    </main>
+  </section>
 
-    {% include 'scores/footer.html' %}
+  <main role="main" class="container text-center">
+
+    {% if score_list %}
+    <div class="container">
+      <div class="row">
+      {% for score in score_list %}
+        <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
+          <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
+            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
+          </a>
+          <h6>{{ score.title }}</h6>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <p>No scores are available.</p>
+    {% endif %}
+  </main>
+
+  {% include 'scores/footer.html' %}
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

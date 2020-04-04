@@ -1,8 +1,8 @@
 $theme-colors: (
   "primary": #c9c9d6,
   "secondary": #550000,
-  "dark": #3e3e4a,
-  "light": #f0f0f0,
+  "dark": #3e3e3e,
+  "light": #f0f0f0
 );
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
@@ -15,8 +15,23 @@ html {
 body {
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 300;
-  background-color: #FAFAFA;
+  background-color: white;
   margin-bottom: 100px;
+}
+
+.navbar {
+  -webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.75);
+}
+
+.jumbotron {
+  background-image: url('https://dmitryk.pythonanywhere.com/public/photo.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #f0f0f0;
+  border-radius: 0px;
 }
 
 h1 {
