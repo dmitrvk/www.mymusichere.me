@@ -24,7 +24,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'scores.apps.ScoresConfig',
-    'hooks.apps.HooksConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
