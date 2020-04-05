@@ -124,3 +124,5 @@ GITHUB_SCORES_SOURCE_REPO = os.environ['MYMUSICHERE_REMOTE']
 DEPLOY_SCORES_SCRIPT_PATH = os.path.join(BASE_DIR, 'deploy-scores')
 
 MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
+
+WEBHOOK_SECRET = os.environ['WEBHOOK_SECRET']

@@ -6,6 +6,6 @@ app_name = 'scores'
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('scores/deploy', views.deploy, name='deploy'),
+    path('scores/deploy', views.DeployView.as_view(), name='deploy'),
     path('<slug:slug>', views.ScoreView.as_view(), name='score')
 ]
