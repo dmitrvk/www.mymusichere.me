@@ -45,6 +45,33 @@
     {% else %}
     <p>No scores are available.</p>
     {% endif %}
+
+    <hr>
+
+    <div class="container text-left">
+      <div class="row">
+        <div class="col">
+          <h3>How to upload sheet music</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <p>All scores here are typeset with the
+          <a class="text-secondary" href="https://lilypond.org" target="_blank">LilyPond</a>
+          system.
+          The source code is located on the GitHub repository. If you are
+          familiar with LilyPond and Github, you can create a pull request with
+          your score. For now this is the only way to publish sheet music
+          here.</p>
+          <p>
+            <a href="https://github.com/dmitrvk/mymusichere" class="btn btn-dark my-2" target="_blank">
+              <i class="fab fa-github mr-1"></i>
+              Visit GitHub
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
   </main>
 
   {% include 'scores/footer.html' %}
