@@ -15,8 +15,9 @@ html {
 body {
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 300;
+  font-size: 18px;
   background-color: white;
-  margin-bottom: 100px;
+  margin-bottom: 110px;
 }
 
 .navbar {
@@ -30,7 +31,8 @@ body {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-color: #f0f0f0;
+  background-color: #3e3e3e;
+  background-blend-mode: overlay;
   border-radius: 0px;
 }
 
@@ -86,7 +88,7 @@ h6 {
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
-  height: 100px;
+  height: 110px;
   color: white;
 }
 
