@@ -31,9 +31,17 @@ body {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-color: #3e3e3e;
+  background-color: #5e5e5e;
   background-blend-mode: overlay;
   border-radius: 0px;
+}
+
+.jumbotron-heading {
+  text-shadow: 0px 1px 1px black;
+}
+
+.lead {
+  text-shadow: 0px 1px 1px black;
 }
 
 h1 {
