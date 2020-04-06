@@ -112,6 +112,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
+    '%s/mymusichere/static' % BASE_DIR,
     '%s/scores/lilypond/out' % BASE_DIR
 ]
 
