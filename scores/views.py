@@ -2,6 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 
+from git import Repo
+import subprocess
+
 import os
 import hmac
 import hashlib
@@ -24,7 +27,38 @@ class ScoreView(generic.DetailView):
 
 class DeployView(View):
     def get(self, request):
-        return HttpResponse('Wrong request', status=400)
+        try:
+            repo = Repo(settings.MYMUSICHERE_REPO_DIR)
+
+            if repo.is_dirty():
+                repo.git.reset('--hard')
+
+            subprocess.run(['make', 'clean'], cwd=repo.working_tree_dir)
+
+            pullinfo = repo.remotes.origin.pull()
+
+            subprocess.run(['make'], cwd=repo.working_tree_dir)
+
+            subprocess.run(['make', 'static'], cwd=settings.BASE_DIR)
+
+            Score.objects.all().delete()
+
+            scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
+
+            for f in os.scandir(scores_dir):
+                if f.is_dir():
+                    s = Score(title='', slug=f.name)
+                    path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, s.slug, '%s.ly' % s.slug)
+                    for line in open(path_to_source):
+                        if 'title' in line:
+                            s.title = line.split('"')[1]
+                            break
+
+                    s.save()
+
+            return HttpResponse('OK')
+        except Exception as err:
+            return HttpResponse('Deploy failed. %s' % err, status=500)
 
     def post(self, request):
         if self.is_request_valid(request):
