@@ -12,8 +12,7 @@ import requests
 logfile = os.path.join(settings.BASE_DIR, 'deploy-scores.log')
 logging.basicConfig(filename=logfile, level=logging.INFO)
 
-repo = Repo('/home/dmitryk/downloads/networks-paper')
-#repo = Repo(settings.MYMUSICHERE_REPO_DIR)
+repo = Repo(settings.MYMUSICHERE_REPO_DIR)
 
 while True:
     time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
