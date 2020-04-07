@@ -26,21 +26,8 @@ class ScoreView(generic.DetailView):
 
 
 class DeployView(View):
-    def get(self, request):
-        try:
-            repo = Repo(settings.MYMUSICHERE_REPO_DIR)
-
-            if repo.is_dirty():
-                repo.git.reset('--hard')
-
-            subprocess.run(['make', 'clean'], cwd=repo.working_tree_dir)
-
-            pullinfo = repo.remotes.origin.pull()
-
-            subprocess.run(['make'], cwd=repo.working_tree_dir)
-
-            subprocess.run(['make', 'static'], cwd=settings.BASE_DIR)
-
+    def post(self, request):
+        if self.is_token_valid(request):
             Score.objects.all().delete()
 
             scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
@@ -56,65 +43,18 @@ class DeployView(View):
 
                     s.save()
 
-            return HttpResponse('OK')
-        except Exception as err:
-            return HttpResponse('Deploy failed. %s' % err, status=500)
-
-    def post(self, request):
-        if self.is_request_valid(request):
-            exitcode = os.system('%s' % settings.DEPLOY_SCORES_SCRIPT_PATH)
-            if exitcode == 0:
-                try:
-                    Score.objects.all().delete()
-
-                    scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
-
-                    for f in os.scandir(scores_dir):
-                        if f.is_dir():
-                            s = Score(title='', slug=f.name)
-                            path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, s.slug, '%s.ly' % s.slug)
-                            for line in open(path_to_source):
-                                if 'title' in line:
-                                    s.title = line.split('"')[1]
-                                    break
-
-                            s.save()
-
-                    return HttpResponse('Deployed successfully')
-                except Exception as err:
-                    return HttpResponse('Deploy failed', status=500)
-            else:
-                return HttpResponse('Deploy failed', status=500)
-            return HttpResponse(response)
+            return HttpResponse('DB updated successfully')
         else:
             return HttpResponse('Wrong request', status=400)
 
 
     def is_request_valid(self, request):
-        if self.request_has_required_headers(request):
-            if self.is_user_agent_valid(request):
-                if self.is_signature_valid(request):
-                    return True
+        return 'Authorization' in request.headers and self.is_token_valid(request)
 
-        return False
-
-    def request_has_required_headers(self, request):
+    def is_token_valid(self, request):
+        auth_header = request.headers.get('Authorization', 'None')
+        auth_header_parts = auth_header.split()
         return \
-            'X-Github-Event' in request.headers and \
-            'X-Github-Delivery' in request.headers and \
-            'X-Hub-Signature' in request.headers and \
-            'User-Agent' in request.headers
-
-    def is_user_agent_valid(self, request):
-        user_agent = request.headers.get('User-Agent', 'None')
-        return user_agent.startswith('GitHub-Hookshot/')
-
-    def is_signature_valid(self, request):
-        x_hub_signature = request.headers.get('X-Hub-Signature', 'None')
-        hash_algorithm, github_signature = x_hub_signature.split('=')
-        algorithm = hashlib.__dict__.get(hash_algorithm)
-        encoded_secret = bytes(settings.WEBHOOK_SECRET, 'latin-1')
-        mac = hmac.new(encoded_secret, msg=request.body, digestmod=algorithm)
-        return hmac.compare_digest(mac.hexdigest(), github_signature)
-
+            auth_header_parts[0] == 'Token' and \
+            auth_header_parts[1] == settings.DEPLOY_TOKEN
 

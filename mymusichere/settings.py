@@ -125,4 +125,4 @@ DEPLOY_SCORES_SCRIPT_PATH = os.path.join(BASE_DIR, 'deploy-scores')
 
 MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
 
-WEBHOOK_SECRET = os.environ['WEBHOOK_SECRET']
+DEPLOY_TOKEN = os.environ['DEPLOY_TOKEN']
