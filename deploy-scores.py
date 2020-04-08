@@ -1,74 +1,113 @@
 #!/usr/bin/env python
 
-import mymusichere.settings as settings
-from git import Repo
+from datetime import datetime
+from shutil import rmtree
 from time import sleep
-import subprocess
 import logging
 import os
-from datetime import datetime
+import subprocess
+import sys
+
+from git import Repo
+from git.exc import InvalidGitRepositoryError, NoSuchPathError
 import requests
 
-logfile = os.path.join(settings.BASE_DIR, 'deploy-scores.log')
-logging.basicConfig(filename=logfile, level=logging.INFO)
 
-repo = Repo(settings.MYMUSICHERE_REPO_DIR)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-while True:
+MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
+
+MYMUSICHERE_REMOTE = os.environ['MYMUSICHERE_REMOTE']
+
+TOKEN = 'Token %s' % os.environ['DEPLOY_TOKEN']
+
+
+def main():
+    logfile = os.path.join(BASE_DIR, 'deploy-scores.log')
+    logging.basicConfig(filename=logfile, level=logging.INFO)
+
     time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     logging.info('%s:Check for update' % time)
 
+    try:
+        repo = Repo(MYMUSICHERE_REPO_DIR)
+
+        if updates_available(repo):
+            logging.info('Changes detected')
+            deploy_scores(repo)
+        else:
+            logging.info('No changes detected')
+
+    except InvalidGitRepositoryError:
+        logging.warning('Invalid git repo at %s. Cloning...' % MYMUSICHERE_REPO_DIR)
+        rmtree(MYMUSICHERE_REPO_DIR)
+        repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
+        deploy_scores(repo)
+
+    except NoSuchPathError:
+        logging.warning('No such path %s. Cloning remote repo...' % MYMUSICHERE_REPO_DIR)
+        repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
+        deploy_scores(repo)
+
+    except Exception as e:
+        logging.error('Error: %s' % e)
+        sys.exit(1)
+
+
+def updates_available(repo):
     logging.info('git fetch...')
     fetchinfo = repo.remotes.origin.fetch()
+    return repo.heads[0].commit != fetchinfo[0].commit
 
-    is_up_to_date = fetchinfo[0].flags & fetchinfo[0].HEAD_UPTODATE
 
-    if repo.heads[0].commit == fetchinfo[0].commit:
-        logging.info('No changes detected')
+def deploy_scores(repo):
+    clean_repo(repo)
+
+    logging.info('git pull...')
+    repo.remotes.origin.pull()
+
+    logging.info('make')
+    completed_make = subprocess.run(['make'], cwd=MYMUSICHERE_REPO_DIR)
+
+    if completed_make.returncode == 0:
+        logging.info('Scores built successfully')
     else:
-        logging.info('Changes detected')
+        logging.error('Scores build failed')
+        sys.exit(1)
 
-        logging.info('Clean repo')
+    response = requests.post(
+        'https://www.mymusichere.me/scores/deploy',
+        headers={'Authorization': TOKEN},
+        verify=True
+    )
 
-        working_dir = repo.working_tree_dir
-        subprocess.run(['make', 'clean'], cwd=working_dir)
+    if response.status_code == 200:
+        logging.info(response.content)
 
-        if repo.is_dirty():
-            logging.info('Repo is dirty. All changes will be removed.')
-            repo.git.reset('--hard')
+        logging.info('make static')
+        args = ['make', 'static']
+        completed_make_static = subprocess.run(args, cwd=BASE_DIR)
 
-        logging.info('git pull...')
-        repo.remotes.origin.pull()
-
-        logging.info('make')
-        completed_make = subprocess.run(['make'], cwd=repo.working_dir)
-
-        if completed_make.returncode == 0:
-            logging.info('Scores built successfully')
+        if completed_make_static.returncode == 0:
+            logging.info('Statifiles updated')
         else:
-            logging.info('Scores build failed')
-            #continue
+            logging.error('Failed to update static files')
+            sys.exit(1)
 
-        token = 'Token %s' % settings.DEPLOY_TOKEN
+    else:
+        logging.error('Got unexpected status code %d: %s' % (response.status_code, response.content))
 
-        response = requests.post(
-            'http://localhost:8000/scores/deploy',
-            headers={'Authorization': token}
-        )
 
-        if response.status_code == 200:
-            logging.info(response.content)
+def clean_repo(repo):
+    logging.info('Clean repo')
 
-            logging.info('make static')
-            args = ['make', 'static']
-            completed_make_static = subprocess.run(args, cwd=working_dir)
+    subprocess.run(['make', 'clean'], cwd=MYMUSICHERE_REPO_DIR)
 
-            if completed_make_static.returncode == 0:
-                logging.info('Statifiles updated')
-            else:
-                logging.info('Failed to update static files')
+    if repo.is_dirty():
+        logging.info('Repo is dirty. All changes will be removed.')
+        repo.git.reset('--hard')
 
-        else:
-          logging.info('Got unexpected status code {}: {!r}'.format(response.status_code, response.content))
 
-    sleep(30)
+if __name__ == "__main__":
+    main()
+
