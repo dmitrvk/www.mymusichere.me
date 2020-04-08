@@ -29,9 +29,9 @@ jobs:
       run: |
         make test
       env:
-        SECRET_KEY: none
-        WEBHOOK_SECRET: none
+        DEPLOY_TOKEN: none
         MYMUSICHERE_REMOTE: https://github.com/dmitrvk/mymusichere
+        SECRET_KEY: none
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
