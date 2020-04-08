@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from git import Repo
 import subprocess
@@ -37,9 +39,17 @@ class DeployView(View):
                     s = Score(title='', slug=f.name)
                     path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, s.slug, '%s.ly' % s.slug)
                     for line in open(path_to_source):
-                        if 'title' in line:
+                        if 'title' in line and s.title == '':
                             s.title = line.split('"')[1]
-                            break
+                        if 'composer' in line:
+                            s.composer = line.split('"')[1]
+                        if 'arranger' in line:
+                            s.arranger = line.split('"')[1]
+                        if 'instrument' in line:
+                            s.instrument = line.split('"')[1]
+
+                    s.last_modified = timezone.now()
+                    s.views = 10
 
                     s.save()
 

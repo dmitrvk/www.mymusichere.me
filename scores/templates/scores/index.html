@@ -18,6 +18,52 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}">
+
+
+<style>
+.score-title {
+    color: #3e3e3e;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.score-composer {
+    color: #3e3e3e;
+    font-weight: 300;
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.score-arranger {
+    color: #3e3e3e;
+    font-weight: 300;
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.score-instrument {
+    color: #3e3e3e;
+    font-weight: 300;
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.score-last-modified {
+    color: #3e3e3e;
+    font-weight: 300;
+    font-size: 11px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.score-views {
+    color: #3e3e3e;
+    font-weight: 300;
+    font-size: 11px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+</style>
 </head>
 <body class="bg-light">
   <header>
@@ -42,7 +88,48 @@
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
             <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
           </a>
-          <h6>{{ score.title }}</h6>
+          <div class="img-fluid mx-auto" style="position: relative; margin-top: -97px; width: 180px; height:
+                                97px; background-color: white;">
+              <div class="container-fluid px-2" style="height: 67px;
+                  line-height: 16px;">
+                  <div class="row mt-1">
+                      <div class="col-12 text-left">
+                          <p class="score-title">{{ score.title }}</p>
+                      </div>
+                    </div>
+                      {% if score.composer %}
+                  <div class="row">
+                      <div class="col-12 text-left">
+                          <p class="score-composer">{{ score.composer }}</p>
+                      </div>
+                    </div>
+                      {% endif %}
+                      {% if score.arranger %}
+                  <div class="row">
+                      <div class="col-12 text-left">
+                          <p class="score-arranger">{{ score.arranger }}</p>
+                      </div>
+                    </div>
+                      {% endif %}
+                      {% if score.instrument %}
+                  <div class="row">
+                      <div class="col-12 text-left">
+                          <p class="score-instrument">{{ score.instrument }}</p>
+                      </div>
+                    </div>
+                      {% endif %}
+            </div>
+            <div class="container-fluid px-2" style="height: 30px">
+                  <div class="row">
+                      <div class="col-6 text-left">
+                          <p class="score-last-modified">{{ score.last_modified|date:"m/d/Y" }}</p>
+                      </div>
+                      <div class="col-6 text-center">
+                          <p class="score-views">{{ score.views }} views</p>
+                      </div>
+                    </div>
+            </div>
+          </div>
         </div>
       {% endfor %}
       </div>

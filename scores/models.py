@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.db import models
@@ -7,6 +8,12 @@ from mymusichere import settings
 class Score(models.Model):
     title = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
+    composer = models.CharField(max_length=255, default='')
+    arranger = models.CharField(max_length=255, default='')
+    instrument = models.CharField(max_length=255, default='')
+    last_modified = models.DateTimeField(default=datetime.datetime(2020, 1, 1))
+    views = models.IntegerField(default=0)
+
 
     def get_path_to_pdf(self):
         if self.slug:
