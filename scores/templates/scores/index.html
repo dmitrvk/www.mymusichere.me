@@ -41,6 +41,7 @@
     font-size: 12px;
     margin-top: 0;
     margin-bottom: 0;
+    text-overflow: ellipsis;
 }
 .score-instrument {
     color: #3e3e3e;
@@ -88,43 +89,45 @@
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
             <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
           </a>
-          <div class="img-fluid mx-auto" style="position: relative; margin-top: -97px; width: 180px; height:
-                                97px; background-color: white;">
-              <div class="container-fluid px-2" style="height: 67px;
+          <div class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
+              <div class="container-fluid px-2" style="height: 63px;
                   line-height: 16px;">
-                  <div class="row mt-1">
+                  <div class="row pt-2 mb-1">
                       <div class="col-12 text-left">
-                          <p class="score-title">{{ score.title }}</p>
+                          <p class="score-title text-truncate">{{ score.title }}</p>
                       </div>
                     </div>
                       {% if score.composer %}
                   <div class="row">
                       <div class="col-12 text-left">
-                          <p class="score-composer">{{ score.composer }}</p>
+                          <p class="score-composer text-truncate">{{ score.composer }}</p>
                       </div>
                     </div>
                       {% endif %}
                       {% if score.arranger %}
                   <div class="row">
                       <div class="col-12 text-left">
-                          <p class="score-arranger">{{ score.arranger }}</p>
-                      </div>
-                    </div>
-                      {% endif %}
-                      {% if score.instrument %}
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-instrument">{{ score.instrument }}</p>
+                          <p class="score-arranger text-truncate">{{ score.arranger }}</p>
                       </div>
                     </div>
                       {% endif %}
             </div>
-            <div class="container-fluid px-2" style="height: 30px">
+            <div class="container-fluid px-2" style="height: 37px">
                   <div class="row">
-                      <div class="col-6 text-left">
-                          <p class="score-last-modified">{{ score.last_modified|date:"m/d/Y" }}</p>
+                      <div class="col-12 text-left">
+                      {% if score.instrument %}
+                          <p class="score-instrument text-lowercase text-truncate">{{ score.instrument }}</p>
+                      {% else %}
+                      <p class="score-instrument" style="visibility: hidden;">instrument</p>
+                      {% endif %}
                       </div>
-                      <div class="col-6 text-center">
+                    </div>
+
+                  <div class="row">
+                      <div class="col text-left">
+                          <p class="score-last-modified">{{ score.last_modified|date:"M d, Y" }}</p>
+                      </div>
+                      <div class="col-auto text-left">
                           <p class="score-views">{{ score.views }} views</p>
                       </div>
                     </div>
