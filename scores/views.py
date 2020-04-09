@@ -17,9 +17,7 @@ from .models import Score
 
 class IndexView(generic.ListView):
     template_name = 'scores/index.html'
-
-    def get_queryset(self):
-        return Score.objects.all()
+    queryset = Score.objects.all()
 
 
 class ScoreView(generic.DetailView):
