@@ -9,6 +9,7 @@ from git import Repo
 import subprocess
 
 import os
+import re
 import hmac
 import hashlib
 
@@ -33,6 +34,18 @@ class ScoreView(generic.DetailView):
 
 
 class DeployView(View):
+    SPACE = r'\s*'
+    LINE_BEGIN = r'^' + SPACE
+    EQUALS_SIGN = SPACE + r'=' + SPACE
+    VALUE = r'".*"'
+
+    HEADER_START_PATTERN = r'\\header'
+    TITLE_PATTERN = LINE_BEGIN + r'title' + EQUALS_SIGN + VALUE
+    COMPOSER_PATTERN = LINE_BEGIN + r'composer' + EQUALS_SIGN + VALUE
+    ARRANGER_PATTERN = LINE_BEGIN + r'arranger' + EQUALS_SIGN + VALUE
+    INSTRUMENT_PATTERN = LINE_BEGIN + r'instrument' + EQUALS_SIGN + VALUE
+
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(DeployView, self).dispatch(request, *args, **kwargs)
@@ -45,21 +58,9 @@ class DeployView(View):
 
             for f in os.scandir(scores_dir):
                 if f.is_dir():
-                    s = Score(title='', slug=f.name)
-                    path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, s.slug, '%s.ly' % s.slug)
-                    for line in open(path_to_source):
-                        if 'title' in line and s.title == '':
-                            s.title = line.split('"')[1]
-                        if 'composer' in line:
-                            s.composer = line.split('"')[1]
-                        if 'arranger' in line:
-                            s.arranger = line.split('"')[1]
-                        if 'instrument' in line:
-                            s.instrument = line.split('"')[1]
-
-                    s.last_modified = timezone.now()
-
-                    s.save()
+                    score = self.parse_header(f)
+                    score.last_modified = timezone.now()
+                    score.save()
 
             return HttpResponse('DB updated successfully')
         else:
@@ -75,4 +76,43 @@ class DeployView(View):
         return \
             auth_header_parts[0] == 'Token' and \
             auth_header_parts[1] == settings.DEPLOY_TOKEN
+
+    def parse_header(self, score_dir):
+        score = Score(title='', slug=score_dir.name)
+
+        path_to_source = os.path.join(
+            settings.MYMUSICHERE_REPO_DIR,
+            score.slug,
+            '%s.ly' % score.slug
+        )
+
+        reading_header = False
+        for line in open(path_to_source):
+            if not reading_header and re.search(self.HEADER_START_PATTERN, line):
+                reading_header = True
+            else:
+                if '}' in line:
+                    reading_header = False
+                else:
+                    match = re.search(self.TITLE_PATTERN, line)
+                    if match and not score.title:
+                        score.title = match.group().split('"')[1]
+                        continue
+
+                    match = re.search(self.COMPOSER_PATTERN, line)
+                    if match and not score.composer:
+                        score.composer = match.group().split('"')[1]
+                        continue
+
+                    match = re.search(self.ARRANGER_PATTERN, line)
+                    if match and not score.arranger:
+                        score.arranger = match.group().split('"')[1]
+                        continue
+
+                    match = re.search(self.INSTRUMENT_PATTERN, line)
+                    if match and not score.instrument:
+                        score.instrument = match.group().split('"')[1]
+                        continue
+
+        return score
 
