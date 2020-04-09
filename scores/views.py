@@ -25,6 +25,12 @@ class ScoreView(generic.DetailView):
     model = Score
     template_name = 'scores/score.html'
 
+    def get_object(self):
+        score = super().get_object()
+        score.views += 1
+        score.save()
+        return score
+
 
 class DeployView(View):
     @method_decorator(csrf_exempt)
@@ -52,7 +58,6 @@ class DeployView(View):
                             s.instrument = line.split('"')[1]
 
                     s.last_modified = timezone.now()
-                    s.views = 10
 
                     s.save()
 
