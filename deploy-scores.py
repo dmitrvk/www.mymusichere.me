@@ -32,7 +32,7 @@ def main():
     try:
         repo = Repo(MYMUSICHERE_REPO_DIR)
 
-        if updates_available(repo):
+        if updates_available(repo) or sys.argv[1] == '--force':
             logging.info('Changes detected')
             deploy_scores(repo)
         else:
