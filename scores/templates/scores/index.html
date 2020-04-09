@@ -51,14 +51,14 @@
     margin-bottom: 0;
 }
 .score-last-modified {
-    color: #3e3e3e;
+    color: #7e7e7e;
     font-weight: 300;
     font-size: 11px;
     margin-top: 0;
     margin-bottom: 0;
 }
 .score-views {
-    color: #3e3e3e;
+    color: #7e7e7e;
     font-weight: 300;
     font-size: 11px;
     margin-top: 0;
@@ -123,11 +123,11 @@
                       </div>
                     </div>
 
-                  <div class="row">
+                  <div class="row no-gutters">
                       <div class="col text-left">
                           <p class="score-last-modified">{{ score.last_modified|date:"M d, Y" }}</p>
                       </div>
-                      <div class="col-auto text-left">
+                      <div class="col text-right">
                           <p class="score-views">{{ score.views }} views</p>
                       </div>
                     </div>
