@@ -43,7 +43,7 @@ class DeployView(View):
     TITLE_PATTERN = LINE_BEGIN + r'title' + EQUALS_SIGN + VALUE
     COMPOSER_PATTERN = LINE_BEGIN + r'composer' + EQUALS_SIGN + VALUE
     ARRANGER_PATTERN = LINE_BEGIN + r'arranger' + EQUALS_SIGN + VALUE
-    INSTRUMENT_PATTERN = LINE_BEGIN + r'instrument' + EQUALS_SIGN + VALUE
+    INSTRUMENT_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
 
 
     @method_decorator(csrf_exempt)
