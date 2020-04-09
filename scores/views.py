@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from git import Repo
 import subprocess
@@ -26,6 +27,10 @@ class ScoreView(generic.DetailView):
 
 
 class DeployView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(DeployView, self).dispatch(request, *args, **kwargs)
+
     def post(self, request):
         if self.is_token_valid(request):
             Score.objects.all().delete()

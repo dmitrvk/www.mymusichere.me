@@ -76,7 +76,7 @@ def deploy_scores(repo):
         sys.exit(1)
 
     response = requests.post(
-        'https://www.mymusichere.me/scores/deploy',
+        'http://localhost:8000/scores/deploy',
         headers={'Authorization': TOKEN},
         verify=True
     )
