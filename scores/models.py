@@ -1,7 +1,9 @@
 import datetime
+
 import os
 
 from django.db import models
+from django.utils import timezone
 
 from mymusichere import settings
 
@@ -50,5 +52,20 @@ class Score(models.Model):
     class Meta:
         ordering = ['title']
 
+    def update_with_score(self, score):
+        self.title = score.title
+        self.composer = score.composer
+        self.arranger = score.arranger
+        self.instrument = score.instrument
+        self.last_modified = timezone.now()
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and \
+            self.slug == other.slug and \
+            self.title == other.title and \
+            self.composer == other.composer and \
+            self.arranger == other.arranger and \
+            self.instrument == other.instrument
+
     def __str__(self):
-        return '%s (%s)' % (self.slug, self.title)
+        return '%s (%s, %s, %s, %s)' % (self.slug, self.title, self.composer, self.arranger, self.instrument)

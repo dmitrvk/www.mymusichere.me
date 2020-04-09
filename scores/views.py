@@ -51,18 +51,37 @@ class DeployView(View):
         return super(DeployView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
-        if self.is_token_valid(request):
-            Score.objects.all().delete()
+        if self.is_request_valid(request):
+            try:
+                scores_repo_dir = os.path.join(settings.STATIC_ROOT, 'scores')
+                scores_in_repo_slugs = set([f.name for f in os.scandir(scores_repo_dir) if f.is_dir()])
 
-            scores_dir = os.path.join(settings.STATIC_ROOT, 'scores')
+                # Delete scores removed from repository
+                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
+                scores_to_delete_slugs = scores_in_db_slugs.difference(scores_in_repo_slugs)
+                Score.objects.filter(slug__in=scores_to_delete_slugs).delete()
 
-            for f in os.scandir(scores_dir):
-                if f.is_dir():
-                    score = self.parse_header(f)
-                    score.last_modified = timezone.now()
-                    score.save()
 
-            return HttpResponse('DB updated successfully')
+                # Create scores added to repository
+                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
+                new_scores_slugs = scores_in_repo_slugs.difference(scores_in_db_slugs)
+                new_scores = [self.create_score_from_header(slug) for slug in new_scores_slugs]
+                Score.objects.bulk_create(new_scores)
+
+
+                # Update scores changed in repository
+                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
+                scores_to_update_slugs = scores_in_db_slugs.difference(new_scores_slugs)
+                for slug in scores_to_update_slugs:
+                    score_in_db = Score.objects.filter(slug=slug)[0]
+                    score_in_repo = self.create_score_from_header(slug)
+                    if score_in_db != score_in_repo:
+                        score_in_db.update_with_score(score_in_repo)
+                    score_in_db.save()
+
+                return HttpResponse('DB updated successfully')
+            except Exception as e:
+                return HttpResponse('Failed to update DB. %s' % e, status=500)
         else:
             return HttpResponse('Wrong request', status=400)
 
@@ -77,8 +96,8 @@ class DeployView(View):
             auth_header_parts[0] == 'Token' and \
             auth_header_parts[1] == settings.DEPLOY_TOKEN
 
-    def parse_header(self, score_dir):
-        score = Score(title='', slug=score_dir.name)
+    def create_score_from_header(self, score_slug):
+        score = Score(title='', slug=score_slug)
 
         path_to_source = os.path.join(
             settings.MYMUSICHERE_REPO_DIR,
