@@ -69,3 +69,6 @@ class Score(models.Model):
 
     def __str__(self):
         return '%s (%s, %s, %s, %s)' % (self.slug, self.title, self.composer, self.arranger, self.instrument)
+
+    def __hash__(self):
+        return hash((self.id, self.title))
