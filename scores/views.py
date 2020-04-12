@@ -53,7 +53,7 @@ class DeployView(View):
     def post(self, request):
         if self.is_request_valid(request):
             try:
-                scores_repo_dir = os.path.join(settings.STATIC_ROOT, 'scores')
+                scores_repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
                 scores_in_repo_slugs = set([f.name for f in os.scandir(scores_repo_dir) if f.is_dir()])
 
                 # Delete scores removed from repository
