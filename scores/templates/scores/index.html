@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  {% load humanize %}
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>MyMusicHere</title>
@@ -127,7 +129,7 @@
 
                   <div class="row no-gutters">
                       <div class="col text-left">
-                          <p class="score-last-modified">{{ score.last_modified|date:"M d, Y" }}</p>
+                          <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y" }}</p>
                       </div>
                       <div class="col text-right">
                           <p class="score-views">{{ score.views }} views</p>
