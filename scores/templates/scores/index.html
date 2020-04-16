@@ -91,14 +91,14 @@
       {% for score in score_list %}
         <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
+            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.ttle|default:"Untitled" }}" width="180">
           </a>
           <div class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
               <div class="container-fluid px-2" style="height: 63px;
                   line-height: 16px;">
                   <div class="row pt-2 mb-1">
                       <div class="col-12 text-left">
-                          <p class="score-title text-truncate">{{ score.title }}</p>
+                          <p class="score-title text-truncate">{{ score.title|default:"Untitled" }}</p>
                       </div>
                     </div>
                       {% if score.composer %}
@@ -119,20 +119,16 @@
             <div class="container-fluid px-2" style="height: 37px">
                   <div class="row">
                       <div class="col-12 text-left">
-                      {% if score.instrument %}
-                          <p class="score-instrument text-lowercase text-truncate">{{ score.instrument }}</p>
-                      {% else %}
-                      <p class="score-instrument" style="visibility: hidden;">instrument</p>
-                      {% endif %}
+                          <p class="score-instrument text-lowercase text-truncate">{{ score.instrument|default:"instrument unknown" }}</p>
                       </div>
                     </div>
 
                   <div class="row no-gutters">
                       <div class="col text-left">
-                          <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y" }}</p>
+                          <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</p>
                       </div>
                       <div class="col text-right">
-                          <p class="score-views">{{ score.views }} views</p>
+                          <p class="score-views">{{ score.views|default:0 }} views</p>
                       </div>
                     </div>
             </div>

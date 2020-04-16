@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>{{ score.title }}</title>
+  <title>{{ score.title|default:"Untitled" }}</title>
   <meta name="description" content="Sheet music typeset with LilyPond - {{ score.title }}">
   <meta name="keywords" content="sheet music, score, notation, lilypond">
 
