@@ -1,99 +1,46 @@
-<!doctype html>
+{% extends 'scores/base.html' %}
+
 {% load static %}
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>{{ score.title|default:"Untitled" }}</title>
-  <meta name="description" content="Sheet music typeset with LilyPond - {{ score.title }}">
-  <meta name="keywords" content="sheet music, score, notation, lilypond">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
-  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-  <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
+{% block title %}{{ score.title|default:"Untitled" }}{% endblock %}
 
-  <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
+{% block description %}Sheet music typeset with LilyPond - {{ score.title }}{% endblock %}
 
-  <script>
-    function share() {
-      copyLinkToClipboard()
-      showLinkCopiedToClipboardMessage()
-    }
+{% block navbar %}
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
 
-    function copyLinkToClipboard() {
-      var input = document.createElement('input')
-      document.body.appendChild(input);
-      input.value = 'https://www.mymusichere.me/{{ score.slug }}';
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-    }
+    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    function showLinkCopiedToClipboardMessage() {
-      var messageDiv = document.getElementById('message')
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="btn btn-dark btn-nav" href="{% static score.get_path_to_pdf %}" download>download</a>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-dark btn-nav" onclick="share()">share</button>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-dark btn-nav" href="{{ score.get_link_to_source }}">view source</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock navbar %}
 
-      if (messageDiv.hasChildNodes()) return;
+{% block content %}
+  <main class="container-fluid text-center">
+    <div id="message"></div>
 
-      var message = document.createElement('div')
-      message.setAttribute('class', 'alert alert-primary fade show m-0')
-      message.setAttribute('role', 'alert')
-      message.textContent = 'Link copied to clipboard'
-
-      messageDiv.appendChild(message)
-
-      setTimeout(function closeAlert() {
-        $('.alert').alert('close')
-      }, 3000)
-    }
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="{% static 'scores/style.css' %}">
-</head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
-
-      <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="btn btn-dark btn-nav" href="{% static score.get_path_to_pdf %}" download>download</a>
-          </li>
-          <li class="nav-item">
-            <button class="btn btn-dark btn-nav" onclick="share()">share</button>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-dark btn-nav" href="{{ score.get_link_to_source }}">view source</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <main class="container-fluid text-center">
-      <div id="message"></div>
-
-      {% for page in score.get_paths_to_pages %}
-      <img src="{% static page %}" class="img-fluid" alt="Score">
-      {% if not forloop.last %}
-      <hr>
-      {% endif %}
-      {% empty %}
-      <p>Sorry, sheet music for this piece is not available.</p>
-      {% endfor %}
-    </main>
-
-    {% include 'scores/footer.html' %}
-
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
-</html>
-
+    {% for page in score.get_paths_to_pages %}
+    <img src="{% static page %}" class="img-fluid" alt="Score">
+    {% if not forloop.last %}
+    <hr>
+    {% endif %}
+    {% empty %}
+    <p>Sorry, sheet music for this piece is not available.</p>
+    {% endfor %}
+  </main>
+{% endblock content %}

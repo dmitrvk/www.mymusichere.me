@@ -1,77 +1,8 @@
-<!doctype html>
+{% extends 'scores/base.html' %}
+
 {% load static humanize %}
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>MyMusicHere</title>
-  <meta name="description" content="Sheet music collection typeset with LilyPond">
-  <meta name="keywords" content="sheet music, score, notation, lilypond">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
-  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-  <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
-
-  <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
-
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}">
-
-
-<style>
-.score-title {
-    color: #3e3e3e;
-    font-weight: 500;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-composer {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-arranger {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-    text-overflow: ellipsis;
-}
-.score-instrument {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-last-modified {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-views {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-</style>
-</head>
-<body class="bg-light">
-  <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">MyMusicHere</a>
-  </nav>
-
+{% block content %}
   <section class="jumbotron">
     <div class="container">
       <h1 class="jumbotron-heading text-light">Sheet music collection</h1>
@@ -123,7 +54,7 @@
                           <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</p>
                       </div>
                       <div class="col text-right">
-                          <p class="score-views">{{ score.views|default:0 }} views</p>
+                          <p class="score-views">{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
                       </div>
                     </div>
             </div>
@@ -164,10 +95,4 @@
     </div>
   </main>
 
-  {% include 'scores/footer.html' %}
-
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock content %}
