@@ -15,11 +15,11 @@
     <div class="container">
       <div class="row">
       {% for score in score_list %}
-        <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
+        <figure class="col-6 col-sm-4 col-lg-3 hvr-grow score">
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.ttle|default:"Untitled" }}" style="width:180px"/>
+            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
           </a>
-          <div class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
+          <figcaption class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
               <div class="container-fluid px-2" style="height: 63px;
                   line-height: 16px;">
                   <div class="row pt-2 mb-1">
@@ -51,15 +51,15 @@
 
                   <div class="row no-gutters">
                       <div class="col text-left">
-                          <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</p>
+                        <p class="score-last-modified"><time datetime="{{ score.last_modified|date:"c" }}">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</time></p>
                       </div>
                       <div class="col text-right">
                           <p class="score-views">{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
                       </div>
                     </div>
             </div>
-          </div>
-        </div>
+          </figcaption>
+        </figure>
       {% endfor %}
       </div>
     </div>
@@ -69,12 +69,12 @@
 
     <hr>
 
-    <div class="container text-left">
-      <div class="row">
+    <section class="container text-left">
+      <header class="row">
         <div class="col">
           <h3>How to upload sheet music</h3>
         </div>
-      </div>
+      </header>
       <div class="row">
         <div class="col">
           <p>All scores here are typeset with the
@@ -92,7 +92,7 @@
           </p>
         </div>
       </div>
-    </div>
+    </section>
   </main>
 
 {% endblock content %}
