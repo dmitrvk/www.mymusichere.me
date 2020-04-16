@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,8 +7,6 @@
   <title>{{ score.title|default:"Untitled" }}</title>
   <meta name="description" content="Sheet music typeset with LilyPond - {{ score.title }}">
   <meta name="keywords" content="sheet music, score, notation, lilypond">
-
-  {% load static %}
 
   <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
