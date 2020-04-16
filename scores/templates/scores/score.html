@@ -31,6 +31,39 @@
 {% endblock navbar %}
 
 {% block content %}
+  <script>
+    function share() {
+      copyLinkToClipboard()
+      showLinkCopiedToClipboardMessage()
+    }
+
+    function copyLinkToClipboard() {
+      var input = document.createElement('input')
+      document.body.appendChild(input);
+      input.value = 'https://www.mymusichere.me/{{ score.slug }}';
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+
+    function showLinkCopiedToClipboardMessage() {
+      var messageDiv = document.getElementById('message')
+
+      if (messageDiv.hasChildNodes()) return;
+
+      var message = document.createElement('div')
+      message.setAttribute('class', 'alert alert-primary fade show m-0')
+      message.setAttribute('role', 'alert')
+      message.textContent = 'Link copied to clipboard'
+
+      messageDiv.appendChild(message)
+
+      setTimeout(function closeAlert() {
+        $('.alert').alert('close')
+      }, 3000)
+    }
+  </script>
+
   <main class="container-fluid text-center">
     <div id="message"></div>
 
