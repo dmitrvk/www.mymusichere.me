@@ -68,7 +68,7 @@
     <div id="message"></div>
 
     {% for page in score.get_paths_to_pages %}
-    <img src="{% static page %}" class="img-fluid" alt="Score">
+    <img src="{% static page %}" class="img-fluid" alt="Score"/>
     {% if not forloop.last %}
     <hr>
     {% endif %}
