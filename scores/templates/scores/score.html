@@ -6,31 +6,7 @@
 
 {% block description %}Sheet music typeset with LilyPond - {{ score.title }}{% endblock %}
 
-{% block navbar %}
-  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
-
-    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="btn btn-dark btn-nav" href="{% static score.get_path_to_pdf %}" download>download</a>
-        </li>
-        <li class="nav-item">
-          <button class="btn btn-dark btn-nav" onclick="share()">share</button>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-dark btn-nav" href="{{ score.get_link_to_source }}">view source</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-{% endblock navbar %}
-
-{% block content %}
+{% block head_extra %}
   <script>
     function share() {
       copyLinkToClipboard()
@@ -63,7 +39,33 @@
       }, 3000)
     }
   </script>
+{% endblock head_extra %}
 
+{% block navbar %}
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <a href="../" class="btn btn-link icon"><i class="fas fa-arrow-left"></i></a>
+
+    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="btn btn-dark btn-nav" href="{% static score.get_path_to_pdf %}" download>download</a>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-dark btn-nav" onclick="share()">share</button>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-dark btn-nav" href="{{ score.get_link_to_source }}">view source</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endblock navbar %}
+
+{% block content %}
   <main class="container-fluid text-center">
     <div id="message"></div>
 

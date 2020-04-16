@@ -4,68 +4,22 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <title>{% block title %}MyMusicHere{% endblock %}</title>
   <meta name="description" content="{% block description %}Sheet music collection typeset with LilyPond{% endblock %}"/>
   <meta name="keywords" content="sheet music, score, notation, lilypond"/>
+
+  <title>{% block title %}MyMusicHere{% endblock %}</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}"/>
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}"/>
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}"/>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}"/>
   <link rel="manifest" href="{% static 'img/site.webmanifest' %}"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap"/>
+  <link rel="stylesheet" href="{% static 'scores/style.css' %}"/>
 
   <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet"/>
-
-  <link rel="stylesheet" href="{% static 'scores/style.css' %}"/>
-
-
-<style>
-.score-title {
-    color: #3e3e3e;
-    font-weight: 500;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-composer {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-arranger {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-    text-overflow: ellipsis;
-}
-.score-instrument {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-last-modified {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-views {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-</style>
+  {% block head_extra %}{% endblock %}
 </head>
 <body class="bg-light">
   {% block navbar %}
