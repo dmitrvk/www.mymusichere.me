@@ -58,57 +58,54 @@
   </section>
 
   <main class="container text-center">
-
     {% if score_list %}
     <div class="container">
       <div class="row">
-      {% for score in score_list %}
-        <figure class="col-6 col-sm-4 col-lg-3 hvr-grow score">
+        {% for score in score_list %}
+        <figure class="score col-6 col-sm-4 col-lg-3 hvr-grow">
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
             <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
           </a>
           <figcaption class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
-              <div class="container-fluid px-2" style="height: 63px;
-                  line-height: 16px;">
-                  <div class="row pt-2 mb-1">
-                      <div class="col-12 text-left">
-                          <p class="score-title text-truncate">{{ score.title|default:"Untitled" }}</p>
-                      </div>
-                    </div>
-                      {% if score.composer %}
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-composer text-truncate">{{ score.composer }}</p>
-                      </div>
-                    </div>
-                      {% endif %}
-                      {% if score.arranger %}
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-arranger text-truncate">{{ score.arranger }}</p>
-                      </div>
-                    </div>
-                      {% endif %}
+            <div class="container-fluid px-2" style="height: 63px; line-height: 16px;">
+              <div class="row pt-2 mb-1">
+                <div class="col-12 text-left">
+                    <p class="score-title text-truncate">{{ score.title|default:"Untitled" }}</p>
+                </div>
+              </div>
+              {% if score.composer %}
+              <div class="row">
+                <div class="col-12 text-left">
+                  <p class="score-composer text-truncate">{{ score.composer }}</p>
+                </div>
+              </div>
+              {% endif %}
+              {% if score.arranger %}
+              <div class="row">
+                <div class="col-12 text-left">
+                  <p class="score-arranger text-truncate">{{ score.arranger }}</p>
+                </div>
+              </div>
+              {% endif %}
             </div>
             <div class="container-fluid px-2" style="height: 37px">
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-instrument text-lowercase text-truncate">{{ score.instrument|default:"instrument unknown" }}</p>
-                      </div>
-                    </div>
-
-                  <div class="row no-gutters">
-                      <div class="col text-left">
-                        <p class="score-last-modified"><time datetime="{{ score.last_modified|date:"c" }}">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</time></p>
-                      </div>
-                      <div class="col text-right">
-                          <p class="score-views">{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
-                      </div>
-                    </div>
+              <div class="row">
+                <div class="col-12 text-left">
+                  <p class="score-instrument text-lowercase text-truncate">{{ score.instrument|default:"instrument unknown" }}</p>
+                </div>
+              </div>
+              <div class="row no-gutters">
+                <div class="col text-left">
+                  <p class="score-last-modified"><time datetime="{{ score.last_modified|date:"c" }}">{{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}</time></p>
+                </div>
+                <div class="col text-right">
+                  <p class="score-views">{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
+                </div>
+              </div>
             </div>
           </figcaption>
         </figure>
-      {% endfor %}
+        {% endfor %}
       </div>
     </div>
     {% else %}
@@ -142,5 +139,4 @@
       </div>
     </section>
   </main>
-
 {% endblock content %}
