@@ -5,19 +5,33 @@ $theme-colors: (
   "light": #f0f0f0
 );
 
+$jumbotron-background-color: #5e5e5e;
+$jumbotron-image-url: 'https://www.mymusichere.me/public/photo.jpg';
+
+$score-caption-bottom-height: 37px;
+$score-caption-top-height: 63px;
+
+$footer-height: 110px;
+
+
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
+
 html {
-  position: relative;
   min-height: 100%;
+  position: relative;
 }
 
 body {
-  font-family: 'Roboto Condensed', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
   background-color: white;
-  margin-bottom: 110px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: $footer-height;
+}
+
+main {
+  @extend .text-center;
 }
 
 .navbar {
@@ -27,31 +41,26 @@ body {
 }
 
 .jumbotron {
-  height: 360px;
-  background-image: url('https://www.mymusichere.me/public/photo.jpg');
-  background-size: cover;
+  background-blend-mode: overlay;
+  background-color: $jumbotron-background-color;
+  background-image: url($jumbotron-image-url);
   background-position: center center;
   background-repeat: no-repeat;
-  background-color: #5e5e5e;
-  background-blend-mode: overlay;
+  background-size: cover;
   border-radius: 0px;
+  height: 360px;
 }
 
 .jumbotron-heading {
-  text-shadow: 0px 1px 1px black;
-}
+  @extend .text-light;
 
-.lead {
-  text-shadow: 0px 1px 1px black;
-}
-
-h1 {
   font-weight: 700;
+  text-shadow: 0px 1px 1px black;
 }
 
 .navbar-brand {
-  font-weight: 700;
   color: white;
+  font-weight: 700;
 }
 
 .nav-link {
@@ -66,78 +75,186 @@ h1 {
 }
 
 .navbar-toggler {
-    border: none;
+  border: none;
 }
 
 li a {
-    color: white !important;
+  color: white !important;
 }
 
 .container-fluid {
-    padding: 0;
+  padding: 0;
 }
 
 .lead {
-  margin-top: 12px;
   margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .score {
+  @extend .hvr-grow;
+
   margin-bottom: 12px;
 }
 
-h6 {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  font-weight: 500;
+.score-caption {
+  @extend .mx-auto;
+
+  background-color: white;
+  height: $score-caption-top-height + $score-caption-bottom-height;
+  margin-top: -100px;
+  position: relative;
+  width: 180px;
+}
+
+.score-caption-top {
+  height: $score-caption-top-height;
+  line-height: 16px;
+}
+
+.score-caption-bottom {
+  @extend .px-2;
+
+  height: $score-caption-bottom-height;
+}
+
+.score-title {
+  @extend .text-left;
+
+  p {
+    @extend .text-truncate;
+
+    color: map-get($theme-colors, "dark");
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.score-composer {
+  @extend .text-left;
+
+  p {
+    @extend .text-truncate;
+
+    color: map-get($theme-colors, "dark");
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.score-arranger {
+  @extend .text-left;
+
+  p {
+    @extend .text-truncate;
+
+    color: map-get($theme-colors, "dark");
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.score-instrument {
+  @extend .text-left;
+
+  p {
+    @extend .text-lowercase;
+    @extend .text-truncate;
+
+    color: map-get($theme-colors, "dark");
+    font-size: 12px;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.score-last-modified {
+  @extend .text-left;
+
+  p {
+    @extend .text-muted;
+
+    font-size: 11px;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.score-views {
+  @extend .text-right;
+
+  p {
+    @extend .text-muted;
+
+    font-size: 11px;
+    font-weight: 300;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 110px;
-  color: white;
-}
+  @extend .bg-dark;
 
-.footer-brand {
-  font-weight: 700;
-  font-size: 18px;
+  bottom: 0;
   color: white;
+  height: $footer-height;
+  position: absolute;
+  width: 100%;
 }
 
 .footer-license {
-  font-weight: 500;
-}
+  @extend .text-center;
 
-.license-link:link {
-  text-decoration: none;
+  p {
+    font-weight: 500;
+
+    a:link { text-decoration: none; }
+  }
 }
 
 .icon {
   color: lightgray;
+
+  &:hover {
+    color: dimgray;
+  }
 }
 
-.icon:hover {
-  color: dimgray;
+@mixin transition-property($property) {
+  -webkit-transition-property: $property;
+  -ms-transition-property: $property;
+  transition-property: $property;
+}
+
+@mixin transition-duration($property) {
+  -webkit-transition-duration: $property;
+  -ms-transition-duration: $property;
+  transition-duration: $property;
+}
+
+@mixin transform($property) {
+  -webkit-transform: $property;
+  -ms-transform: $property;
+  transform: $property;
 }
 
 /* Grow effect */
 .hvr-grow {
   display: inline-block;
   vertical-align: middle;
-  -webkit-transform: perspective(1px) translateZ(0);
-  transform: perspective(1px) translateZ(0);
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-property: transform;
-  transition-property: transform;
+  @include transition-property(transform);
+  @include transition-duration(0.3s);
 }
 
 .hvr-grow:hover, .hvr-grow:focus, .hvr-grow:active {
-  -webkit-transform: scale(1.05);
-  transform: scale(1.05);
+  @include transform(scale(1.05));
 }
-
