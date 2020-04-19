@@ -15,6 +15,16 @@ class ScoreModelTest(TestCase):
         filename = score.get_path_to_pdf()
         self.assertEqual(filename, '')
 
+    def test_get_thumbnail_path(self):
+        score = Score(title='My Score', slug='myscore')
+        thumbnail_path = score.get_thumbnail_path()
+        self.assertEqual(thumbnail_path, 'scores/myscore/thumbnail.png')
+
+    def test_get_thumbnail_path_if_score_has_no_slug(self):
+        score = Score(title='My Score', slug='')
+        thumbnail_path = score.get_thumbnail_path()
+        self.assertEqual(thumbnail_path, '')
+
     def test_source_link(self):
         score = Score(title="My Score", slug="myscore")
         link = score.get_link_to_source()
