@@ -13,7 +13,7 @@ import re
 import hmac
 import hashlib
 
-from mymusichere import settings
+from django.conf import settings
 from .models import Score
 
 

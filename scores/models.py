@@ -5,7 +5,7 @@ import os
 from django.db import models
 from django.utils import timezone
 
-from mymusichere import settings
+from django.conf import settings
 
 class Score(models.Model):
     title = models.CharField(max_length=255)
@@ -27,15 +27,24 @@ class Score(models.Model):
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
 
-            paths_to_pages = [os.path.join('scores', self.slug, page.name)
-                    for page in os.scandir(pages_dir)
-                    if page.name.startswith('%s-page' % self.slug)
-                    or page.name == '%s.png' % self.slug]
+            if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
+                paths_to_pages = [os.path.join('scores', self.slug, page.name)
+                        for page in os.scandir(pages_dir)
+                        if page.name.startswith('%s-page' % self.slug)
+                        or page.name == '%s.png' % self.slug]
 
-            if len(paths_to_pages) > 1:
-                paths_to_pages.sort(key=lambda path : path.split('page')[1].split('.')[0])
+                if len(paths_to_pages) > 1:
+                    paths_to_pages.sort(key=lambda path : path.split('page')[1].split('.')[0])
 
-            return paths_to_pages
+                return paths_to_pages
+            else:
+                return []
+        else:
+            return []
+
+    def get_thumbnail_path(self):
+        if self.slug:
+            return 'scores/%s/thumbnail.png' % self.slug
         else:
             return ''
 
