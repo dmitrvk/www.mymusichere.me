@@ -1,144 +1,67 @@
-<!doctype html>
-<html lang="en">
-<head>
-  {% load humanize %}
+{% extends 'scores/base.html' %}
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>MyMusicHere</title>
-  <meta name="description" content="Sheet music collection typeset with LilyPond">
-  <meta name="keywords" content="sheet music, score, notation, lilypond">
+{% load static humanize %}
 
-  {% load static %}
-
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
-  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-  <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
-
-  <script src="https://kit.fontawesome.com/6552e45fcd.js" crossorigin="anonymous"></script>
-
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}">
-
-
-<style>
-.score-title {
-    color: #3e3e3e;
-    font-weight: 500;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-composer {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-arranger {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-    text-overflow: ellipsis;
-}
-.score-instrument {
-    color: #3e3e3e;
-    font-weight: 300;
-    font-size: 12px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-last-modified {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.score-views {
-    color: #7e7e7e;
-    font-weight: 300;
-    font-size: 11px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-</style>
-</head>
-<body class="bg-light">
-  <header>
-    <nav class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">MyMusicHere</a>
-    </nav>
-  </header>
-
+{% block content %}
   <section class="jumbotron">
     <div class="container">
-      <h1 class="jumbotron-heading text-light">Sheet music collection</h1>
+      <h1 class="jumbotron-heading">Sheet music collection</h1>
     </div>
   </section>
 
-  <main class="container text-center">
-
+  <main class="container">
     {% if score_list %}
     <div class="container">
       <div class="row">
-      {% for score in score_list %}
-        <div class="col-6 col-sm-4 col-lg-3 hvr-grow score">
+        {% for score in score_list %}
+        <figure class="score col-6 col-sm-4 col-lg-3">
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-            <img class="img-fluid" src="{% static 'scores/'|add:score.slug|add:'/thumbnail.png' %}" alt="{{ score.title }}" width="180">
+            <img class="img-fluid" src="{% static score.get_thumbnail_path %}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
           </a>
-          <div class="img-fluid mx-auto" style="position: relative; margin-top: -100px; width: 180px; height: 100px; background-color: white;">
-              <div class="container-fluid px-2" style="height: 63px;
-                  line-height: 16px;">
-                  <div class="row pt-2 mb-1">
-                      <div class="col-12 text-left">
-                          <p class="score-title text-truncate">{{ score.title }}</p>
-                      </div>
-                    </div>
-                      {% if score.composer %}
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-composer text-truncate">{{ score.composer }}</p>
-                      </div>
-                    </div>
-                      {% endif %}
-                      {% if score.arranger %}
-                  <div class="row">
-                      <div class="col-12 text-left">
-                          <p class="score-arranger text-truncate">{{ score.arranger }}</p>
-                      </div>
-                    </div>
-                      {% endif %}
+          <figcaption class="score-caption img-fluid">
+            <div class="score-caption-top container-fluid px-2">
+              <div class="row pt-2 mb-1">
+                <div class="score-title col-12">
+                    <p>{{ score.title|default:"Untitled" }}</p>
+                </div>
+              </div>
+              {% if score.composer %}
+              <div class="row">
+                <div class="score-composer col-12">
+                  <p>{{ score.composer }}</p>
+                </div>
+              </div>
+              {% endif %}
+              {% if score.arranger %}
+              <div class="row">
+                <div class="score-arranger col-12">
+                  <p>{{ score.arranger }}</p>
+                </div>
+              </div>
+              {% endif %}
             </div>
-            <div class="container-fluid px-2" style="height: 37px">
-                  <div class="row">
-                      <div class="col-12 text-left">
-                      {% if score.instrument %}
-                          <p class="score-instrument text-lowercase text-truncate">{{ score.instrument }}</p>
-                      {% else %}
-                      <p class="score-instrument" style="visibility: hidden;">instrument</p>
-                      {% endif %}
-                      </div>
-                    </div>
-
-                  <div class="row no-gutters">
-                      <div class="col text-left">
-                          <p class="score-last-modified">{{ score.last_modified|naturalday:"M j, Y" }}</p>
-                      </div>
-                      <div class="col text-right">
-                          <p class="score-views">{{ score.views }} views</p>
-                      </div>
-                    </div>
+            <div class="score-caption-bottom container-fluid">
+              <div class="row">
+                <div class="score-instrument col-12">
+                  <p>{{ score.instrument|default:"instrument unknown" }}</p>
+                </div>
+              </div>
+              <div class="row no-gutters">
+                <div class="score-last-modified col">
+                  <p>
+                    <time datetime="{{ score.last_modified|date:"c" }}">
+                      {{ score.last_modified|naturalday:"M j, Y"|default:"date unknown"}}
+                    </time>
+                  </p>
+                </div>
+                <div class="score-views col">
+                  <p>{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      {% endfor %}
+          </figcaption>
+        </figure>
+        {% endfor %}
       </div>
     </div>
     {% else %}
@@ -147,12 +70,12 @@
 
     <hr>
 
-    <div class="container text-left">
-      <div class="row">
+    <section class="container text-left">
+      <header class="row">
         <div class="col">
           <h3>How to upload sheet music</h3>
         </div>
-      </div>
+      </header>
       <div class="row">
         <div class="col">
           <p>All scores here are typeset with the
@@ -170,13 +93,6 @@
           </p>
         </div>
       </div>
-    </div>
+    </section>
   </main>
-
-  {% include 'scores/footer.html' %}
-
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock content %}

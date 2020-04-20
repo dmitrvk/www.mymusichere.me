@@ -39,6 +39,12 @@ class Score(models.Model):
         else:
             return ''
 
+    def get_thumbnail_path(self):
+        if self.slug:
+            return 'scores/%s/thumbnail.png' % self.slug
+        else:
+            return ''
+
     def get_link_to_source(self):
         if settings.GITHUB_SCORES_SOURCE_REPO:
             if self.slug:
