@@ -78,8 +78,12 @@ main {
   border: none;
 }
 
-li a {
-  color: white !important;
+.navbar-nav {
+  @extend .ml-auto;
+
+  li a {
+    color: white !important;
+  }
 }
 
 .container-fluid {
