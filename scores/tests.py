@@ -2,6 +2,7 @@ from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
+from django.conf import settings
 from .models import Score
 
 class ScoreModelTest(TestCase):
@@ -97,10 +98,73 @@ class ScoreModelTest(TestCase):
 
 
 
-class ScoreIndexViewTest(TestCase):
+class IndexViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
 
     def test_no_scores(self):
-        client = Client()
         response = self.client.get(reverse('scores:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No scores are available.')
+
+    def test_one_score(self):
+        score = Score(title='My Score', slug='myscore')
+        score.save()
+
+        response = self.client.get(reverse('scores:index'))
+        self.assertEqual(response.status_code, 200)
+
+        scores = response.context.get('score_list', None)
+        self.assertIsNotNone(scores)
+        self.assertEqual(len(scores), 1)
+        self.assertTrue(scores[0] == score)
+
+
+class ScoreViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_view_score(self):
+        score = Score(title='My Score', slug='myscore')
+        score.save()
+
+        response = self.client.get(reverse('scores:score', args=['myscore']))
+        self.assertEqual(response.status_code, 200)
+
+        response_score = response.context.get('score', None)
+        self.assertIsNotNone(response_score)
+        self.assertTrue(response_score == score)
+
+    def test_no_pages(self):
+        score = Score(title='My Score', slug='myscore')
+        score.save()
+
+        response = self.client.get(reverse('scores:score', args=['myscore']))
+        self.assertEqual(response.status_code, 200)
+
+        response_score = response.context.get('score', None)
+        self.assertIsNotNone(response_score)
+
+        paths_to_pages = response_score.get_paths_to_pages()
+        self.assertEqual(len(paths_to_pages), 0)
+
+        self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
+
+
+class DeployViewTest(TestCase):
+    def test_deploy_get_method(self):
+        response = self.client.get(reverse('scores:deploy'))
+        self.assertEqual(response.status_code, 405)
+
+    def test_deploy_request_invalid(self):
+        response = self.client.post(reverse('scores:deploy'))
+        self.assertEqual(response.status_code, 400)
+
+    def test_update_db_failed(self):
+        with self.settings(BASE_DIR=None):
+            c = Client(HTTP_AUTHORIZATION='Token %s' % settings.DEPLOY_TOKEN)
+            response = c.post(reverse('scores:deploy'))
+            self.assertEqual(response.status_code, 500)
+
+
+
