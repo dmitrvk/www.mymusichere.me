@@ -7,7 +7,7 @@ install:
 	@pip install -r requirements.txt
 	@npm install
 
-static: scss
+static:
 	./manage.py collectstatic --clear --noinput
 
 scss:
