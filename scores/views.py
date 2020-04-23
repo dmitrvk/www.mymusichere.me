@@ -21,6 +21,15 @@ class IndexView(generic.ListView):
     template_name = 'scores/index.html'
     queryset = Score.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['session'] = self.request.session
+        return context
+
+    def get(self, request):
+        self.request.session.set_test_cookie()
+        return super().get(request)
+
 
 class ScoreView(generic.DetailView):
     model = Score
@@ -28,8 +37,14 @@ class ScoreView(generic.DetailView):
 
     def get_object(self):
         score = super().get_object()
-        score.views += 1
-        score.save()
+
+        if self.request.session.test_cookie_worked():
+            self.request.session.delete_test_cookie()
+            if not self.request.session.get('viewed_score', False):
+                score.views += 1
+                score.save()
+                self.request.session['viewed_score'] = True
+
         return score
 
 
