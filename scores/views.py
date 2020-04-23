@@ -21,11 +21,6 @@ class IndexView(generic.ListView):
     template_name = 'scores/index.html'
     queryset = Score.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['session'] = self.request.session
-        return context
-
     def get(self, request):
         self.request.session.set_test_cookie()
         return super().get(request)
