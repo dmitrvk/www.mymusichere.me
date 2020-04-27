@@ -50,3 +50,12 @@ To compile CSS from SCSS run `make css`.
 
 When editing SCSS sources it might be useful to run `make watch-scss`.
 This enables auto-compilation of CSS every time SCSS is changed.
+
+
+## Publishing sheet music
+
+If you use LilyPond to create sheet music
+and want to publish your scores on mymusichere.me,
+please, visit
+[this repository](https://github.com/dmitrvk/mymusichere)
+and create pull request with your score.
