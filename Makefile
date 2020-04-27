@@ -10,7 +10,7 @@ install:
 static:
 	./manage.py collectstatic --clear --noinput
 
-scss:
+css:
 	pysassc $(SCSS)/style.scss $(STATIC)/style.css -s compressed
 
 watch-scss:
