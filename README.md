@@ -41,3 +41,12 @@ and publishes compiled scores on the
 10. Publish sheet music with `./deploy-scores.py --force`
 
 The website should be availabe at http://localhost:8000
+
+
+## Editing CSS
+
+*Sass* is used as a pre-processor for CSS.
+To compile CSS from SCSS run `make css`.
+
+When editing SCSS sources it might be useful to run `make watch-scss`.
+This enables auto-compilation of CSS every time SCSS is changed.
