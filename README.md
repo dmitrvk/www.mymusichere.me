@@ -55,7 +55,8 @@ This enables auto-compilation every time SCSS is changed.
 ## Publishing sheet music
 
 If you use LilyPond to create sheet music
-and want to publish your scores on mymusichere.me,
+and want to publish your scores on
+[mymusichere.me](https://www.mymusichere.me),
 please, visit
 [this repository](https://github.com/dmitrvk/mymusichere)
 and create pull request with your score.
