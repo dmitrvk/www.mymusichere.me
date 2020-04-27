@@ -12,6 +12,7 @@ import os
 import re
 import hmac
 import hashlib
+import logging
 
 from django.conf import settings
 from .models import Score
@@ -21,11 +22,6 @@ class IndexView(generic.ListView):
     template_name = 'scores/index.html'
     queryset = Score.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['session'] = self.request.session
-        return context
-
     def get(self, request):
         self.request.session.set_test_cookie()
         return super().get(request)
@@ -34,6 +30,8 @@ class IndexView(generic.ListView):
 class ScoreView(generic.DetailView):
     model = Score
     template_name = 'scores/score.html'
+
+    logger = logging.getLogger(__name__)
 
     def get_object(self):
         score = super().get_object()
@@ -45,7 +43,10 @@ class ScoreView(generic.DetailView):
                 score.save()
                 self.request.session['viewed_score'] = True
 
+        self.logger.info("Score '%s' accessed" % score.slug)
+
         return score
+
 
 
 class DeployView(View):
@@ -60,6 +61,7 @@ class DeployView(View):
     ARRANGER_PATTERN = LINE_BEGIN + r'arranger' + EQUALS_SIGN + VALUE
     INSTRUMENT_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
 
+    logger = logging.getLogger(__name__)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -76,12 +78,22 @@ class DeployView(View):
                 scores_to_delete_slugs = scores_in_db_slugs.difference(scores_in_repo_slugs)
                 Score.objects.filter(slug__in=scores_to_delete_slugs).delete()
 
+                if scores_to_delete_slugs:
+                    self.logger.info("Scores '%s' deleted" % "','".join(scores_to_delete_slugs))
+                else:
+                    self.logger.info('No scores deleted')
+
 
                 # Create scores added to repository
                 scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
                 new_scores_slugs = scores_in_repo_slugs.difference(scores_in_db_slugs)
                 new_scores = [self.create_score_from_header(slug) for slug in new_scores_slugs]
                 Score.objects.bulk_create(new_scores)
+
+                if new_scores_slugs:
+                    self.logger.info("Scores '%s' created" % "','".join(new_scores_slugs))
+                else:
+                    self.logger.info('No scores created')
 
 
                 # Update scores changed in repository
@@ -93,6 +105,11 @@ class DeployView(View):
                     if score_in_db != score_in_repo:
                         score_in_db.update_with_score(score_in_repo)
                     score_in_db.save()
+
+                if scores_to_update_slugs:
+                    self.logger.info("Scores '%s' updated" % "','".join(scores_to_update_slugs))
+                else:
+                    self.logger.info('No scores updated')
 
                 return HttpResponse('DB updated successfully')
             except Exception as e:
