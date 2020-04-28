@@ -19,7 +19,7 @@ MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
 
 MYMUSICHERE_REMOTE = os.environ['MYMUSICHERE_REMOTE']
 
-TOKEN = 'Token %s' % os.environ['DEPLOY_TOKEN']
+TOKEN = 'Token %s' % os.environ['PUBLISH_TOKEN']
 
 LOGGING_FORMAT = '%(levelname)s:%(asctime)s:%(module)s:%(message)s'
 
@@ -38,10 +38,10 @@ def main():
         repo = Repo(MYMUSICHERE_REPO_DIR)
 
         if len(sys.argv) > 1 and sys.argv[1] == '--force':
-            deploy_scores(repo)
+            publish_scores(repo)
         elif updates_available(repo):
             logger.info('Changes detected')
-            deploy_scores(repo)
+            publish_scores(repo)
         else:
             logger.info('No changes detected')
 
@@ -49,12 +49,12 @@ def main():
         logger.warning('Invalid git repo at %s. Cloning...' % MYMUSICHERE_REPO_DIR)
         rmtree(MYMUSICHERE_REPO_DIR)
         repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
-        deploy_scores(repo)
+        publish_scores(repo)
 
     except NoSuchPathError:
         logger.warning('No such path %s. Cloning remote repo...' % MYMUSICHERE_REPO_DIR)
         repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
-        deploy_scores(repo)
+        publish_scores(repo)
 
     except Exception as e:
         logger.error('Error: %s' % e)
@@ -67,7 +67,7 @@ def updates_available(repo):
     return repo.heads[0].commit != fetchinfo[0].commit
 
 
-def deploy_scores(repo):
+def publish_scores(repo):
     clean_repo(repo)
 
     logger.info('git pull...')
@@ -83,7 +83,7 @@ def deploy_scores(repo):
         sys.exit(1)
 
     response = requests.post(
-        'http://localhost:8000/scores/deploy',
+        'http://localhost:8000/scores/publish',
         headers={'Authorization': TOKEN},
         verify=True
     )

@@ -24,7 +24,7 @@ and publishes compiled scores on the
     | Variable             | Description                              |
     | :------------------- | :--------------------------------------- |
     | `BASE_DIR`           | `/absolute/path/to/project/root`         |
-    | `DEPLOY_TOKEN`       | Secret token for deploying scores        |
+    | `PUBLISH_TOKEN`      | Secret token for publishing scores       |
     | `MYMUSICHERE_REMOTE` | `https://github.com/dmitrvk/mymusichere` |
     | `SECRET_KEY`         | Django's app secret key                  |
 

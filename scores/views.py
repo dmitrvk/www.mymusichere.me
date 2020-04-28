@@ -49,7 +49,7 @@ class ScoreView(generic.DetailView):
 
 
 
-class DeployView(View):
+class PublishView(View):
     SPACE = r'\s*'
     LINE_BEGIN = r'^' + SPACE
     EQUALS_SIGN = SPACE + r'=' + SPACE
@@ -65,7 +65,7 @@ class DeployView(View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        return super(DeployView, self).dispatch(request, *args, **kwargs)
+        return super(PublishView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
         if self.is_request_valid(request):
@@ -126,7 +126,7 @@ class DeployView(View):
         auth_header_parts = auth_header.split()
         return \
             auth_header_parts[0] == 'Token' and \
-            auth_header_parts[1] == settings.DEPLOY_TOKEN
+            auth_header_parts[1] == settings.PUBLISH_TOKEN
 
     def create_score_from_header(self, score_slug):
         score = Score(title='', slug=score_slug)

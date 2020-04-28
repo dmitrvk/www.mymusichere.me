@@ -151,19 +151,19 @@ class ScoreViewTest(TestCase):
         self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
 
 
-class DeployViewTest(TestCase):
-    def test_deploy_get_method(self):
-        response = self.client.get(reverse('scores:deploy'))
+class PublishViewTest(TestCase):
+    def test_publish_get_method(self):
+        response = self.client.get(reverse('scores:publish'))
         self.assertEqual(response.status_code, 405)
 
-    def test_deploy_request_invalid(self):
-        response = self.client.post(reverse('scores:deploy'))
+    def test_publish_request_invalid(self):
+        response = self.client.post(reverse('scores:publish'))
         self.assertEqual(response.status_code, 400)
 
     def test_update_db_failed(self):
         with self.settings(BASE_DIR=None):
-            c = Client(HTTP_AUTHORIZATION='Token %s' % settings.DEPLOY_TOKEN)
-            response = c.post(reverse('scores:deploy'))
+            c = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
+            response = c.post(reverse('scores:publish'))
             self.assertEqual(response.status_code, 500)
 
 
