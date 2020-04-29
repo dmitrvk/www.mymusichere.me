@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 import os
 
+from django.http import HttpRequest
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -174,9 +175,8 @@ class PublishViewTest(TestCase):
 
     @patchfs
     def test_get_repo_scores(self, fs):
-        base = settings.BASE_DIR
-        scores_dir_path_parts = ['scores', 'lilypond', 'out', 'scores']
-        repo_dir = os.path.join(settings.BASE_DIR, *scores_dir_path_parts)
+        scores_dir_path_parts = [settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores']
+        repo_dir = os.path.join(*scores_dir_path_parts)
 
         fs.create_dir(repo_dir)
 
@@ -189,4 +189,55 @@ class PublishViewTest(TestCase):
 
         self.assertIsInstance(repo_scores, set)
         self.assertEqual(scores, repo_scores)
+
+    def test_get_db_scores(self):
+        scores = {'myscore1', 'myscore2', 'myscore3'}
+
+        for slug in scores:
+            Score(title=slug, slug=slug).save()
+
+        db_scores = PublishView()._PublishView__get_db_scores()
+
+        self.assertIsInstance(db_scores, set)
+        self.assertEqual(scores, db_scores)
+
+    @patchfs
+    def test_create_score_from_header(self, fs):
+        slug = 'myscore'
+        path_to_source_parts = [settings.MYMUSICHERE_REPO_DIR, slug, '%s.ly' % slug]
+        path_to_source = os.path.join(*path_to_source_parts)
+
+        lilypond_header = """
+        \header {
+            title = "My Score"
+            subtitle = "Subtitle"
+            composer = "Composed by composer"
+            arranger = "Arranged by arranger"
+            instruments = "piano"
+            license = "Creative Commons Attribution-ShareAlike 4.0"
+        }"""
+
+        fs.create_file(path_to_source, contents=lilypond_header)
+
+        score = PublishView()._PublishView__create_score_from_header(slug)
+
+        self.assertIsInstance(score, Score)
+        self.assertEquals(score.slug, slug)
+        self.assertEquals(score.title, 'My Score')
+        self.assertEquals(score.composer, 'Composed by composer')
+        self.assertEquals(score.arranger, 'Arranged by arranger')
+        self.assertEquals(score.instrument, 'piano')
+
+    def test_is_request_valid(self):
+        publishView = PublishView()
+        request = HttpRequest()
+
+        valid = publishView._PublishView__is_request_valid(request)
+        self.assertFalse(valid)
+
+        headers = {'Authorization': 'Token %s' % settings.PUBLISH_TOKEN}
+        request.headers = headers
+
+        valid = publishView._PublishView__is_request_valid(request)
+        self.assertTrue(valid)
 

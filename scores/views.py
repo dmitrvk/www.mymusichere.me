@@ -68,7 +68,7 @@ class PublishView(View):
         return super(PublishView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
-        if self.is_request_valid(request):
+        if self.__is_request_valid(request):
             try:
                 repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
                 repo_scores = self.__get_repo_scores(repo_dir)
@@ -88,7 +88,7 @@ class PublishView(View):
                 # Create scores added to repository
                 db_scores = self.__get_db_scores()
                 new_scores_slugs = repo_scores.difference(db_scores)
-                new_scores = [self.create_score_from_header(slug) for slug in new_scores_slugs]
+                new_scores = [self.__create_score_from_header(slug) for slug in new_scores_slugs]
                 Score.objects.bulk_create(new_scores)
 
                 if new_scores_slugs:
@@ -102,7 +102,7 @@ class PublishView(View):
                 scores_to_update_slugs = db_scores.difference(new_scores_slugs)
                 for slug in scores_to_update_slugs:
                     score_in_db = Score.objects.filter(slug=slug)[0]
-                    score_in_repo = self.create_score_from_header(slug)
+                    score_in_repo = self.__create_score_from_header(slug)
                     if score_in_db != score_in_repo:
                         score_in_db.update_with_score(score_in_repo)
                     score_in_db.save()
@@ -119,15 +119,12 @@ class PublishView(View):
             return HttpResponse('Wrong request', status=400)
 
 
-    def is_request_valid(self, request):
-        return 'Authorization' in request.headers and self.is_token_valid(request)
-
-    def is_token_valid(self, request):
-        auth_header = request.headers.get('Authorization', 'None')
-        auth_header_parts = auth_header.split()
-        return \
-            auth_header_parts[0] == 'Token' and \
-            auth_header_parts[1] == settings.PUBLISH_TOKEN
+    def __is_request_valid(self, request):
+        if 'Authorization' in request.headers:
+            header = request.headers.get('Authorization', 'None').split()
+            return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
+        else:
+            return False
 
     def __get_repo_scores(self, repo_dir):
         return set([f.name for f in os.scandir(repo_dir) if f.is_dir()])
@@ -135,7 +132,7 @@ class PublishView(View):
     def __get_db_scores(self):
         return set([score.slug for score in Score.objects.all()])
 
-    def create_score_from_header(self, score_slug):
+    def __create_score_from_header(self, score_slug):
         score = Score(title='', slug=score_slug)
 
         path_to_source = os.path.join(
