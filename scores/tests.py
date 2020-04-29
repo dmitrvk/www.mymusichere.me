@@ -1,9 +1,15 @@
+from unittest.mock import MagicMock
+import os
+
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
+from pyfakefs.fake_filesystem_unittest import patchfs
+
 from django.conf import settings
 from .models import Score
+from .views import PublishView
 
 class ScoreModelTest(TestCase):
 
@@ -166,5 +172,21 @@ class PublishViewTest(TestCase):
             response = c.post(reverse('scores:publish'))
             self.assertEqual(response.status_code, 500)
 
+    @patchfs
+    def test_get_repo_scores(self, fs):
+        base = settings.BASE_DIR
+        scores_dir_path_parts = ['scores', 'lilypond', 'out', 'scores']
+        repo_dir = os.path.join(settings.BASE_DIR, *scores_dir_path_parts)
 
+        fs.create_dir(repo_dir)
+
+        scores = {'myscore1', 'myscore2', 'myscore3'}
+
+        for score in scores:
+            fs.create_dir(os.path.join(repo_dir, score))
+
+        repo_scores = PublishView()._PublishView__get_repo_scores(repo_dir)
+
+        self.assertIsInstance(repo_scores, set)
+        self.assertEqual(scores, repo_scores)
 

@@ -70,12 +70,13 @@ class PublishView(View):
     def post(self, request):
         if self.is_request_valid(request):
             try:
-                scores_repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
-                scores_in_repo_slugs = set([f.name for f in os.scandir(scores_repo_dir) if f.is_dir()])
+                repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
+                repo_scores = self.__get_repo_scores(repo_dir)
+
+                db_scores = self.__get_db_scores()
 
                 # Delete scores removed from repository
-                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
-                scores_to_delete_slugs = scores_in_db_slugs.difference(scores_in_repo_slugs)
+                scores_to_delete_slugs = db_scores.difference(repo_scores)
                 Score.objects.filter(slug__in=scores_to_delete_slugs).delete()
 
                 if scores_to_delete_slugs:
@@ -85,8 +86,8 @@ class PublishView(View):
 
 
                 # Create scores added to repository
-                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
-                new_scores_slugs = scores_in_repo_slugs.difference(scores_in_db_slugs)
+                db_scores = self.__get_db_scores()
+                new_scores_slugs = repo_scores.difference(db_scores)
                 new_scores = [self.create_score_from_header(slug) for slug in new_scores_slugs]
                 Score.objects.bulk_create(new_scores)
 
@@ -97,8 +98,8 @@ class PublishView(View):
 
 
                 # Update scores changed in repository
-                scores_in_db_slugs = set([s.slug for s in Score.objects.all()])
-                scores_to_update_slugs = scores_in_db_slugs.difference(new_scores_slugs)
+                db_scores = self.__get_db_scores()
+                scores_to_update_slugs = db_scores.difference(new_scores_slugs)
                 for slug in scores_to_update_slugs:
                     score_in_db = Score.objects.filter(slug=slug)[0]
                     score_in_repo = self.create_score_from_header(slug)
@@ -127,6 +128,12 @@ class PublishView(View):
         return \
             auth_header_parts[0] == 'Token' and \
             auth_header_parts[1] == settings.PUBLISH_TOKEN
+
+    def __get_repo_scores(self, repo_dir):
+        return set([f.name for f in os.scandir(repo_dir) if f.is_dir()])
+
+    def __get_db_scores(self):
+        return set([score.slug for score in Score.objects.all()])
 
     def create_score_from_header(self, score_slug):
         score = Score(title='', slug=score_slug)
