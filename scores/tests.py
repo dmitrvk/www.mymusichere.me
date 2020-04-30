@@ -31,6 +31,29 @@ class ScoreModelTest(TestCase):
         self.assertIsNotNone(paths_to_pages)
         self.assertTrue(len(paths_to_pages) == 0)
 
+    @patchfs
+    def test_get_paths_to_pages(self, fs):
+        score = Score(title='My Score', slug='myscore')
+
+        pages_dir_parts = [settings.STATIC_ROOT, 'scores', 'myscore']
+        pages_dir = os.path.join(*pages_dir_parts)
+
+        pages_paths = []
+
+        for i in range(3):
+            page_filename = 'myscore-page%d.png' % (i + 1)
+            page_path = os.path.join(pages_dir, page_filename)
+            fs.create_file(page_path)
+            pages_paths.append(page_path)
+
+        score_pages_paths = score.get_paths_to_pages()
+
+        self.assertIsNotNone(pages_paths)
+        self.assertEquals(len(score_pages_paths), 3)
+
+        for i, path in enumerate(pages_paths):
+            self.assertTrue(score_pages_paths[i], path)
+
     def test_path_to_pages_if_score_has_no_slug(self):
         score = Score(title="My Score", slug='')
         paths_to_pages = score.get_paths_to_pages()
@@ -102,6 +125,11 @@ class ScoreModelTest(TestCase):
         score.arranger = 'Arranger'
         score.instrument = 'Instrument'
         self.assertEqual(score.__str__(), 'myscore (My Score, Composer, Arranger, Instrument)')
+
+    def test_hash(self):
+        score = Score(title='My Score', slug='myscore')
+        score.save()
+        self.assertEqual(score.__hash__(), hash((score.id, score.title)))
 
 
 
@@ -354,8 +382,6 @@ class PublishViewTest(TestCase):
         path_to_out_dir_parts = [settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', 'myscore']
         path_to_out_dir = os.path.join(*path_to_out_dir_parts)
         fs.create_dir(path_to_out_dir)
-
-        fs.create_file('/home/dmitryk/.local/virtualenvs/mymusichere/lib/python3.8/site-packages/django/views/templates/technical_500.txt')
 
         client = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
         response = client.post(reverse('scores:publish'))
