@@ -157,6 +157,23 @@ class ScoreViewTest(TestCase):
 
         self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
 
+    def test_increment_views(self):
+        score = Score(title='My Score', slug='myscore')
+        self.assertEquals(score.views, 0)
+        score.save()
+
+        response = self.client.get(reverse('scores:index'))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse('scores:score', args=['myscore']))
+        self.assertEqual(response.status_code, 200)
+
+        response_score = response.context.get('score', None)
+        self.assertIsNotNone(response_score)
+        self.assertIsInstance(response_score, Score)
+        self.assertEquals(response_score.views, 1)
+
+
 
 class PublishViewTest(TestCase):
     def test_publish_get_method(self):
