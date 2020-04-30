@@ -48,7 +48,6 @@ class ScoreView(generic.DetailView):
         return score
 
 
-
 class PublishView(View):
     SPACE = r'\s*'
     LINE_BEGIN = r'^' + SPACE
@@ -107,6 +106,23 @@ class PublishView(View):
         else:
             self.logger.info('No scores deleted')
 
+    def __update_changed_scores(self):
+        scores_to_update = self.__get_db_scores()
+        updated_scores = []
+
+        for slug in scores_to_update:
+            db_score = Score.objects.filter(slug=slug)[0]
+            repo_score = self.__create_score_from_header(slug)
+            if db_score != repo_score:
+                db_score.update_with_score(repo_score)
+                db_score.save()
+            updated_scores.append(slug)
+
+        if updated_scores:
+            self.logger.info("Scores '%s' updated" % "','".join(updated_scores))
+        else:
+            self.logger.info('No scores updated')
+
     def __create_scores_added_to_repo(self):
         repo_scores = self.__get_repo_scores()
         db_scores = self.__get_db_scores()
@@ -120,24 +136,6 @@ class PublishView(View):
             self.logger.info("Scores '%s' created" % "','".join(new_scores))
         else:
             self.logger.info('No scores created')
-
-    def __update_changed_scores(self):
-        scores_to_update = self.__get_repo_scores()
-
-        updated_scores = []
-
-        for slug in scores_to_update:
-            db_score = Score.objects.filter(slug=slug)[0]
-            repo_score = self.__create_score_from_header(slug)
-            if db_score != repo_score:
-                db_score.update_with_score(repo_score)
-            db_score.save()
-            updated_scores.append(slug)
-
-        if updated_scores:
-            self.logger.info("Scores '%s' updated" % "','".join(updated_scores))
-        else:
-            self.logger.info('No scores updated')
 
     def __create_score_from_header(self, score_slug):
         score = Score(title='', slug=score_slug)

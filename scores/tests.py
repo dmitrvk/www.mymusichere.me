@@ -168,10 +168,16 @@ class PublishViewTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_db_failed(self):
-        with self.settings(BASE_DIR=None):
-            c = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
-            response = c.post(reverse('scores:publish'))
-            self.assertEqual(response.status_code, 500)
+        method = PublishView._PublishView__delete_scores_removed_from_repo
+
+        mock = MagicMock(side_effect=Exception('BOOM!'))
+        PublishView._PublishView__delete_scores_removed_from_repo = mock
+
+        client = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
+        response = client.post(reverse('scores:publish'))
+        self.assertEqual(response.status_code, 500)
+
+        PublishView._PublishView__delete_scores_removed_from_repo = method
 
     @patchfs
     def test_get_repo_scores(self, fs):
@@ -241,3 +247,112 @@ class PublishViewTest(TestCase):
         valid = publishView._PublishView__is_request_valid(request)
         self.assertTrue(valid)
 
+    @patchfs
+    def test_created_one_score(self, fs):
+        slug = 'myscore'
+        path_to_source_parts = [settings.MYMUSICHERE_REPO_DIR, slug, '%s.ly' % slug]
+        path_to_source = os.path.join(*path_to_source_parts)
+
+        lilypond_header = """
+        \header {
+            title = "My Score"
+            subtitle = "Subtitle"
+            composer = "Composed by composer"
+            arranger = "Arranged by arranger"
+            instruments = "piano"
+            license = "Creative Commons Attribution-ShareAlike 4.0"
+        }"""
+
+        fs.create_file(path_to_source, contents=lilypond_header)
+
+        path_to_out_dir_parts = [settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', slug]
+        path_to_out_dir = os.path.join(*path_to_out_dir_parts)
+
+        fs.create_dir(path_to_out_dir)
+
+        client = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
+        response = client.post(reverse('scores:publish'))
+        self.assertEqual(response.status_code, 200)
+
+        scores = Score.objects.all()
+        self.assertEqual(len(scores), 1)
+
+        score = scores[0]
+        self.assertEqual(score.slug, slug)
+        self.assertEqual(score.title, "My Score")
+        self.assertEqual(score.composer, "Composed by composer")
+        self.assertEqual(score.arranger, "Arranged by arranger")
+        self.assertEqual(score.instrument, "piano")
+
+    @patchfs
+    def test_deleted_one_score(self, fs):
+        Score(title='My Score', slug='myscore').save()
+        self.assertEquals(len(Score.objects.all()), 1)
+
+        path_to_source_parts = [settings.MYMUSICHERE_REPO_DIR, 'myscore', 'myscore.ly']
+        path_to_source = os.path.join(*path_to_source_parts)
+        lilypond_header = """
+        \header {
+            title = "My Score"
+            subtitle = "Subtitle"
+            composer = "Composed by composer"
+            arranger = "Arranged by arranger"
+            instruments = "piano"
+            license = "Creative Commons Attribution-ShareAlike 4.0"
+        }"""
+        fs.create_file(path_to_source, contents=lilypond_header)
+
+        path_to_out_dir_parts = [settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores']
+        path_to_out_dir = os.path.join(*path_to_out_dir_parts)
+        fs.create_dir(path_to_out_dir)
+
+        client = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
+        response = client.post(reverse('scores:publish'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(len(Score.objects.all()), 0)
+
+    @patchfs
+    def test_update_one_score(self, fs):
+        score = Score(title='My Score', slug='myscore')
+        score.composer = 'Composer'
+        score.arranger = 'Arranger'
+        score.instrument = 'guitar'
+        score.save()
+        self.assertEquals(len(Score.objects.all()), 1)
+
+        path_to_source_parts = [settings.MYMUSICHERE_REPO_DIR, 'myscore', 'myscore.ly']
+        path_to_source = os.path.join(*path_to_source_parts)
+        lilypond_header = """
+        \header {
+            title = "My Score"
+            subtitle = "Subtitle"
+            composer = "Composed by composer"
+            arranger = "Arranged by arranger"
+            instruments = "piano"
+            license = "Creative Commons Attribution-ShareAlike 4.0"
+        }"""
+        fs.create_file(path_to_source, contents=lilypond_header)
+
+        path_to_out_dir_parts = [settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', 'myscore']
+        path_to_out_dir = os.path.join(*path_to_out_dir_parts)
+        fs.create_dir(path_to_out_dir)
+
+        fs.create_file('/home/dmitryk/.local/virtualenvs/mymusichere/lib/python3.8/site-packages/django/views/templates/technical_500.txt')
+
+        client = Client(HTTP_AUTHORIZATION='Token %s' % settings.PUBLISH_TOKEN)
+        response = client.post(reverse('scores:publish'))
+
+        print(response.content)
+
+        self.assertEqual(response.status_code, 200)
+
+        scores = Score.objects.all()
+        self.assertEquals(len(scores), 1)
+
+        score = scores[0]
+        self.assertIsInstance(score, Score)
+        self.assertEqual(score.title, "My Score")
+        self.assertEqual(score.composer, "Composed by composer")
+        self.assertEqual(score.arranger, "Arranged by arranger")
+        self.assertEqual(score.instrument, "piano")
