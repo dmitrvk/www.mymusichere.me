@@ -185,7 +185,7 @@ class PublishViewTest(TestCase):
         for score in scores:
             fs.create_dir(os.path.join(repo_dir, score))
 
-        repo_scores = PublishView()._PublishView__get_repo_scores(repo_dir)
+        repo_scores = PublishView()._PublishView__get_repo_scores()
 
         self.assertIsInstance(repo_scores, set)
         self.assertEqual(scores, repo_scores)

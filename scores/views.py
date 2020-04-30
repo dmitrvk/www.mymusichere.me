@@ -62,6 +62,7 @@ class PublishView(View):
     INSTRUMENT_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
 
     logger = logging.getLogger(__name__)
+    repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -70,48 +71,9 @@ class PublishView(View):
     def post(self, request):
         if self.__is_request_valid(request):
             try:
-                repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
-                repo_scores = self.__get_repo_scores(repo_dir)
-
-                db_scores = self.__get_db_scores()
-
-                # Delete scores removed from repository
-                scores_to_delete_slugs = db_scores.difference(repo_scores)
-                Score.objects.filter(slug__in=scores_to_delete_slugs).delete()
-
-                if scores_to_delete_slugs:
-                    self.logger.info("Scores '%s' deleted" % "','".join(scores_to_delete_slugs))
-                else:
-                    self.logger.info('No scores deleted')
-
-
-                # Create scores added to repository
-                db_scores = self.__get_db_scores()
-                new_scores_slugs = repo_scores.difference(db_scores)
-                new_scores = [self.__create_score_from_header(slug) for slug in new_scores_slugs]
-                Score.objects.bulk_create(new_scores)
-
-                if new_scores_slugs:
-                    self.logger.info("Scores '%s' created" % "','".join(new_scores_slugs))
-                else:
-                    self.logger.info('No scores created')
-
-
-                # Update scores changed in repository
-                db_scores = self.__get_db_scores()
-                scores_to_update_slugs = db_scores.difference(new_scores_slugs)
-                for slug in scores_to_update_slugs:
-                    score_in_db = Score.objects.filter(slug=slug)[0]
-                    score_in_repo = self.__create_score_from_header(slug)
-                    if score_in_db != score_in_repo:
-                        score_in_db.update_with_score(score_in_repo)
-                    score_in_db.save()
-
-                if scores_to_update_slugs:
-                    self.logger.info("Scores '%s' updated" % "','".join(scores_to_update_slugs))
-                else:
-                    self.logger.info('No scores updated')
-
+                self.__delete_scores_removed_from_repo()
+                self.__update_changed_scores()
+                self.__create_scores_added_to_repo()
                 return HttpResponse('DB updated successfully')
             except Exception as e:
                 return HttpResponse('Failed to update DB. %s' % e, status=500)
@@ -126,11 +88,56 @@ class PublishView(View):
         else:
             return False
 
-    def __get_repo_scores(self, repo_dir):
-        return set([f.name for f in os.scandir(repo_dir) if f.is_dir()])
+    def __get_repo_scores(self):
+        return set([f.name for f in os.scandir(self.repo_dir) if f.is_dir()])
 
     def __get_db_scores(self):
         return set([score.slug for score in Score.objects.all()])
+
+    def __delete_scores_removed_from_repo(self):
+        repo_scores = self.__get_repo_scores()
+        db_scores = self.__get_db_scores()
+
+        scores_to_delete = db_scores.difference(repo_scores)
+
+        Score.objects.filter(slug__in=scores_to_delete).delete()
+
+        if scores_to_delete:
+            self.logger.info("Scores '%s' deleted" % "','".join(scores_to_delete))
+        else:
+            self.logger.info('No scores deleted')
+
+    def __create_scores_added_to_repo(self):
+        repo_scores = self.__get_repo_scores()
+        db_scores = self.__get_db_scores()
+
+        new_scores = repo_scores.difference(db_scores)
+
+        for slug in new_scores:
+            self.__create_score_from_header(slug).save()
+
+        if new_scores:
+            self.logger.info("Scores '%s' created" % "','".join(new_scores))
+        else:
+            self.logger.info('No scores created')
+
+    def __update_changed_scores(self):
+        scores_to_update = self.__get_repo_scores()
+
+        updated_scores = []
+
+        for slug in scores_to_update:
+            db_score = Score.objects.filter(slug=slug)[0]
+            repo_score = self.__create_score_from_header(slug)
+            if db_score != repo_score:
+                db_score.update_with_score(repo_score)
+            db_score.save()
+            updated_scores.append(slug)
+
+        if updated_scores:
+            self.logger.info("Scores '%s' updated" % "','".join(updated_scores))
+        else:
+            self.logger.info('No scores updated')
 
     def __create_score_from_header(self, score_slug):
         score = Score(title='', slug=score_slug)

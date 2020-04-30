@@ -20,7 +20,7 @@ run:
 	./manage.py runserver 0:8000
 
 test: migrations-check
-	@coverage run --source=hooks,mymusichere,scores manage.py test --verbosity 2
+	@coverage run --source=mymusichere,scores manage.py test --verbosity 2
 	@coverage xml
 
 migrations-check:
