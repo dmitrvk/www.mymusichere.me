@@ -58,7 +58,7 @@ class PublishView(View):
     TITLE_PATTERN = LINE_BEGIN + r'title' + EQUALS_SIGN + VALUE
     COMPOSER_PATTERN = LINE_BEGIN + r'composer' + EQUALS_SIGN + VALUE
     ARRANGER_PATTERN = LINE_BEGIN + r'arranger' + EQUALS_SIGN + VALUE
-    INSTRUMENT_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
+    INSTRUMENTS_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
 
     logger = logging.getLogger(__name__)
     repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
@@ -169,9 +169,9 @@ class PublishView(View):
                         score.arranger = match.group().split('"')[1]
                         continue
 
-                    match = re.search(self.INSTRUMENT_PATTERN, line)
-                    if match and not score.instrument:
-                        score.instrument = match.group().split('"')[1]
+                    match = re.search(self.INSTRUMENTS_PATTERN, line)
+                    if match and not score.instruments:
+                        score.instruments = match.group().split('"')[1]
                         continue
 
         return score

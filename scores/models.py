@@ -12,7 +12,7 @@ class Score(models.Model):
     slug = models.CharField(max_length=255)
     composer = models.CharField(max_length=255, default='')
     arranger = models.CharField(max_length=255, default='')
-    instrument = models.CharField(max_length=255, default='')
+    instruments = models.CharField(max_length=255, default='')
     last_modified = models.DateTimeField(default=datetime.datetime(2020, 1, 1))
     views = models.IntegerField(default=0)
 
@@ -65,7 +65,7 @@ class Score(models.Model):
         self.title = score.title
         self.composer = score.composer
         self.arranger = score.arranger
-        self.instrument = score.instrument
+        self.instruments = score.instruments
         self.last_modified = timezone.now()
 
     def __eq__(self, other):
@@ -74,10 +74,10 @@ class Score(models.Model):
             self.title == other.title and \
             self.composer == other.composer and \
             self.arranger == other.arranger and \
-            self.instrument == other.instrument
+            self.instruments == other.instruments
 
     def __str__(self):
-        return '%s (%s, %s, %s, %s)' % (self.slug, self.title, self.composer, self.arranger, self.instrument)
+        return '%s (%s, %s, %s, %s)' % (self.slug, self.title, self.composer, self.arranger, self.instruments)
 
     def __hash__(self):
         return hash((self.id, self.title))

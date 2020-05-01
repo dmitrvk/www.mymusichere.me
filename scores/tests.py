@@ -91,31 +91,31 @@ class ScoreModelTest(TestCase):
         score = Score(title='My Score', slug='myscore')
         score.composer = 'Composer'
         score.arranger = 'Arranger'
-        score.instrument = 'Instrument'
+        score.instruments = 'Instrument'
 
         new_score = Score(title='New Score', slug='newscore')
         new_score.composer = 'New Composer'
         new_score.arranger = 'New Arranger'
-        new_score.instrument = 'New Instrument'
+        new_score.instruments = 'New Instrument'
 
         score.update_with_score(new_score)
 
         self.assertEqual(score.title, new_score.title)
         self.assertEqual(score.composer, new_score.composer)
         self.assertEqual(score.arranger, new_score.arranger)
-        self.assertEqual(score.instrument, new_score.instrument)
-        self.assertEqual(score.instrument, new_score.instrument)
+        self.assertEqual(score.instruments, new_score.instruments)
+        self.assertEqual(score.instruments, new_score.instruments)
 
     def test_eq(self):
         score_one = Score(title='My Score', slug='myscore')
         score_one.composer = 'Composer'
         score_one.arranger = 'Arranger'
-        score_one.instrument = 'Instrument'
+        score_one.instruments = 'Instrument'
 
         score_two = Score(title='My Score', slug='myscore')
         score_two.composer = 'Composer'
         score_two.arranger = 'Arranger'
-        score_two.instrument = 'Instrument'
+        score_two.instruments = 'Instrument'
 
         self.assertTrue(score_one == score_two)
 
@@ -123,7 +123,7 @@ class ScoreModelTest(TestCase):
         score = Score(title='My Score', slug='myscore')
         score.composer = 'Composer'
         score.arranger = 'Arranger'
-        score.instrument = 'Instrument'
+        score.instruments = 'Instrument'
         self.assertEqual(score.__str__(), 'myscore (My Score, Composer, Arranger, Instrument)')
 
     def test_hash(self):
@@ -277,7 +277,7 @@ class PublishViewTest(TestCase):
         self.assertEquals(score.title, 'My Score')
         self.assertEquals(score.composer, 'Composed by composer')
         self.assertEquals(score.arranger, 'Arranged by arranger')
-        self.assertEquals(score.instrument, 'piano')
+        self.assertEquals(score.instruments, 'piano')
 
     def test_is_request_valid(self):
         publishView = PublishView()
@@ -327,7 +327,7 @@ class PublishViewTest(TestCase):
         self.assertEqual(score.title, "My Score")
         self.assertEqual(score.composer, "Composed by composer")
         self.assertEqual(score.arranger, "Arranged by arranger")
-        self.assertEqual(score.instrument, "piano")
+        self.assertEqual(score.instruments, "piano")
 
     @patchfs
     def test_deleted_one_score(self, fs):
@@ -362,7 +362,7 @@ class PublishViewTest(TestCase):
         score = Score(title='My Score', slug='myscore')
         score.composer = 'Composer'
         score.arranger = 'Arranger'
-        score.instrument = 'guitar'
+        score.instruments = 'guitar'
         score.save()
         self.assertEquals(len(Score.objects.all()), 1)
 
@@ -398,4 +398,4 @@ class PublishViewTest(TestCase):
         self.assertEqual(score.title, "My Score")
         self.assertEqual(score.composer, "Composed by composer")
         self.assertEqual(score.arranger, "Arranged by arranger")
-        self.assertEqual(score.instrument, "piano")
+        self.assertEqual(score.instruments, "piano")
