@@ -5,12 +5,12 @@ from shutil import rmtree
 from time import sleep
 import logging
 import os
+import requests
 import subprocess
 import sys
 
 from git import Repo
 from git.exc import InvalidGitRepositoryError, NoSuchPathError
-import requests
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

@@ -1,20 +1,19 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.views import generic, View
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
-from django.utils.decorators import method_decorator
-
-from git import Repo
-import subprocess
-
+import hashlib
+import hmac
+import logging
 import os
 import re
-import hmac
-import hashlib
-import logging
+import subprocess
 
 from django.conf import settings
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views import generic, View
+from django.views.decorators.csrf import csrf_exempt
+from git import Repo
+
 from .models import Score
 
 

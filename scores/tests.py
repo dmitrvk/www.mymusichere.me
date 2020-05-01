@@ -1,16 +1,16 @@
-from unittest.mock import MagicMock
 import os
 
+from django.conf import settings
 from django.http import HttpRequest
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.utils import timezone
 
 from pyfakefs.fake_filesystem_unittest import patchfs
+from unittest.mock import MagicMock
 
-from django.conf import settings
 from .models import Score
 from .views import PublishView
+
 
 class ScoreModelTest(TestCase):
 

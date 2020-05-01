@@ -1,11 +1,10 @@
 import datetime
-
 import os
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from django.conf import settings
 
 class Score(models.Model):
     title = models.CharField(max_length=255)
