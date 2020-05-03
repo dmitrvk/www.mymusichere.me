@@ -347,7 +347,7 @@ class PublishViewTest(TestCase):
 
     @patchfs
     def test_one_score_deleted(self, fs):
-        slug = list(self.test_slugs)[0]
+        slug = 'testscore'
 
         Score(title='Test Score', slug=slug).save()
 
@@ -377,10 +377,11 @@ class PublishViewTest(TestCase):
 
         self.assertEquals(len(Score.objects.all()), 1)
 
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, 'myscore', 'myscore.ly')
+        filename = '{}.ly'.format(slug)
+        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
         fs.create_file(path_to_source, contents=self.test_lilypond_header)
 
-        pages_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', 'myscore')
+        pages_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', slug)
         fs.create_dir(pages_dir_path)
 
         response = self.client.post(reverse('scores:publish'))
@@ -395,7 +396,7 @@ class PublishViewTest(TestCase):
 
         self.assertIsNotNone(score)
         self.assertIsInstance(score, Score)
-        self.assertEqual(score.title, "Test Score")
-        self.assertEqual(score.composer, "Composed by Composer")
-        self.assertEqual(score.arranger, "Arranged by Arranger")
-        self.assertEqual(score.instruments, "piano")
+        self.assertEqual(score.title, 'Test Score')
+        self.assertEqual(score.composer, 'Composed by Composer')
+        self.assertEqual(score.arranger, 'Arranged by Arranger')
+        self.assertEqual(score.instruments, 'piano')
