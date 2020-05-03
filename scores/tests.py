@@ -244,7 +244,7 @@ class PublishViewTest(TestCase):
         response = self.client.get(reverse('scores:publish'))
         self.assertEqual(response.status_code, 405)
 
-    def test_request_invalid(self):
+    def test_wrong_request(self):
         response = self.client_no_auth.post(reverse('scores:publish'))
         self.assertEqual(response.status_code, 400)
 
