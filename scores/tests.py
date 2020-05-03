@@ -320,7 +320,7 @@ class PublishViewTest(TestCase):
     def test_one_score_created(self, fs):
         slug = 'testscore'
 
-        filename = '{}.ly'.format(slug)
+        filename = f'{slug}.ly'
         path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
         fs.create_file(path_to_source, contents=self.test_lilypond_header)
 
@@ -377,7 +377,7 @@ class PublishViewTest(TestCase):
 
         self.assertEquals(len(Score.objects.all()), 1)
 
-        filename = '{}.ly'.format(slug)
+        filename = f'{slug}.ly'
         path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
         fs.create_file(path_to_source, contents=self.test_lilypond_header)
 

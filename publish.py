@@ -19,7 +19,7 @@ MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
 
 MYMUSICHERE_REMOTE = os.environ['MYMUSICHERE_REMOTE']
 
-TOKEN = 'Token %s' % os.environ['PUBLISH_TOKEN']
+TOKEN = f"Token {os.environ['PUBLISH_TOKEN']}"
 
 LOGGING_FORMAT = '%(levelname)s:%(asctime)s:%(module)s:%(message)s'
 
@@ -46,18 +46,18 @@ def main():
             logger.info('No changes detected')
 
     except InvalidGitRepositoryError:
-        logger.warning('Invalid git repo at %s. Cloning...' % MYMUSICHERE_REPO_DIR)
+        logger.warning(f'Invalid git repo at {MYMUSICHERE_REPO_DIR}. Cloning...')
         rmtree(MYMUSICHERE_REPO_DIR)
         repo = git.Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
         publish_scores(repo)
 
     except NoSuchPathError:
-        logger.warning('No such path %s. Cloning remote repo...' % MYMUSICHERE_REPO_DIR)
+        logger.warning(f'No such path {MYMUSICHERE_REPO_DIR}. Cloning remote repo...')
         repo = git.Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
         publish_scores(repo)
 
     except Exception as e:
-        logger.error('Error: %s' % e)
+        logger.error(f'Error: {e}')
         sys.exit(1)
 
 
@@ -102,7 +102,7 @@ def publish_scores(repo: git.Repo) -> None:
             sys.exit(1)
 
     else:
-        logger.error('Got unexpected status code %d: %s' % (response.status_code, response.content))
+        logger.error(f'Got unexpected status code {response.status_code}: {response.content}')
 
 
 def clean_repo(repo: git.Repo) -> None:

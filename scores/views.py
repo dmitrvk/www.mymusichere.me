@@ -40,7 +40,7 @@ class ScoreView(generic.DetailView):
                 score.save()
                 self.request.session['viewed_score'] = True
 
-        self.logger.info("Score '%s' accessed" % score.slug)
+        self.logger.info(f"Score '{score.slug}' accessed")
 
         return score
 
@@ -72,7 +72,7 @@ class PublishView(View):
                 self.__create_scores_added_to_repo()
                 return HttpResponse('DB updated successfully')
             except Exception as e:
-                return HttpResponse('Failed to update DB. %s' % e, status=500)
+                return HttpResponse(f'Failed to update DB. {e}', status=500)
         else:
             return HttpResponse('Wrong request', status=400)
 
@@ -99,7 +99,8 @@ class PublishView(View):
         Score.objects.filter(slug__in=scores_to_delete).delete()
 
         if scores_to_delete:
-            self.logger.info("Scores '%s' deleted" % "','".join(scores_to_delete))
+            scores_list = "','".join(scores_to_delete)
+            self.logger.info(f"Scores '{scores_list}' deleted")
         else:
             self.logger.info('No scores deleted')
 
@@ -116,7 +117,8 @@ class PublishView(View):
             updated_scores.append(slug)
 
         if updated_scores:
-            self.logger.info("Scores '%s' updated" % "','".join(updated_scores))
+            scores_list = "','".join(updated_scores)
+            self.logger.info(f"Scores '{scores_list}' updated")
         else:
             self.logger.info('No scores updated')
 
@@ -130,18 +132,15 @@ class PublishView(View):
             self.__create_score_from_header(slug).save()
 
         if new_scores:
-            self.logger.info("Scores '%s' created" % "','".join(new_scores))
+            scores_list = "','".join(new_scores)
+            self.logger.info(f"Scores '{scores_list}' created")
         else:
             self.logger.info('No scores created')
 
     def __create_score_from_header(self, score_slug: str) -> Score:
         score = Score(title='', slug=score_slug)
 
-        path_to_source = os.path.join(
-            settings.MYMUSICHERE_REPO_DIR,
-            score.slug,
-            '%s.ly' % score.slug
-        )
+        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, score.slug, f'{score.slug}.ly')
 
         reading_header = False
         for line in open(path_to_source):
