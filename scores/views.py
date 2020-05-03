@@ -7,12 +7,10 @@ import subprocess
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
-from git import Repo
 
 from .models import Score
 
@@ -79,20 +77,20 @@ class PublishView(View):
             return HttpResponse('Wrong request', status=400)
 
 
-    def __is_request_valid(self, request):
+    def __is_request_valid(self, request) -> bool:
         if 'Authorization' in request.headers:
             header = request.headers.get('Authorization', 'None').split()
             return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
         else:
             return False
 
-    def __get_repo_scores(self):
+    def __get_repo_scores(self) -> set:
         return set([f.name for f in os.scandir(self.repo_dir) if f.is_dir()])
 
-    def __get_db_scores(self):
+    def __get_db_scores(self) -> set:
         return set([score.slug for score in Score.objects.all()])
 
-    def __delete_scores_removed_from_repo(self):
+    def __delete_scores_removed_from_repo(self) -> None:
         repo_scores = self.__get_repo_scores()
         db_scores = self.__get_db_scores()
 
@@ -105,7 +103,7 @@ class PublishView(View):
         else:
             self.logger.info('No scores deleted')
 
-    def __update_changed_scores(self):
+    def __update_changed_scores(self) -> None:
         scores_to_update = self.__get_db_scores()
         updated_scores = []
 
@@ -122,7 +120,7 @@ class PublishView(View):
         else:
             self.logger.info('No scores updated')
 
-    def __create_scores_added_to_repo(self):
+    def __create_scores_added_to_repo(self) -> None:
         repo_scores = self.__get_repo_scores()
         db_scores = self.__get_db_scores()
 
@@ -136,7 +134,7 @@ class PublishView(View):
         else:
             self.logger.info('No scores created')
 
-    def __create_score_from_header(self, score_slug):
+    def __create_score_from_header(self, score_slug: str) -> Score:
         score = Score(title='', slug=score_slug)
 
         path_to_source = os.path.join(

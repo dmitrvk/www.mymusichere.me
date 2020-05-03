@@ -9,7 +9,7 @@ import requests
 import subprocess
 import sys
 
-from git import Repo
+import git
 from git.exc import InvalidGitRepositoryError, NoSuchPathError
 
 
@@ -35,7 +35,7 @@ def main():
     logger.info('Check for update')
 
     try:
-        repo = Repo(MYMUSICHERE_REPO_DIR)
+        repo = git.Repo(MYMUSICHERE_REPO_DIR)
 
         if len(sys.argv) > 1 and sys.argv[1] == '--force':
             publish_scores(repo)
@@ -48,12 +48,12 @@ def main():
     except InvalidGitRepositoryError:
         logger.warning('Invalid git repo at %s. Cloning...' % MYMUSICHERE_REPO_DIR)
         rmtree(MYMUSICHERE_REPO_DIR)
-        repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
+        repo = git.Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
         publish_scores(repo)
 
     except NoSuchPathError:
         logger.warning('No such path %s. Cloning remote repo...' % MYMUSICHERE_REPO_DIR)
-        repo = Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
+        repo = git.Repo.clone_from(MYMUSICHERE_REMOTE, MYMUSICHERE_REPO_DIR, branch='master')
         publish_scores(repo)
 
     except Exception as e:
@@ -61,13 +61,13 @@ def main():
         sys.exit(1)
 
 
-def updates_available(repo):
+def updates_available(repo: git.Repo) -> bool:
     logger.info('git fetch...')
     fetchinfo = repo.remotes.origin.fetch()
     return repo.heads[0].commit != fetchinfo[0].commit
 
 
-def publish_scores(repo):
+def publish_scores(repo: git.Repo) -> None:
     clean_repo(repo)
 
     logger.info('git pull...')
@@ -105,7 +105,7 @@ def publish_scores(repo):
         logger.error('Got unexpected status code %d: %s' % (response.status_code, response.content))
 
 
-def clean_repo(repo):
+def clean_repo(repo: git.Repo) -> None:
     logger.info('Clean repo')
 
     subprocess.run(['make', 'clean'], cwd=MYMUSICHERE_REPO_DIR)

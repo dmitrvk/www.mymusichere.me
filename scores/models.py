@@ -16,13 +16,13 @@ class Score(models.Model):
     views = models.IntegerField(default=0)
 
 
-    def get_path_to_pdf(self):
+    def get_path_to_pdf(self) -> str:
         if self.slug:
             return 'scores/%s/%s.pdf' % (self.slug, self.slug)
         else:
             return ''
 
-    def get_paths_to_pages(self):
+    def get_paths_to_pages(self) -> list:
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', '%s' % self.slug)
 
@@ -41,13 +41,13 @@ class Score(models.Model):
         else:
             return []
 
-    def get_thumbnail_path(self):
+    def get_thumbnail_path(self) -> str:
         if self.slug:
             return 'scores/%s/thumbnail.png' % self.slug
         else:
             return ''
 
-    def get_link_to_source(self):
+    def get_link_to_source(self) -> str:
         if settings.GITHUB_SCORES_SOURCE_REPO:
             if self.slug:
                 return settings.GITHUB_SCORES_SOURCE_REPO \
@@ -60,7 +60,7 @@ class Score(models.Model):
     class Meta:
         ordering = ['title']
 
-    def update_with_score(self, score):
+    def update_with_score(self, score) -> None:
         self.title = score.title
         self.composer = score.composer
         self.arranger = score.arranger
