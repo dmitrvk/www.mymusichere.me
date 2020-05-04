@@ -23,17 +23,17 @@ class ScoreModelTest(TestCase):
 
         self.test_score_no_slug = Score(title='Test Score', slug='')
 
-    def test_get_path_to_pdf(self):
-        filename = self.test_score.get_path_to_pdf()
+    def test_get_pdf_path(self):
+        filename = self.test_score.get_pdf_path()
         expected = 'scores/{slug}/{slug}.pdf'.format(slug=self.test_score.slug)
         self.assertEqual(filename, expected)
 
-    def test_get_path_to_pdf_no_slug(self):
-        filename = self.test_score_no_slug.get_path_to_pdf()
+    def test_get_pdf_path_no_slug(self):
+        filename = self.test_score_no_slug.get_pdf_path()
         self.assertEqual(filename, '')
 
     @patchfs
-    def test_get_paths_to_pages(self, fs):
+    def test_get_pages_paths(self, fs):
         pages_dir_path = os.path.join(
             settings.STATIC_ROOT, 'scores', self.test_score.slug
         )
@@ -54,7 +54,7 @@ class ScoreModelTest(TestCase):
                 'scores', self.test_score.slug, filename
             ))
 
-        actual_paths = self.test_score.get_paths_to_pages()
+        actual_paths = self.test_score.get_pages_paths()
 
         self.assertIsNotNone(actual_paths)
         self.assertEquals(len(actual_paths), len(expected_paths))
@@ -62,15 +62,15 @@ class ScoreModelTest(TestCase):
         for i, expected_path in enumerate(expected_paths):
             self.assertEquals(actual_paths[i], expected_path)
 
-    def test_get_paths_to_pages_with_no_pages(self):
-        paths = self.test_score.get_paths_to_pages()
+    def test_get_pages_paths_with_no_pages(self):
+        paths = self.test_score.get_pages_paths()
 
         self.assertIsNotNone(paths)
         self.assertIsInstance(paths, list)
         self.assertTrue(len(paths) == 0)
 
-    def test_path_to_pages_if_score_has_no_slug(self):
-        paths = self.test_score_no_slug.get_paths_to_pages()
+    def test_get_pages_paths_if_score_has_no_slug(self):
+        paths = self.test_score_no_slug.get_pages_paths()
 
         self.assertIsNotNone(paths)
         self.assertIsInstance(paths, list)
@@ -90,7 +90,7 @@ class ScoreModelTest(TestCase):
         self.assertEqual(path, '')
 
     def test_get_link_to_source(self):
-        expected_link = '{repo}/tree/master/{slug}/'.format(
+        expected_link = '{repo}/tree/master/{slug}'.format(
             repo=settings.GITHUB_SCORES_SOURCE_REPO,
             slug=self.test_score.slug
         )
@@ -197,7 +197,7 @@ class ScoreViewTest(TestCase):
         self.assertIsNotNone(response_score)
         self.assertIsInstance(response_score, Score)
 
-        pages_paths = response_score.get_paths_to_pages()
+        pages_paths = response_score.get_pages_paths()
 
         self.assertEqual(len(pages_paths), 0)
         self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
