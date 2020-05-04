@@ -29,13 +29,13 @@ class Score(models.Model):
             if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
                 pages_paths = []
                 for page in os.scandir(pages_dir):
-                    if self.__file_is_score_page(page.name):
+                    if self._file_is_score_page(page.name):
                         page_path = os.path.join('scores', self.slug, page.name)
                         pages_paths.append(page_path)
 
                 if len(pages_paths) > 1:
                     pages_paths.sort(
-                        key=lambda name: self.__get_page_number_from_filename(name)
+                        key=lambda name: self._get_page_number_from_filename(name)
                     )
 
                 return pages_paths
@@ -44,11 +44,11 @@ class Score(models.Model):
         else:
             return []
 
-    def __file_is_score_page(self, filename: str) -> bool:
+    def _file_is_score_page(self, filename: str) -> bool:
         return (filename.startswith(f'{self.slug}-page') or
                 filename == f'{self.slug}.png')
 
-    def __get_page_number_from_filename(self, filename: str) -> str:
+    def _get_page_number_from_filename(self, filename: str) -> str:
         return int(filename.split('page')[1].split('.')[0])
 
     def get_thumbnail_path(self) -> str:

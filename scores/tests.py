@@ -249,16 +249,16 @@ class PublishViewTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_update_db_failed(self):
-        method = PublishView._PublishView__delete_scores_removed_from_repo
+        method = PublishView._delete_scores_removed_from_repo
         mock = MagicMock(side_effect=Exception())
 
-        PublishView._PublishView__delete_scores_removed_from_repo = mock
+        PublishView._delete_scores_removed_from_repo = mock
 
         response = self.client.post(reverse('scores:publish'))
 
         self.assertEqual(response.status_code, 500)
 
-        PublishView._PublishView__delete_scores_removed_from_repo = method
+        PublishView._delete_scores_removed_from_repo = method
 
     @patchfs
     def test_get_repo_scores(self, fs):
@@ -270,7 +270,7 @@ class PublishViewTest(TestCase):
             score_path = os.path.join(repo_dir_path, slug)
             fs.create_dir(score_path)
 
-        repo_scores = PublishView()._PublishView__get_repo_scores()
+        repo_scores = PublishView()._get_repo_scores()
 
         self.assertIsNotNone(repo_scores)
         self.assertIsInstance(repo_scores, set)
@@ -280,7 +280,7 @@ class PublishViewTest(TestCase):
         for slug in self.test_slugs:
             Score(title=slug, slug=slug).save()
 
-        db_scores = PublishView()._PublishView__get_db_scores()
+        db_scores = PublishView()._get_db_scores()
 
         self.assertIsNotNone(db_scores)
         self.assertIsInstance(db_scores, set)
@@ -295,7 +295,7 @@ class PublishViewTest(TestCase):
 
         fs.create_file(path_to_source, contents=self.test_lilypond_header)
 
-        score = PublishView()._PublishView__create_score_from_header(slug)
+        score = PublishView()._create_score_from_header(slug)
 
         self.assertIsNotNone(score)
         self.assertIsInstance(score, Score)
@@ -309,12 +309,12 @@ class PublishViewTest(TestCase):
         request = HttpRequest()
         request.headers = {'Authorization': self.auth_token}
 
-        self.assertTrue(PublishView()._PublishView__is_request_valid(request))
+        self.assertTrue(PublishView()._is_request_valid(request))
 
     def test_request_invalid(self):
         request = HttpRequest()
 
-        self.assertFalse(PublishView()._PublishView__is_request_valid(request))
+        self.assertFalse(PublishView()._is_request_valid(request))
 
     @patchfs
     def test_one_score_created(self, fs):

@@ -65,11 +65,11 @@ class PublishView(View):
         return super(PublishView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
-        if self.__is_request_valid(request):
+        if self._is_request_valid(request):
             try:
-                self.__delete_scores_removed_from_repo()
-                self.__update_changed_scores()
-                self.__create_scores_added_to_repo()
+                self._delete_scores_removed_from_repo()
+                self._update_changed_scores()
+                self._create_scores_added_to_repo()
                 return HttpResponse('DB updated successfully')
             except Exception as e:
                 return HttpResponse(f'Failed to update DB. {e}', status=500)
@@ -77,22 +77,22 @@ class PublishView(View):
             return HttpResponse('Wrong request', status=400)
 
 
-    def __is_request_valid(self, request) -> bool:
+    def _is_request_valid(self, request) -> bool:
         if 'Authorization' in request.headers:
             header = request.headers.get('Authorization', 'None').split()
             return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
         else:
             return False
 
-    def __get_repo_scores(self) -> set:
+    def _get_repo_scores(self) -> set:
         return set([f.name for f in os.scandir(self.repo_dir) if f.is_dir()])
 
-    def __get_db_scores(self) -> set:
+    def _get_db_scores(self) -> set:
         return set([score.slug for score in Score.objects.all()])
 
-    def __delete_scores_removed_from_repo(self) -> None:
-        repo_scores = self.__get_repo_scores()
-        db_scores = self.__get_db_scores()
+    def _delete_scores_removed_from_repo(self) -> None:
+        repo_scores = self._get_repo_scores()
+        db_scores = self._get_db_scores()
 
         scores_to_delete = db_scores.difference(repo_scores)
 
@@ -104,13 +104,13 @@ class PublishView(View):
         else:
             self.logger.info('No scores deleted')
 
-    def __update_changed_scores(self) -> None:
-        scores_to_update = self.__get_db_scores()
+    def _update_changed_scores(self) -> None:
+        scores_to_update = self._get_db_scores()
         updated_scores = []
 
         for slug in scores_to_update:
             db_score = Score.objects.filter(slug=slug)[0]
-            repo_score = self.__create_score_from_header(slug)
+            repo_score = self._create_score_from_header(slug)
             if db_score != repo_score:
                 db_score.update_with_score(repo_score)
                 db_score.save()
@@ -122,14 +122,14 @@ class PublishView(View):
         else:
             self.logger.info('No scores updated')
 
-    def __create_scores_added_to_repo(self) -> None:
-        repo_scores = self.__get_repo_scores()
-        db_scores = self.__get_db_scores()
+    def _create_scores_added_to_repo(self) -> None:
+        repo_scores = self._get_repo_scores()
+        db_scores = self._get_db_scores()
 
         new_scores = repo_scores.difference(db_scores)
 
         for slug in new_scores:
-            self.__create_score_from_header(slug).save()
+            self._create_score_from_header(slug).save()
 
         if new_scores:
             scores_list = "','".join(new_scores)
@@ -137,7 +137,7 @@ class PublishView(View):
         else:
             self.logger.info('No scores created')
 
-    def __create_score_from_header(self, score_slug: str) -> Score:
+    def _create_score_from_header(self, score_slug: str) -> Score:
         score = Score(title='', slug=score_slug)
 
         path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, score.slug, f'{score.slug}.ly')
