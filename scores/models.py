@@ -18,7 +18,7 @@ class Score(models.Model):
 
     def get_pdf_path(self) -> str:
         if self.slug:
-            return os.path.join('scores', self.slug, f'{self.slug}.pdf')
+            return f'scores/{self.slug}/{self.slug}.pdf'
         else:
             return ''
 
@@ -30,7 +30,7 @@ class Score(models.Model):
                 pages_paths = []
                 for page in os.scandir(pages_dir):
                     if self._file_is_score_page(page.name):
-                        page_path = os.path.join('scores', self.slug, page.name)
+                        page_path = f'scores/{self.slug}/{page.name}'
                         pages_paths.append(page_path)
 
                 if len(pages_paths) > 1:
@@ -53,7 +53,7 @@ class Score(models.Model):
 
     def get_thumbnail_path(self) -> str:
         if self.slug:
-            return os.path.join('scores', self.slug, 'thumbnail.png')
+            return f'scores/{self.slug}/thumbnail.png'
         else:
             return ''
 
