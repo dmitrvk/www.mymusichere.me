@@ -29,39 +29,52 @@ class Score(models.Model):
     def get_pages_paths(self) -> list:
         """List of relative paths to pages.
 
-        Returned strings should be appended to static URL.
+        Each item in the list is a string like
+        'scores/testscore/testscore.png' (if only one page present) or
+        'scores/testscore/testscore-page1.png',
+        where 'testscore' is score's slug and '1' is page number.
+        Returned strings should be appended to the static URL.
+        If slug is empty, an empty list is returned.
         """
+        def dir_entry_is_score_page(dir_entry: os.DirEntry) -> bool:
+            """Return true if dir entry is score's page."""
+            if dir_entry.is_file():
+                return (dir_entry.name == f'{self.slug}.png' or
+                        dir_entry.name.startswith(f'{self.slug}-page'))
+            else:
+                return False
 
-        def page_number_from_filename(filename: str) -> int:
-            """Extract page number from page's filename.
+        def get_relative_path_from_dir_entry(dir_entry: os.DirEntry) -> str:
+            """Return relative path to page or empty string if not a file."""
+            if dir_entry.is_file():
+                return f'scores/{self.slug}/{dir_entry.name}'
+            else:
+                return ''
 
-            For example, if a filename is 'testscore-page12.png',
+        def get_page_number_from_path(path: str) -> int:
+            """Extract page number from page's path.
+
+            For example, if path is 'scores/testscore/testscore-page12.png',
             the function returns 12.
             """
-            return int(filename.split('page')[1].split('.')[0])
+            print(f'PATH {path}')
+            return int(path.split('page')[1].split('.')[0])
 
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', self.slug)
 
             if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
-                pages_paths = []
-                for page in os.scandir(pages_dir):
-                    if self._file_is_score_page(page.name):
-                        page_path = f'scores/{self.slug}/{page.name}'
-                        pages_paths.append(page_path)
+                dir_entries = filter(dir_entry_is_score_page, os.scandir(pages_dir))
+                paths = list(map(get_relative_path_from_dir_entry, dir_entries))
 
-                if len(pages_paths) > 1:
-                    pages_paths.sort(key=page_number_from_filename)
+                if len(paths) > 1:
+                    paths.sort(key=get_page_number_from_path)
 
-                return pages_paths
+                return paths
             else:
                 return []
         else:
             return []
-
-    def _file_is_score_page(self, filename: str) -> bool:
-        return (filename.startswith(f'{self.slug}-page') or
-                filename == f'{self.slug}.png')
 
     def get_thumbnail_path(self) -> str:
         if self.slug:
