@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 MyMusicHere is a web application
-that compilies LilyPond sheet music from the
+that compiles LilyPond sheet music from the
 [Github repository](http://github.com/dmitrvk/mymusichere)
 and publishes compiled scores on the
 [website](http://www.mymusichere.me).
@@ -38,9 +38,9 @@ and publishes compiled scores on the
 
 9. Run dev server with `make run`
 
-10. Publish sheet music with `./deploy-scores.py --force`
+10. Publish sheet music with `./publish.py --force`
 
-The website should be availabe at http://localhost:8000
+The website should be available at http://localhost:8000
 
 
 ## Editing CSS
