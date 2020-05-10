@@ -2,19 +2,29 @@ import datetime
 import os
 
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
 
 class Score(models.Model):
-    slug = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
     title = models.CharField(max_length=255)
-    composer = models.CharField(max_length=255, default='')
-    arranger = models.CharField(max_length=255, default='')
-    instruments = models.CharField(max_length=255, default='')
-    last_modified = models.DateTimeField(default=datetime.datetime(2020, 1, 1))
-    views = models.IntegerField(default=0)
-
+    composer = models.ForeignKey(
+            'Composer',
+            on_delete=models.SET_NULL,
+            blank=True,
+            null=True
+    )
+    arranger = models.ForeignKey(
+            'Arranger',
+            on_delete=models.SET_NULL,
+            blank=True,
+            null=True
+    )
+    instruments = models.ManyToManyField('Instrument')
+    last_modified = models.DateTimeField(auto_now=True)
+    views = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     def get_pdf_path(self) -> str:
         """Relative path to pdf file with score.
@@ -36,7 +46,7 @@ class Score(models.Model):
         Returned strings should be appended to the static URL.
         If slug is empty, an empty list is returned.
         """
-        def dir_entry_is_score_page(dir_entry: os.DirEntry) -> bool:
+        def dir_entry_is_page(dir_entry: os.DirEntry) -> bool:
             """Return true if dir entry is score's page."""
             if dir_entry.is_file():
                 return (dir_entry.name == f'{self.slug}.png' or
@@ -44,7 +54,7 @@ class Score(models.Model):
             else:
                 return False
 
-        def get_relative_path_from_dir_entry(dir_entry: os.DirEntry) -> str:
+        def get_path_from_dir_entry(dir_entry: os.DirEntry) -> str:
             """Return relative path to page or empty string if not a file."""
             if dir_entry.is_file():
                 return f'scores/{self.slug}/{dir_entry.name}'
@@ -64,8 +74,8 @@ class Score(models.Model):
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', self.slug)
 
             if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
-                dir_entries = filter(dir_entry_is_score_page, os.scandir(pages_dir))
-                paths = list(map(get_relative_path_from_dir_entry, dir_entries))
+                dir_entries = filter(dir_entry_is_page, os.scandir(pages_dir))
+                paths = list(map(get_path_from_dir_entry, dir_entries))
 
                 if len(paths) > 1:
                     paths.sort(key=get_page_number_from_path)
@@ -92,13 +102,6 @@ class Score(models.Model):
         else:
             return 'https://github.com/'
 
-    def update_with_score(self, score) -> None:
-        self.title = score.title
-        self.composer = score.composer
-        self.arranger = score.arranger
-        self.instruments = score.instruments
-        self.last_modified = timezone.now()
-
     class Meta:
         ordering = ['title']
 
@@ -108,12 +111,56 @@ class Score(models.Model):
                 self.title == other.title and
                 self.composer == other.composer and
                 self.arranger == other.arranger and
-                self.instruments == other.instruments)
+                list(self.instruments.all()) == list(other.instruments.all()))
 
     def __str__(self):
-        return (f'{self.slug} ({self.title}, {self.composer}, '
-                f'{self.arranger}, {self.instruments})')
+        return (f'{self.slug} ({self.title})')
 
     def __hash__(self):
         return hash((self.id, self.title))
+
+
+class Composer(models.Model):
+    """Represents a composer of a score."""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__) and self.name == other.name)
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash((self.id, self.name))
+
+
+class Arranger(models.Model):
+    """Represents an arranger of a score."""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__) and self.name == other.name)
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash((self.id, self.name))
+
+
+class Instrument(models.Model):
+    """Represents an instrument on which the score is played."""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    def __eq__(self, other):
+        return (isinstance(other, self.__class__) and self.name == other.name)
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash((self.id, self.name))
 

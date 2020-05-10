@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic, View
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Score
+from .models import Arranger, Composer, Instrument, Score
 
 
 class IndexView(generic.ListView):
@@ -157,17 +157,26 @@ class PublishView(View):
 
                     match = re.search(self.COMPOSER_PATTERN, line)
                     if match and not score.composer:
-                        score.composer = match.group().split('"')[1]
+                        name = match.group().split('"')[1]
+                        composer = Composer.objects.filter(name=name)
+                        if composer.exists():
+                            score.composer = composer
+                        else:
+                            composer = Composer(name=name)
+                            composer.save()
+                            score.composer = composer
                         continue
 
                     match = re.search(self.ARRANGER_PATTERN, line)
                     if match and not score.arranger:
-                        score.arranger = match.group().split('"')[1]
-                        continue
-
-                    match = re.search(self.INSTRUMENTS_PATTERN, line)
-                    if match and not score.instruments:
-                        score.instruments = match.group().split('"')[1]
+                        name = match.group().split('"')[1]
+                        arranger = Arranger.objects.filter(name=name)
+                        if arranger.exists():
+                            score.arranger = arranger
+                        else:
+                            arranger = Arranger(name=name)
+                            arranger.save()
+                            score.arranger = arranger
                         continue
 
         return score
