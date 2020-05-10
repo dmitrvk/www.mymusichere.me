@@ -31,6 +31,15 @@ class Score(models.Model):
 
         Returned strings should be appended to static URL.
         """
+
+        def page_number_from_filename(filename: str) -> int:
+            """Extract page number from page's filename.
+
+            For example, if a filename is 'testscore-page12.png',
+            the function returns 12.
+            """
+            return int(filename.split('page')[1].split('.')[0])
+
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', self.slug)
 
@@ -42,9 +51,7 @@ class Score(models.Model):
                         pages_paths.append(page_path)
 
                 if len(pages_paths) > 1:
-                    pages_paths.sort(
-                        key=lambda name: self._get_page_number_from_filename(name)
-                    )
+                    pages_paths.sort(key=page_number_from_filename)
 
                 return pages_paths
             else:
@@ -55,9 +62,6 @@ class Score(models.Model):
     def _file_is_score_page(self, filename: str) -> bool:
         return (filename.startswith(f'{self.slug}-page') or
                 filename == f'{self.slug}.png')
-
-    def _get_page_number_from_filename(self, filename: str) -> str:
-        return int(filename.split('page')[1].split('.')[0])
 
     def get_thumbnail_path(self) -> str:
         if self.slug:
@@ -94,7 +98,8 @@ class Score(models.Model):
                 self.instruments == other.instruments)
 
     def __str__(self):
-        return f'{self.slug} ({self.title}, {self.composer}, {self.arranger}, {self.instruments})'
+        return (f'{self.slug} ({self.title}, {self.composer}, '
+                f'{self.arranger}, {self.instruments})')
 
     def __hash__(self):
         return hash((self.id, self.title))
