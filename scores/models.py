@@ -17,12 +17,20 @@ class Score(models.Model):
 
 
     def get_pdf_path(self) -> str:
+        """Relative path to pdf file with score.
+
+        Returned string should be appended to static URL.
+        """
         if self.slug:
             return f'scores/{self.slug}/{self.slug}.pdf'
         else:
             return ''
 
     def get_pages_paths(self) -> list:
+        """List of relative paths to pages.
+
+        Returned strings should be appended to static URL.
+        """
         if self.slug:
             pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', self.slug)
 
