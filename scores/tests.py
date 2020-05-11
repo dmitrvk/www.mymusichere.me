@@ -141,6 +141,51 @@ class ScoreModelTest(TestCase):
         self.assertEqual(self.test_score.__hash__(), expected)
 
 
+class ComposerModelTest(TestCase):
+    def setUp(self):
+        self.composer = Composer(name='Test Composer')
+
+    def test__eq__(self):
+        self.assertEqual(Composer(name='Test Composer'), self.composer)
+
+    def test__hash__(self):
+        expected_hash = hash((self.composer.id, self.composer.name))
+        self.assertEqual(self.composer.__hash__(), expected_hash)
+
+    def test__str__(self):
+        self.assertEqual(self.composer.__str__(), 'Test Composer')
+
+
+class ArrangerModelTest(TestCase):
+    def setUp(self):
+        self.arranger = Arranger(name='Test Arranger')
+
+    def test__eq__(self):
+        self.assertEqual(Arranger(name='Test Arranger'), self.arranger)
+
+    def test__hash__(self):
+        expected_hash = hash((self.arranger.id, self.arranger.name))
+        self.assertEqual(self.arranger.__hash__(), expected_hash)
+
+    def test__str__(self):
+        self.assertEqual(self.arranger.__str__(), 'Test Arranger')
+
+
+class InstrumentModelTest(TestCase):
+    def setUp(self):
+        self.instrument = Instrument(name='Test Instrument')
+
+    def test__eq__(self):
+        self.assertEqual(Instrument(name='Test Instrument'), self.instrument)
+
+    def test__hash__(self):
+        expected_hash = hash((self.instrument.id, self.instrument.name))
+        self.assertEqual(self.instrument.__hash__(), expected_hash)
+
+    def test__str__(self):
+        self.assertEqual(self.instrument.__str__(), 'Test Instrument')
+
+
 class IndexViewTest(TestCase):
     def setUp(self):
         self.client = Client()
