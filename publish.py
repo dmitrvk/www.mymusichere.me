@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
+import logging
+import os
+import subprocess
+import sys
 from datetime import datetime
 from shutil import rmtree
 from time import sleep
-import logging
-import os
-import requests
-import subprocess
-import sys
 
 import git
+import requests
 from git.exc import InvalidGitRepositoryError, NoSuchPathError
-
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,6 +23,7 @@ TOKEN = f"Token {os.environ['PUBLISH_TOKEN']}"
 LOGGING_FORMAT = '%(levelname)s:%(asctime)s:%(module)s:%(message)s'
 
 logger = logging.getLogger(__name__)
+
 
 def main():
     logger.setLevel(logging.INFO)
@@ -60,12 +60,10 @@ def main():
         logger.error(f'Error: {e}')
         sys.exit(1)
 
-
 def updates_available(repo: git.Repo) -> bool:
     logger.info('git fetch...')
     fetchinfo = repo.remotes.origin.fetch()
     return repo.heads[0].commit != fetchinfo[0].commit
-
 
 def publish_scores(repo: git.Repo) -> None:
     clean_repo(repo)
@@ -104,7 +102,6 @@ def publish_scores(repo: git.Repo) -> None:
     else:
         logger.error(f'Got unexpected status code {response.status_code}: {response.content}')
 
-
 def clean_repo(repo: git.Repo) -> None:
     logger.info('Clean repo')
 
@@ -114,7 +111,5 @@ def clean_repo(repo: git.Repo) -> None:
         logger.info('Repo is dirty. All changes will be removed.')
         repo.git.reset('--hard')
 
-
 if __name__ == "__main__":
     main()
-

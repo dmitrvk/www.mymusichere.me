@@ -1,14 +1,13 @@
 import copy
 import os
 import unittest
+from unittest.mock import MagicMock
 
 from django.conf import settings
 from django.http import HttpRequest
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
-
 from pyfakefs.fake_filesystem_unittest import patchfs
-from unittest.mock import MagicMock
 
 from .models import Arranger, Composer, Instrument, Score
 from .views import PublishView

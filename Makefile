@@ -1,12 +1,14 @@
+APPS = mymusichere scores
 STATIC = scores/static/scores
 SCSS = scores/scss
 
-.PHONY: css help install migrations-check run static test watch-scss
+.PHONY: css help install isort migrations-check run static test watch-scss
 
 help:
 	@echo "Please, use \`make <target>\` where <target> is one of the following:"
 	@echo "  css                 compile CSS from SCSS"
 	@echo "  install             install dependencies with pip and npm"
+	@echo "  isort               sort imports in .py files"
 	@echo "  migrations-check    check migrations issues"
 	@echo "  run                 start development server"
 	@echo "  static              collect static files for deployment"
@@ -19,6 +21,9 @@ css:
 install:
 	@pip install -r requirements.txt
 	@npm install
+
+isort:
+	isort -rc --atomic $(APPS) publish.py
 
 migrations-check:
 	@./manage.py makemigrations --check --dry-run

@@ -9,7 +9,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views import generic, View
+from django.views import View, generic
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Arranger, Composer, Instrument, Score
@@ -180,4 +180,3 @@ class PublishView(View):
                         continue
 
         return score
-
