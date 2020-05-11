@@ -16,7 +16,8 @@ def parse_lilypond_header(filename: str) -> dict:
                     if len(field) > 0 and len(value) > 0:
                         if '"' in value:
                             value = value.strip('"')
-                        header[field.lower()] = value
+                        if len(value) > 0:
+                            header[field.lower()] = value
             elif '\header' in line:
                 reading_header = True
         return header
