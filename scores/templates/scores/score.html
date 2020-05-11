@@ -57,13 +57,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="btn btn-dark btn-nav" href="{% static score.get_pdf_path %}" download>download</a>
+          <a class="btn btn-dark btn-nav" href="{% static score.pdf_path %}" download>download</a>
         </li>
         <li class="nav-item">
           <button class="btn btn-dark btn-nav" onclick="share()">share</button>
         </li>
         <li class="nav-item">
-          <a class="btn btn-dark btn-nav" href="{{ score.get_link_to_source }}">view source</a>
+          <a class="btn btn-dark btn-nav" href="{{ score.github_link }}">view source</a>
         </li>
       </ul>
     </div>
@@ -74,7 +74,7 @@
   <main class="container-fluid">
     <div id="message"></div>
 
-    {% for page in score.get_pages_paths %}
+    {% for page in score.pages_paths %}
     <img src="{% static page %}" class="img-fluid" alt="Score page {{ forloop.counter }}"/>
     {% if not forloop.last %}
     <hr>

@@ -26,7 +26,8 @@ class Score(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     views = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
-    def get_pdf_path(self) -> str:
+    @property
+    def pdf_path(self) -> str:
         """Relative path to pdf file with score.
 
         Returned string should be appended to static URL.
@@ -36,7 +37,8 @@ class Score(models.Model):
         else:
             return ''
 
-    def get_pages_paths(self) -> list:
+    @property
+    def pages_paths(self) -> list:
         """List of relative paths to pages.
 
         Each item in the list is a string like
@@ -86,13 +88,15 @@ class Score(models.Model):
         else:
             return []
 
-    def get_thumbnail_path(self) -> str:
+    @property
+    def thumbnail_path(self) -> str:
         if self.slug:
             return f'scores/{self.slug}/thumbnail.png'
         else:
             return ''
 
-    def get_link_to_source(self) -> str:
+    @property
+    def github_link(self) -> str:
         if settings.GITHUB_SCORES_SOURCE_REPO:
             if self.slug:
                 base = settings.GITHUB_SCORES_SOURCE_REPO
@@ -113,11 +117,11 @@ class Score(models.Model):
                 self.arranger == other.arranger and
                 list(self.instruments.all()) == list(other.instruments.all()))
 
-    def __str__(self):
-        return (f'{self.slug} ({self.title})')
-
     def __hash__(self):
         return hash((self.id, self.title))
+
+    def __str__(self):
+        return (f'{self.slug} ({self.title})')
 
 
 class Composer(models.Model):

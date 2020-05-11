@@ -16,7 +16,7 @@
         {% for score in score_list %}
         <figure class="score col-6 col-sm-4 col-lg-3">
           <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-            <img class="img-fluid" src="{% static score.get_thumbnail_path %}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
+            <img class="img-fluid" src="{% static score.thumbnail_path %}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
           </a>
           <figcaption class="score-caption img-fluid">
             <div class="score-caption-top container-fluid px-2">

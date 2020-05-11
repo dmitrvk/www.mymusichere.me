@@ -37,17 +37,17 @@ class ScoreModelTest(TestCase):
 
         self.test_score_no_slug = Score(title='Test Score', slug='')
 
-    def test_get_pdf_path(self):
-        filename = self.test_score.get_pdf_path()
+    def test_pdf_path(self):
+        filename = self.test_score.pdf_path
         expected = 'scores/{slug}/{slug}.pdf'.format(slug=self.test_score.slug)
         self.assertEqual(filename, expected)
 
-    def test_get_pdf_path_no_slug(self):
-        filename = self.test_score_no_slug.get_pdf_path()
+    def test_pdf_path_no_slug(self):
+        filename = self.test_score_no_slug.pdf_path
         self.assertEqual(filename, '')
 
     @patchfs
-    def test_get_pages_paths(self, fs):
+    def test_pages_paths(self, fs):
         pages_dir_path = os.path.join(
             settings.STATIC_ROOT, 'scores', self.test_score.slug
         )
@@ -68,7 +68,7 @@ class ScoreModelTest(TestCase):
                 'scores', self.test_score.slug, filename
             ))
 
-        actual_paths = self.test_score.get_pages_paths()
+        actual_paths = self.test_score.pages_paths
 
         self.assertIsNotNone(actual_paths)
         self.assertEquals(len(actual_paths), len(expected_paths))
@@ -76,69 +76,69 @@ class ScoreModelTest(TestCase):
         for i, expected_path in enumerate(expected_paths):
             self.assertEquals(actual_paths[i], expected_path)
 
-    def test_get_pages_paths_with_no_pages(self):
-        paths = self.test_score.get_pages_paths()
+    def test_pages_paths_no_pages(self):
+        paths = self.test_score.pages_paths
 
         self.assertIsNotNone(paths)
         self.assertIsInstance(paths, list)
         self.assertTrue(len(paths) == 0)
 
-    def test_get_pages_paths_if_score_has_no_slug(self):
-        paths = self.test_score_no_slug.get_pages_paths()
+    def test_pages_paths_no_slug(self):
+        paths = self.test_score_no_slug.pages_paths
 
         self.assertIsNotNone(paths)
         self.assertIsInstance(paths, list)
         self.assertTrue(len(paths) == 0)
 
-    def test_get_thumbnail_path(self):
+    def test_thumbnail_path(self):
         expected_path = 'scores/{slug}/thumbnail.png'.format(
             slug=self.test_score.slug
         )
 
-        actual_path = self.test_score.get_thumbnail_path()
+        actual_path = self.test_score.thumbnail_path
 
         self.assertEqual(actual_path, expected_path)
 
-    def test_get_thumbnail_path_of_score_without_slug(self):
-        path = self.test_score_no_slug.get_thumbnail_path()
+    def test_thumbnail_path_no_slug(self):
+        path = self.test_score_no_slug.thumbnail_path
         self.assertEqual(path, '')
 
-    def test_get_link_to_source(self):
+    def test_github_link(self):
         expected_link = '{repo}/tree/master/{slug}'.format(
             repo=settings.GITHUB_SCORES_SOURCE_REPO,
             slug=self.test_score.slug
         )
 
-        actual_link = self.test_score.get_link_to_source()
+        actual_link = self.test_score.github_link
 
         self.assertEqual(actual_link, expected_link)
 
-    def test_get_link_to_source_of_score_without_slug(self):
-        link = self.test_score_no_slug.get_link_to_source()
+    def test_github_link_no_slug(self):
+        link = self.test_score_no_slug.github_link
         self.assertEqual(link, settings.GITHUB_SCORES_SOURCE_REPO)
 
-    def test_get_link_to_source_if_repo_not_set(self):
+    def test_github_link_no_repo(self):
         with self.settings(GITHUB_SCORES_SOURCE_REPO=None):
-            link = self.test_score.get_link_to_source()
+            link = self.test_score.github_link
             self.assertEqual(link, 'https://github.com/')
 
-    def test_eq(self):
+    def test__eq__(self):
         score_one = copy.copy(self.test_score)
         score_two = copy.copy(self.test_score)
 
         self.assertTrue(score_one == score_two)
 
-    def test_str(self):
+    def test__hash__(self):
+        expected = hash((self.test_score.id, self.test_score.title))
+        self.assertEqual(self.test_score.__hash__(), expected)
+
+    def test__str__(self):
         expected = '{slug} ({title})'.format(
             slug=self.test_score.slug,
             title=self.test_score.title,
         )
 
         self.assertEqual(self.test_score.__str__(), expected)
-
-    def test_hash(self):
-        expected = hash((self.test_score.id, self.test_score.title))
-        self.assertEqual(self.test_score.__hash__(), expected)
 
 
 class ComposerModelTest(TestCase):
@@ -237,7 +237,7 @@ class ScoreViewTest(TestCase):
         self.assertIsNotNone(response_score)
         self.assertIsInstance(response_score, Score)
 
-        pages_paths = response_score.get_pages_paths()
+        pages_paths = response_score.pages_paths
 
         self.assertEqual(len(pages_paths), 0)
         self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
