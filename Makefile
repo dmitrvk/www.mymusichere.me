@@ -1,6 +1,5 @@
 APPS = mymusichere scores
-STATIC = scores/static/scores
-SCSS = scores/scss
+SCSS = mymusichere/scss
 
 .PHONY: css help install isort migrations-check run static test watch-scss
 
@@ -16,7 +15,7 @@ help:
 	@echo "  watch-scss          compile CSS every time SCSS is updated"
 
 css:
-	pysassc $(SCSS)/style.scss $(STATIC)/style.css -s compressed
+	pysassc $(SCSS)/style.scss mymusichere/static/css/style.css -s compressed
 
 install:
 	@pip install -r requirements.txt

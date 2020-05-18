@@ -142,12 +142,8 @@ cython_debug/
 media
 /static/
 
-scores/static/scores/*
-!scores/static/scores/.README
-
 # npm
 node_modules/
 package-lock.json
 
-# Scores source
-scores/lilypond
+mymusichere/static/css/*.css
