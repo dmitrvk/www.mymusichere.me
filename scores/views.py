@@ -66,19 +66,15 @@ class PublishView(View):
     def dispatch(self, request, *args, **kwargs):
         return super(PublishView, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request):
-        self._delete_scores_removed_from_repo()
-        self._update_changed_scores()
-        self._create_scores_added_to_repo()
-        return HttpResponse('Database updated.', content_type='text/plain')
-
     def post(self, request):
         if self._is_request_valid(request):
             try:
                 self._delete_scores_removed_from_repo()
                 self._update_changed_scores()
                 self._create_scores_added_to_repo()
-                return HttpResponse('DB updated successfully')
+                return HttpResponse(
+                    'Database updated.', content_type='text/plain'
+                )
             except Exception as e:
                 msg = f'Failed to update DB. {e}'
                 return HttpResponseServerError(msg, content_type='text/plain')
