@@ -33,7 +33,7 @@ class Score(models.Model):
         Returned string should be appended to static URL.
         """
         if self.slug:
-            return f'scores/{self.slug}/{self.slug}.pdf'
+            return f'{self.slug}/{self.slug}.pdf'
         else:
             return ''
 
@@ -59,7 +59,7 @@ class Score(models.Model):
         def get_path_from_dir_entry(dir_entry: os.DirEntry) -> str:
             """Return relative path to page or empty string if not a file."""
             if dir_entry.is_file():
-                return f'scores/{self.slug}/{dir_entry.name}'
+                return f'{self.slug}/{dir_entry.name}'
             else:
                 return ''
 
@@ -73,7 +73,7 @@ class Score(models.Model):
             return int(path.split('page')[1].split('.')[0])
 
         if self.slug:
-            pages_dir = os.path.join(settings.STATIC_ROOT, 'scores', self.slug)
+            pages_dir = os.path.join(settings.MEDIA_ROOT, self.slug)
 
             if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
                 dir_entries = filter(dir_entry_is_page, os.scandir(pages_dir))
