@@ -113,8 +113,7 @@ SESSION_COOKIE_AGE = 600
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
-    '%s/mymusichere/static' % BASE_DIR,
-    '%s/scores/lilypond/out' % BASE_DIR
+    '%s/mymusichere/static' % BASE_DIR
 ]
 
 STATIC_URL = '/static/'
@@ -122,6 +121,9 @@ STATIC_URL = '/static/'
 
 GITHUB_SCORES_SOURCE_REPO = os.environ['MYMUSICHERE_REMOTE']
 
-MYMUSICHERE_REPO_DIR = os.path.join(BASE_DIR, 'scores', 'lilypond')
+MYMUSICHERE_REPO_DIR = '/home/dmitryk/work/mymusichere'
+
+SCORES_DIR = os.path.join(STATIC_ROOT, 'scores')
 
 PUBLISH_TOKEN = os.environ['PUBLISH_TOKEN']
+

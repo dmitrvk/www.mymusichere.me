@@ -4,9 +4,11 @@ import logging
 import os
 import re
 import subprocess
+import urllib
+from operator import methodcaller
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View, generic
@@ -46,23 +48,24 @@ class ScoreView(generic.DetailView):
 
 
 class PublishView(View):
-    SPACE = r'\s*'
-    LINE_BEGIN = r'^' + SPACE
-    EQUALS_SIGN = SPACE + r'=' + SPACE
-    VALUE = r'".*"'
+    """Publish scores on the website.
 
-    HEADER_START_PATTERN = r'\\header'
-    TITLE_PATTERN = LINE_BEGIN + r'title' + EQUALS_SIGN + VALUE
-    COMPOSER_PATTERN = LINE_BEGIN + r'composer' + EQUALS_SIGN + VALUE
-    ARRANGER_PATTERN = LINE_BEGIN + r'arranger' + EQUALS_SIGN + VALUE
-    INSTRUMENTS_PATTERN = LINE_BEGIN + r'instruments*' + EQUALS_SIGN + VALUE
+    Publishing includes copying assets to static files dir and
+    updating the database."""
 
-    logger = logging.getLogger(__name__)
-    repo_dir = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.repo_scores = self._get_repo_scores()
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(PublishView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        self._delete_scores_removed_from_repo()
+        self._update_changed_scores()
+        #self._create_scores_added_to_repo()
+        return HttpResponse('Database updated.', content_type='text/plain')
 
     def post(self, request):
         if self._is_request_valid(request):
@@ -72,10 +75,10 @@ class PublishView(View):
                 self._create_scores_added_to_repo()
                 return HttpResponse('DB updated successfully')
             except Exception as e:
-                return HttpResponse(f'Failed to update DB. {e}', status=500)
+                msg = f'Failed to update DB. {e}'
+                return HttpResponseServerError(msg, content_type='text/plain')
         else:
-            return HttpResponse('Wrong request', status=400)
-
+            return HttpResponseBadRequest()
 
     def _is_request_valid(self, request) -> bool:
         if 'Authorization' in request.headers:
@@ -85,42 +88,60 @@ class PublishView(View):
             return False
 
     def _get_repo_scores(self) -> set:
-        return set([f.name for f in os.scandir(self.repo_dir) if f.is_dir()])
+        repo_scores = set()
+        with os.scandir(settings.MYMUSICHERE_REPO_DIR) as dir_entries:
+            for entry in dir_entries:
+                if entry.is_dir() and not entry.name in '.github':
+                    repo_scores.add(entry.name)
+        return repo_scores
 
     def _get_db_scores(self) -> set:
         return set([score.slug for score in Score.objects.all()])
 
+    def _get_score_header(self, slug: str) -> dict:
+        """Download source of score with given slug and return its header."""
+        header = dict()
+
+        base_url = 'https://raw.githubusercontent.com'
+        url = f'{base_url}/dmitrvk/mymusichere/master/{slug}/{slug}.ly'
+        ly_file = urllib.request.urlopen(url)
+
+        reading_header = False
+
+        for line in ly_file:
+            line = bytes.decode(line).strip()
+            if reading_header:
+                if '}' in line:
+                    reading_header = False
+                    break
+                elif '=' in line:
+                    field, value = map(methodcaller('strip'), line.split('='))
+                    if len(field) > 0 and len(value) > 0:
+                        if '"' in value:
+                            value = value.strip('"')
+                        if len(value) > 0:
+                            header[field.lower()] = value
+            elif '\header' in line:
+                reading_header = True
+        return header
+
+    def _copy_score_assets_to_static_dir(self, slug: str) -> None:
+        """Copy PNG and PDF files of score with given slug to static dir"""
+        pass
+
     def _delete_scores_removed_from_repo(self) -> None:
-        repo_scores = self._get_repo_scores()
-        db_scores = self._get_db_scores()
-
-        scores_to_delete = db_scores.difference(repo_scores)
-
-        Score.objects.filter(slug__in=scores_to_delete).delete()
+        scores_to_delete = self._get_db_scores() - self.repo_scores
 
         if scores_to_delete:
-            scores_list = "','".join(scores_to_delete)
-            self.logger.info(f"Scores '{scores_list}' deleted")
-        else:
-            self.logger.info('No scores deleted')
+            Score.objects.filter(slug__in=scores_to_delete).delete()
+            self.logger.info(f'Scores {scores_to_delete} deleted')
 
     def _update_changed_scores(self) -> None:
-        scores_to_update = self._get_db_scores()
-        updated_scores = []
-
-        for slug in scores_to_update:
-            db_score = Score.objects.filter(slug=slug)[0]
-            repo_score = self._create_score_from_header(slug)
-            if db_score != repo_score:
-                db_score.update_with_score(repo_score)
-                db_score.save()
-            updated_scores.append(slug)
-
-        if updated_scores:
-            scores_list = "','".join(updated_scores)
-            self.logger.info(f"Scores '{scores_list}' updated")
-        else:
-            self.logger.info('No scores updated')
+        for slug in self._get_db_scores():
+            score = Score.objects.filter(slug=slug)[0]
+            new_header = self._get_score_header(slug)
+            score.update_with_header(new_header)
+            self.logger.info(f"Score '{score.slug}' updated")
 
     def _create_scores_added_to_repo(self) -> None:
         repo_scores = self._get_repo_scores()
@@ -137,46 +158,3 @@ class PublishView(View):
         else:
             self.logger.info('No scores created')
 
-    def _create_score_from_header(self, score_slug: str) -> Score:
-        score = Score(title='', slug=score_slug)
-
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, score.slug, f'{score.slug}.ly')
-
-        reading_header = False
-        for line in open(path_to_source):
-            if not reading_header and re.search(self.HEADER_START_PATTERN, line):
-                reading_header = True
-            else:
-                if '}' in line:
-                    reading_header = False
-                else:
-                    match = re.search(self.TITLE_PATTERN, line)
-                    if match and not score.title:
-                        score.title = match.group().split('"')[1]
-                        continue
-
-                    match = re.search(self.COMPOSER_PATTERN, line)
-                    if match and not score.composer:
-                        name = match.group().split('"')[1]
-                        composer = Composer.objects.filter(name=name)
-                        if composer.exists():
-                            score.composer = composer
-                        else:
-                            composer = Composer(name=name)
-                            composer.save()
-                            score.composer = composer
-                        continue
-
-                    match = re.search(self.ARRANGER_PATTERN, line)
-                    if match and not score.arranger:
-                        name = match.group().split('"')[1]
-                        arranger = Arranger.objects.filter(name=name)
-                        if arranger.exists():
-                            score.arranger = arranger
-                        else:
-                            arranger = Arranger(name=name)
-                            arranger.save()
-                            score.arranger = arranger
-                        continue
-
-        return score

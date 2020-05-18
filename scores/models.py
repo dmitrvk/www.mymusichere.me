@@ -2,7 +2,6 @@ import datetime
 import os
 
 from django.conf import settings
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -22,9 +21,9 @@ class Score(models.Model):
             blank=True,
             null=True
     )
-    instruments = models.ManyToManyField('Instrument')
-    last_modified = models.DateTimeField(auto_now=True)
-    views = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    instruments = models.ManyToManyField('Instrument', blank=True)
+    datetime_created = models.DateTimeField(editable=False)
+    views = models.PositiveIntegerField(default=0)
 
     @property
     def pdf_path(self) -> str:
@@ -91,7 +90,7 @@ class Score(models.Model):
     @property
     def thumbnail_path(self) -> str:
         if self.slug:
-            return f'scores/{self.slug}/thumbnail.png'
+            return f'scores/{self.slug}/{self.slug}-thumbnail.png'
         else:
             return ''
 
@@ -105,6 +104,28 @@ class Score(models.Model):
                 return settings.GITHUB_SCORES_SOURCE_REPO
         else:
             return 'https://github.com/'
+
+    def update_with_header(self, header: dict) -> None:
+        changed = False
+
+        if 'mmh_title' in header:
+            new_title = header.get('mmh_title')
+        elif 'title' in header:
+            new_title = header.get('title')
+
+        if new_title != None and self.title != new_title:
+            self.title = new_title
+            changed = True
+
+        if changed:
+            self.save()
+
+    def save(self, *args, **kwargs):
+        """Set timestamp when first created."""
+        if not self.id:
+            self.datetime_created = timezone.now()
+
+        return super(Score, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['title']
