@@ -64,7 +64,7 @@ class PublishView(View):
     def get(self, request):
         self._delete_scores_removed_from_repo()
         self._update_changed_scores()
-        #self._create_scores_added_to_repo()
+        self._create_scores_added_to_repo()
         return HttpResponse('Database updated.', content_type='text/plain')
 
     def post(self, request):
@@ -123,30 +123,21 @@ class PublishView(View):
 
     def _delete_scores_removed_from_repo(self) -> None:
         scores_to_delete = self._get_db_scores() - self.repo_scores
-
         if scores_to_delete:
             Score.objects.filter(slug__in=scores_to_delete).delete()
-            self.logger.info(f'Scores {scores_to_delete} deleted')
+            self.logger.info(f'Scores {scores_to_delete} deleted.')
 
     def _update_changed_scores(self) -> None:
         for slug in self._get_db_scores():
+            header = self._get_score_header(slug)
             score = Score.objects.filter(slug=slug)[0]
-            new_header = self._get_score_header(slug)
-            score.update_with_header(new_header)
-            self.logger.info(f"Score '{score.slug}' updated")
+            score.update_with_header(header)
+            self.logger.info(f"Score '{slug}' updated.")
 
     def _create_scores_added_to_repo(self) -> None:
-        repo_scores = self._get_repo_scores()
-        db_scores = self._get_db_scores()
-
-        new_scores = repo_scores.difference(db_scores)
-
-        for slug in new_scores:
-            self._create_score_from_header(slug).save()
-
-        if new_scores:
-            scores_list = "','".join(new_scores)
-            self.logger.info(f"Scores '{scores_list}' created")
-        else:
-            self.logger.info('No scores created')
+        for slug in (self.repo_scores - self._get_db_scores()):
+            header = self._get_score_header(slug)
+            score = Score(slug=slug)
+            score.update_with_header(header)
+            self.logger.info(f"Score '{slug}' created.")
 
