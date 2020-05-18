@@ -109,39 +109,76 @@ class Score(models.Model):
     def update_with_header(self, header: dict) -> None:
         changed = False
 
-        new_title = None
         if 'mmh_title' in header:
             new_title = header.get('mmh_title')
         elif 'title' in header:
             new_title = header.get('title')
+        else:
+            new_title = None
 
         if new_title != None and self.title != new_title:
             self.title = new_title
             changed = True
 
-        composer = None
         if 'mmh_composer' in header:
             composer = Composer(name=header.get('mmh_composer'))
         elif 'composer' in header:
             composer = Composer(name=header.get('composer'))
+        else:
+            composer = None
 
-        if composer != None and self.composer != composer:
+        if composer == None:
+            self.composer = None
+            changed = True
+        elif self.composer != composer:
             if not Composer.objects.filter(name=composer.name).exists():
                 composer.save()
                 self.composer_id = composer.id
                 changed = True
 
-        arranger = None
         if 'mmh_arranger' in header:
             arranger = Arranger(name=header.get('mmh_arranger'))
         elif 'arranger' in header:
             arranger = Arranger(name=header.get('arranger'))
+        else:
+            arranger = None
 
-        if arranger != None and self.arranger != arranger:
+        if arranger == None:
+            self.arranger = None
+            changed = True
+        elif self.arranger != arranger:
             if not Arranger.objects.filter(name=arranger.name).exists():
                 arranger.save()
                 self.arranger_id = arranger.id
                 changed = True
+
+        fields = [
+            'mmh_instruments', 'mmh_instrument', 'instruments', 'instrument'
+        ]
+
+        instruments = None
+
+        logger = logging.getLogger(__name__)
+
+        for field in fields:
+            if field in header:
+                instruments = header.get(field).split(',')
+                break
+
+        if instruments:
+            for name in instruments:
+                if Instrument.objects.filter(name=name).exists():
+                    if not self.instruments.filter(name=name).exists():
+                        instrument = Instrument.objects.filter(name=name)
+                        self.instruments.add(instrument)
+                        changed = True
+                else:
+                    instrument = Instrument(name=name)
+                    instrument.save()
+                    self.instruments.add(instrument)
+                    changed = True
+        else:
+            self.instruments.all().delete()
 
         if changed:
             self.save()
@@ -205,6 +242,9 @@ class Instrument(models.Model):
     """Represents an instrument on which the score is played."""
 
     name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ['name']
 
     def __eq__(self, other):
         return (isinstance(other, self.__class__) and self.name == other.name)
