@@ -55,7 +55,12 @@ class PublishView(View):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.repo_scores = self._get_repo_scores()
+
+        self.repo_scores = set()
+        with os.scandir(settings.MEDIA_ROOT) as dir_entries:
+            for entry in dir_entries:
+                if entry.is_dir():
+                    self.repo_scores.add(entry.name)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -86,10 +91,6 @@ class PublishView(View):
             return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
         else:
             return False
-
-    def _get_repo_scores(self) -> set:
-        with os.scandir(settings.MEDIA_ROOT) as dir_entries:
-            return set([entry.name for entry in dir_entries if entry.is_dir()])
 
     def _get_db_scores(self) -> set:
         return set([score.slug for score in Score.objects.all()])
