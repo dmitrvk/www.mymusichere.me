@@ -124,7 +124,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-GITHUB_SCORES_SOURCE_REPO = os.environ['MYMUSICHERE_REMOTE']
+GITHUB_SCORES_SOURCE_REPO = 'https://github.com/dmitrvk/mymusichere'
 
 SCORES_DIR = os.path.join(STATIC_ROOT, 'scores')
 
