@@ -88,12 +88,8 @@ class PublishView(View):
             return False
 
     def _get_repo_scores(self) -> set:
-        repo_scores = set()
-        with os.scandir(settings.MYMUSICHERE_REPO_DIR) as dir_entries:
-            for entry in dir_entries:
-                if entry.is_dir() and not entry.name in '.github':
-                    repo_scores.add(entry.name)
-        return repo_scores
+        with os.scandir(settings.MEDIA_ROOT) as dir_entries:
+            return set([entry.name for entry in dir_entries if entry.is_dir()])
 
     def _get_db_scores(self) -> set:
         return set([score.slug for score in Score.objects.all()])

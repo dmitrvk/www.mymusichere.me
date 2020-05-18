@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 from django.conf import settings
@@ -90,7 +91,7 @@ class Score(models.Model):
     @property
     def thumbnail_path(self) -> str:
         if self.slug:
-            return f'scores/{self.slug}/{self.slug}-thumbnail.png'
+            return f'{self.slug}/{self.slug}-thumbnail.png'
         else:
             return ''
 
@@ -108,6 +109,7 @@ class Score(models.Model):
     def update_with_header(self, header: dict) -> None:
         changed = False
 
+        new_title = None
         if 'mmh_title' in header:
             new_title = header.get('mmh_title')
         elif 'title' in header:
@@ -116,6 +118,30 @@ class Score(models.Model):
         if new_title != None and self.title != new_title:
             self.title = new_title
             changed = True
+
+        composer = None
+        if 'mmh_composer' in header:
+            composer = Composer(name=header.get('mmh_composer'))
+        elif 'composer' in header:
+            composer = Composer(name=header.get('composer'))
+
+        if composer != None and self.composer != composer:
+            if not Composer.objects.filter(name=composer.name).exists():
+                composer.save()
+                self.composer_id = composer.id
+                changed = True
+
+        arranger = None
+        if 'mmh_arranger' in header:
+            arranger = Arranger(name=header.get('mmh_arranger'))
+        elif 'arranger' in header:
+            arranger = Arranger(name=header.get('arranger'))
+
+        if arranger != None and self.arranger != arranger:
+            if not Arranger.objects.filter(name=arranger.name).exists():
+                arranger.save()
+                self.arranger_id = arranger.id
+                changed = True
 
         if changed:
             self.save()
