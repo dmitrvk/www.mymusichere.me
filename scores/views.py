@@ -121,10 +121,6 @@ class PublishView(View):
                 reading_header = True
         return header
 
-    def _copy_score_assets_to_static_dir(self, slug: str) -> None:
-        """Copy PNG and PDF files of score with given slug to static dir"""
-        pass
-
     def _delete_scores_removed_from_repo(self) -> None:
         scores_to_delete = self._get_db_scores() - self.repo_scores
 
