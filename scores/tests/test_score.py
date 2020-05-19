@@ -1,19 +1,15 @@
-import copy
 import os
 import unittest
 from unittest.mock import MagicMock
 
 from django.conf import settings
-from django.http import HttpRequest
-from django.test import Client, TestCase
-from django.urls import reverse
+from django.test import TestCase
 from pyfakefs.fake_filesystem_unittest import patchfs
 
-from .models import Arranger, Composer, Instrument, Score
-from .views import PublishView
+from scores.models import Arranger, Composer, Instrument, Score
 
 
-class ScoreModelTest(TestCase):
+class ScoreTest(TestCase):
     def setUp(self):
         self.test_score = Score(title='Test Score', slug='testscore')
 

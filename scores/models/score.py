@@ -1,5 +1,4 @@
 import datetime
-import logging
 import os
 
 from django.conf import settings
@@ -158,8 +157,6 @@ class Score(models.Model):
 
         instruments = None
 
-        logger = logging.getLogger(__name__)
-
         for field in fields:
             if field in header:
                 instruments = header.get(field).split(',')
@@ -206,51 +203,3 @@ class Score(models.Model):
 
     def __str__(self):
         return (f'{self.slug} ({self.title})')
-
-
-class Composer(models.Model):
-    """Represents a composer of a score."""
-
-    name = models.CharField(max_length=255, unique=True)
-
-    def __eq__(self, other):
-        return (isinstance(other, self.__class__) and self.name == other.name)
-
-    def __hash__(self):
-        return hash((self.id, self.name))
-
-    def __str__(self):
-        return self.name
-
-
-class Arranger(models.Model):
-    """Represents an arranger of a score."""
-
-    name = models.CharField(max_length=255, unique=True)
-
-    def __eq__(self, other):
-        return (isinstance(other, self.__class__) and self.name == other.name)
-
-    def __hash__(self):
-        return hash((self.id, self.name))
-
-    def __str__(self):
-        return self.name
-
-
-class Instrument(models.Model):
-    """Represents an instrument on which the score is played."""
-
-    name = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __eq__(self, other):
-        return (isinstance(other, self.__class__) and self.name == other.name)
-
-    def __hash__(self):
-        return hash((self.id, self.name))
-
-    def __str__(self):
-        return self.name

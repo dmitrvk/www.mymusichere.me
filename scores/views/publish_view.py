@@ -1,50 +1,16 @@
-import hashlib
-import hmac
 import logging
 import os
-import re
-import subprocess
 import urllib
 from operator import methodcaller
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.utils import timezone
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseServerError)
 from django.utils.decorators import method_decorator
-from django.views import View, generic
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Arranger, Composer, Instrument, Score
-
-
-class IndexView(generic.ListView):
-    template_name = 'scores/index.html'
-    queryset = Score.objects.all()
-
-    def get(self, request):
-        self.request.session.set_test_cookie()
-        return super().get(request)
-
-
-class ScoreView(generic.DetailView):
-    model = Score
-    template_name = 'scores/score.html'
-
-    logger = logging.getLogger(__name__)
-
-    def get_object(self):
-        score = super().get_object()
-
-        if self.request.session.test_cookie_worked():
-            self.request.session.delete_test_cookie()
-            if not self.request.session.get('viewed_score', False):
-                score.views += 1
-                score.save()
-                self.request.session['viewed_score'] = True
-
-        self.logger.info(f"Score '{score.slug}' accessed")
-
-        return score
+from scores.models import Score
 
 
 class PublishView(View):
@@ -137,4 +103,3 @@ class PublishView(View):
             score = Score(slug=slug)
             score.update_with_header(header)
             self.logger.info(f"Score '{slug}' created.")
-
