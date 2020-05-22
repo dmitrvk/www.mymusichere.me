@@ -1,9 +1,10 @@
+import copy
 import os
 import unittest
 from unittest.mock import MagicMock
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import Client, TestCase
 from pyfakefs.fake_filesystem_unittest import patchfs
 
 from scores.models import Arranger, Composer, Instrument, Score
@@ -34,7 +35,7 @@ class ScoreTest(TestCase):
 
     def test_pdf_path(self):
         filename = self.test_score.pdf_path
-        expected = 'scores/{slug}/{slug}.pdf'.format(slug=self.test_score.slug)
+        expected = '{slug}/{slug}.pdf'.format(slug=self.test_score.slug)
         self.assertEqual(filename, expected)
 
     def test_pdf_path_no_slug(self):
@@ -44,7 +45,7 @@ class ScoreTest(TestCase):
     @patchfs
     def test_pages_paths(self, fs):
         pages_dir_path = os.path.join(
-            settings.STATIC_ROOT, 'scores', self.test_score.slug
+            settings.MEDIA_ROOT, self.test_score.slug
         )
 
         expected_paths = []
@@ -56,12 +57,9 @@ class ScoreTest(TestCase):
             )
 
             page_path = os.path.join(pages_dir_path, filename)
-
             fs.create_file(page_path)
 
-            expected_paths.append(os.path.join(
-                'scores', self.test_score.slug, filename
-            ))
+            expected_paths.append(os.path.join(self.test_score.slug, filename))
 
         actual_paths = self.test_score.pages_paths
 
@@ -86,7 +84,7 @@ class ScoreTest(TestCase):
         self.assertTrue(len(paths) == 0)
 
     def test_thumbnail_path(self):
-        expected_path = 'scores/{slug}/thumbnail.png'.format(
+        expected_path = '{slug}/{slug}-thumbnail.png'.format(
             slug=self.test_score.slug
         )
 
@@ -135,329 +133,3 @@ class ScoreTest(TestCase):
 
         self.assertEqual(self.test_score.__str__(), expected)
 
-
-class ComposerModelTest(TestCase):
-    def setUp(self):
-        self.composer = Composer(name='Test Composer')
-
-    def test__eq__(self):
-        self.assertEqual(Composer(name='Test Composer'), self.composer)
-
-    def test__hash__(self):
-        expected_hash = hash((self.composer.id, self.composer.name))
-        self.assertEqual(self.composer.__hash__(), expected_hash)
-
-    def test__str__(self):
-        self.assertEqual(self.composer.__str__(), 'Test Composer')
-
-
-class ArrangerModelTest(TestCase):
-    def setUp(self):
-        self.arranger = Arranger(name='Test Arranger')
-
-    def test__eq__(self):
-        self.assertEqual(Arranger(name='Test Arranger'), self.arranger)
-
-    def test__hash__(self):
-        expected_hash = hash((self.arranger.id, self.arranger.name))
-        self.assertEqual(self.arranger.__hash__(), expected_hash)
-
-    def test__str__(self):
-        self.assertEqual(self.arranger.__str__(), 'Test Arranger')
-
-
-class InstrumentModelTest(TestCase):
-    def setUp(self):
-        self.instrument = Instrument(name='Test Instrument')
-
-    def test__eq__(self):
-        self.assertEqual(Instrument(name='Test Instrument'), self.instrument)
-
-    def test__hash__(self):
-        expected_hash = hash((self.instrument.id, self.instrument.name))
-        self.assertEqual(self.instrument.__hash__(), expected_hash)
-
-    def test__str__(self):
-        self.assertEqual(self.instrument.__str__(), 'Test Instrument')
-
-
-class IndexViewTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-
-    def test_no_scores(self):
-        response = self.client.get(reverse('scores:index'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'No scores are available.')
-
-    def test_one_score(self):
-        score = Score(title='Test Score', slug='testscore')
-        score.save()
-
-        response = self.client.get(reverse('scores:index'))
-
-        self.assertEqual(response.status_code, 200)
-
-        scores = response.context.get('score_list', None)
-
-        self.assertIsNotNone(scores)
-        self.assertEqual(len(scores), 1)
-        self.assertEqual(scores[0], score)
-
-
-class ScoreViewTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.test_score = Score(title='Test Score', slug='testscore')
-        self.test_score.save()
-
-    def test_view_score(self):
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
-
-        self.assertEqual(response.status_code, 200)
-
-        response_score = response.context.get('score', None)
-
-        self.assertIsNotNone(response_score)
-        self.assertIsInstance(response_score, Score)
-        self.assertEqual(response_score, self.test_score)
-
-    def test_no_pages(self):
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
-
-        self.assertEqual(response.status_code, 200)
-
-        response_score = response.context.get('score', None)
-
-        self.assertIsNotNone(response_score)
-        self.assertIsInstance(response_score, Score)
-
-        pages_paths = response_score.pages_paths
-
-        self.assertEqual(len(pages_paths), 0)
-        self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
-
-    def test_increment_views(self):
-        self.assertEquals(self.test_score.views, 0)
-
-        response = self.client.get(reverse('scores:index'))
-
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
-
-        self.assertEqual(response.status_code, 200)
-
-        response_score = response.context.get('score', None)
-
-        self.assertIsNotNone(response_score)
-        self.assertIsInstance(response_score, Score)
-        self.assertEquals(response_score.views, 1)
-
-
-
-class PublishViewTest(TestCase):
-    def setUp(self):
-        self.auth_token = 'Token {}'.format(settings.PUBLISH_TOKEN)
-
-        self.client = Client(HTTP_AUTHORIZATION=self.auth_token)
-        self.client_no_auth = Client()
-
-        self.test_slugs = {'testscore1', 'testscore2', 'testscore3'}
-
-        self.test_lilypond_header = """
-        \header {
-            title = "Test Score"
-            subtitle = "Subtitle"
-            composer = "Composed by Composer"
-            arranger = "Arranged by Arranger"
-            instruments = "piano"
-            license = "Creative Commons Attribution-ShareAlike 4.0"
-        }"""
-
-        self.test_score = Score(title='Test Score', slug='testscore')
-
-        composer = Composer(name='Composer')
-        composer.save()
-
-        self.test_score.composer = composer
-
-        arranger = Arranger(name='Arranger')
-        arranger.save()
-
-        self.test_score.arranger = arranger
-
-        instrument = Instrument(name='Instrument')
-        instrument.save()
-
-        self.test_score.save()
-
-        self.test_score.instruments.add(instrument)
-
-    def test_get_method_not_allowed(self):
-        response = self.client.get(reverse('scores:publish'))
-        self.assertEqual(response.status_code, 405)
-
-    def test_wrong_request(self):
-        response = self.client_no_auth.post(reverse('scores:publish'))
-        self.assertEqual(response.status_code, 400)
-
-    def test_update_db_failed(self):
-        method = PublishView._delete_scores_removed_from_repo
-        mock = MagicMock(side_effect=Exception())
-
-        PublishView._delete_scores_removed_from_repo = mock
-
-        response = self.client.post(reverse('scores:publish'))
-
-        self.assertEqual(response.status_code, 500)
-
-        PublishView._delete_scores_removed_from_repo = method
-
-    @patchfs
-    def test_get_repo_scores(self, fs):
-        repo_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
-
-        fs.create_dir(repo_dir_path)
-
-        for slug in self.test_slugs:
-            score_path = os.path.join(repo_dir_path, slug)
-            fs.create_dir(score_path)
-
-        repo_scores = PublishView()._get_repo_scores()
-
-        self.assertIsNotNone(repo_scores)
-        self.assertIsInstance(repo_scores, set)
-        self.assertEqual(repo_scores, self.test_slugs)
-
-    @unittest.skip('must be corrected for new model')
-    def test_get_db_scores(self):
-        for slug in self.test_slugs:
-            Score(title=slug, slug=slug).save()
-
-        db_scores = PublishView()._get_db_scores()
-
-        self.assertIsNotNone(db_scores)
-        self.assertIsInstance(db_scores, set)
-        self.assertEqual(db_scores, self.test_slugs)
-
-    @patchfs
-    def test_create_score_from_header(self, fs):
-        slug = 'new_testscore'
-
-        filename = '{}.ly'.format(slug)
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
-
-        fs.create_file(path_to_source, contents=self.test_lilypond_header)
-
-        score = PublishView()._create_score_from_header(slug)
-        score.save()
-
-        self.assertIsNotNone(score)
-        self.assertIsInstance(score, Score)
-        self.assertEquals(score.slug, slug)
-        self.assertEquals(score.title, 'Test Score')
-        self.assertIsNotNone(score.composer)
-        self.assertEquals(score.composer.name, 'Composed by Composer')
-        self.assertIsNotNone(score.arranger)
-        self.assertEquals(score.arranger.name, 'Arranged by Arranger')
-        self.assertIsNotNone(score.instruments)
-        self.assertEquals(score.instruments.all().count(), 0)
-
-    def test_request_valid(self):
-        request = HttpRequest()
-        request.headers = {'Authorization': self.auth_token}
-
-        self.assertTrue(PublishView()._is_request_valid(request))
-
-    def test_request_invalid(self):
-        request = HttpRequest()
-
-        self.assertFalse(PublishView()._is_request_valid(request))
-
-    @patchfs
-    @unittest.skip('must be corrected for new model')
-    def test_one_score_created(self, fs):
-        slug = 'testscore'
-
-        filename = f'{slug}.ly'
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
-        fs.create_file(path_to_source, contents=self.test_lilypond_header)
-
-        pages_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', slug)
-        fs.create_dir(pages_dir_path)
-
-        response = self.client.post(reverse('scores:publish'))
-
-        self.assertEqual(response.status_code, 200)
-
-        scores = Score.objects.all()
-
-        self.assertEqual(len(scores), 1)
-
-        score = scores[0]
-
-        self.assertIsNotNone(score)
-        self.assertIsInstance(score, Score)
-        self.assertEquals(score.slug, slug)
-        self.assertEquals(score.title, 'Test Score')
-        self.assertIsNotNone(score.composer)
-        self.assertEquals(score.composer.name, 'Composed by Composer')
-        self.assertIsNotNone(score.arranger)
-        self.assertEquals(score.arranger.name, 'Arranged by Arranger')
-        self.assertIsNotNone(score.instruments)
-        self.assertEquals(score.instruments.all().count(), 0)
-
-    @patchfs
-    @unittest.skip('must be corrected for new model')
-    def test_one_score_deleted(self, fs):
-        slug = 'testscore'
-
-        Score(title='Test Score', slug=slug).save()
-
-        self.assertEquals(len(Score.objects.all()), 1)
-
-        filename = '{}.ly'.format(slug)
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
-        fs.create_file(path_to_source, contents=self.test_lilypond_header)
-
-        pages_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores')
-        fs.create_dir(pages_dir_path)
-
-        response = self.client.post(reverse('scores:publish'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(Score.objects.all()), 0)
-
-    @patchfs
-    @unittest.skip('must be corrected for new model')
-    def test_update_one_score(self, fs):
-        slug = self.test_score.slug
-
-        self.assertEquals(len(Score.objects.all()), 1)
-
-        filename = f'{slug}.ly'
-        path_to_source = os.path.join(settings.MYMUSICHERE_REPO_DIR, slug, filename)
-        fs.create_file(path_to_source, contents=self.test_lilypond_header)
-
-        pages_dir_path = os.path.join(settings.BASE_DIR, 'scores', 'lilypond', 'out', 'scores', slug)
-        fs.create_dir(pages_dir_path)
-
-        response = self.client.post(reverse('scores:publish'))
-
-        self.assertEqual(response.status_code, 200)
-
-        scores = Score.objects.all()
-
-        self.assertEquals(len(scores), 1)
-
-        score = scores[0]
-
-        self.assertIsNotNone(score)
-        self.assertIsInstance(score, Score)
-        self.assertEqual(score.title, 'Test Score')
-        self.assertIsNotNone(score.composer)
-        self.assertEqual(score.composer.name, 'Composed by Composer')
-        self.assertIsNotNone(score.arranger)
-        self.assertEqual(score.arranger.name, 'Arranged by Arranger')
-        self.assertEqual(score.instruments.all()[0].name, 'piano')

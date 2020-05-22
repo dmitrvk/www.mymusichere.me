@@ -70,7 +70,6 @@ class Score(models.Model):
             For example, if path is 'scores/testscore/testscore-page12.png',
             the function returns 12.
             """
-            print(f'PATH {path}')
             return int(path.split('page')[1].split('.')[0])
 
         if self.slug:
