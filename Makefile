@@ -22,7 +22,7 @@ install:
 	@npm install
 
 isort:
-	isort -rc --atomic $(APPS) publish.py
+	isort -rc --atomic $(APPS)
 
 migrations-check:
 	@./manage.py makemigrations --check --dry-run
