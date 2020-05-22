@@ -5,6 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from scores.models import Arranger, Composer, Instrument
+
 
 class Score(models.Model):
     slug = models.SlugField(unique=True)
@@ -165,13 +167,14 @@ class Score(models.Model):
         if instruments:
             for name in instruments:
                 if Instrument.objects.filter(name=name).exists():
-                    if not self.instruments.filter(name=name).exists():
-                        instrument = Instrument.objects.filter(name=name)
-                        self.instruments.add(instrument)
-                        changed = True
+                    instrument = Instrument.objects.filter(name=name)[0]
+                    self.save()
+                    self.instruments.add(instrument)
+                    changed = True
                 else:
                     instrument = Instrument(name=name)
                     instrument.save()
+                    self.save()
                     self.instruments.add(instrument)
                     changed = True
         else:
