@@ -85,7 +85,7 @@ class PublishView(View):
         return header
 
     def _delete_scores_removed_from_repo(self) -> None:
-        scores_to_delete = self._get_db_scores() - self.repo_scores
+        scores_to_delete = self._get_db_scores().difference(self.repo_scores)
         if scores_to_delete:
             Score.objects.filter(slug__in=scores_to_delete).delete()
             self.logger.info(f'Scores {scores_to_delete} deleted.')
@@ -98,7 +98,7 @@ class PublishView(View):
             self.logger.info(f"Score '{slug}' updated.")
 
     def _create_scores_added_to_repo(self) -> None:
-        for slug in (self.repo_scores - self._get_db_scores()):
+        for slug in (self.repo_scores.difference(self._get_db_scores())):
             header = self._get_score_header(slug)
             score = Score(slug=slug)
             score.update_with_header(header)
