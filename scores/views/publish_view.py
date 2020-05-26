@@ -1,6 +1,6 @@
 import logging
 import os
-import urllib
+import urllib.request
 from operator import methodcaller
 
 from django.conf import settings
