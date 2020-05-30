@@ -21,20 +21,20 @@
     }
 
     function showLinkCopiedToClipboardMessage() {
-      var messageDiv = document.getElementById('message')
-
-      if (messageDiv.hasChildNodes()) return;
-
-      var message = document.createElement('div')
+      let message = document.createElement('div')
       message.setAttribute('class', 'alert alert-primary fade show m-0')
       message.setAttribute('role', 'alert')
       message.textContent = 'Link copied to clipboard'
 
-      messageDiv.appendChild(message)
+      let alertDiv = document.getElementById('alert')
 
-      setTimeout(function closeAlert() {
-        $('.alert').alert('close')
-      }, 3000)
+      if (!alertDiv.hasChildNodes()) {
+        alertDiv.appendChild(message)
+
+        setTimeout(function closeAlert() {
+          $('.alert').alert('close')
+        }, 3000)
+      }
     }
   </script>
 {% endblock head_extra %}
@@ -70,7 +70,12 @@
 
 {% block content %}
   <main class="container-fluid">
-    <div id="message"></div>
+    <div id="alert"></div>
+
+    <noscript>
+      <p class="text-secondary my-2">Unfortunately, your browser does not support JavaScript.
+      Some features may not work properly.</p>
+    </noscript>
 
     {% for page in score.pages_paths %}
     <img src="{{ MEDIA_URL }}{{ page }}" class="img-fluid" alt="Score page {{ forloop.counter }}"/>
