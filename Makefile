@@ -34,7 +34,7 @@ static:
 	./manage.py collectstatic --clear --noinput
 
 test: migrations-check
-	@coverage run --source=mymusichere,scores manage.py test $(APPS) --verbosity 2
+	@coverage run --source=mymusichere,scores manage.py test $(APPS)
 	@coverage xml
 
 watch-scss:
