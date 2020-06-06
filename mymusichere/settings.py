@@ -15,6 +15,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'scores.apps.ScoresConfig',
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
