@@ -132,4 +132,3 @@ class ScoreTest(TestCase):
         )
 
         self.assertEqual(self.test_score.__str__(), expected)
-

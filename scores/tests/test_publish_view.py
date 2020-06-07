@@ -49,4 +49,3 @@ class PublishViewTest(TestCase):
         self.test_score.save()
 
         self.test_score.instruments.add(instrument)
-
