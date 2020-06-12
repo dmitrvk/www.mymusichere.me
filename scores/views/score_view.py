@@ -3,7 +3,9 @@ from django.views.generic import DetailView
 from scores.models import Score
 
 
-class ScoreView(DetailView):
+class ScoreView(DetailView):  # pylint: disable=too-few-public-methods
+    """Page with sheet music for a score."""
+
     model = Score
     template_name = 'scores/score.html'
 

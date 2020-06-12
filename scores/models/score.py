@@ -1,4 +1,3 @@
-import datetime
 import os
 
 from django.conf import settings
@@ -12,16 +11,16 @@ class Score(models.Model):
     slug = models.SlugField(unique=True)
     title = models.CharField(max_length=255)
     composer = models.ForeignKey(
-            'Composer',
-            on_delete=models.SET_NULL,
-            blank=True,
-            null=True
+        'Composer',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
     )
     arranger = models.ForeignKey(
-            'Arranger',
-            on_delete=models.SET_NULL,
-            blank=True,
-            null=True
+        'Arranger',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
     )
     instruments = models.ManyToManyField('Instrument', blank=True)
     datetime_created = models.DateTimeField(editable=False)
@@ -35,8 +34,8 @@ class Score(models.Model):
         """
         if self.slug:
             return f'{self.slug}/{self.slug}.pdf'
-        else:
-            return ''
+
+        return ''
 
     @property
     def pages_paths(self) -> list:
@@ -54,15 +53,15 @@ class Score(models.Model):
             if dir_entry.is_file():
                 return (dir_entry.name == f'{self.slug}.png' or
                         dir_entry.name.startswith(f'{self.slug}-page'))
-            else:
-                return False
+
+            return False
 
         def get_path_from_dir_entry(dir_entry: os.DirEntry) -> str:
             """Return relative path to page or empty string if not a file."""
             if dir_entry.is_file():
                 return f'{self.slug}/{dir_entry.name}'
-            else:
-                return ''
+
+            return ''
 
         def get_page_number_from_path(path: str) -> int:
             """Extract page number from page's path.
@@ -83,30 +82,33 @@ class Score(models.Model):
                     paths.sort(key=get_page_number_from_path)
 
                 return paths
-            else:
-                return []
-        else:
+
             return []
+
+        return []
 
     @property
     def thumbnail_path(self) -> str:
+        """Relative path to thumbnail image."""
         if self.slug:
             return f'{self.slug}/{self.slug}-thumbnail.png'
-        else:
-            return ''
+
+        return ''
 
     @property
     def github_link(self) -> str:
+        """Link to lilypond source files on GitHub."""
         if settings.GITHUB_SCORES_SOURCE_REPO:
             if self.slug:
                 base = settings.GITHUB_SCORES_SOURCE_REPO
                 return f'{base}/tree/master/{self.slug}'
-            else:
-                return settings.GITHUB_SCORES_SOURCE_REPO
-        else:
-            return 'https://github.com/'
+
+            return settings.GITHUB_SCORES_SOURCE_REPO
+
+        return 'https://github.com/'
 
     def update_with_header(self, header: dict) -> None:
+        """Change score fields according to new lilypond header."""
         changed = False
 
         if 'mmh_title' in header:
@@ -116,7 +118,7 @@ class Score(models.Model):
         else:
             new_title = None
 
-        if new_title != None and self.title != new_title:
+        if new_title and self.title != new_title:
             self.title = new_title
             changed = True
 
@@ -127,13 +129,13 @@ class Score(models.Model):
         else:
             composer = None
 
-        if composer == None:
+        if composer is None:
             self.composer = None
             changed = True
         elif self.composer != composer:
             if not Composer.objects.filter(name=composer.name).exists():
                 composer.save()
-                self.composer_id = composer.id
+                self.composer_id = composer.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
                 changed = True
 
         if 'mmh_arranger' in header:
@@ -143,13 +145,13 @@ class Score(models.Model):
         else:
             arranger = None
 
-        if arranger == None:
+        if arranger is None:
             self.arranger = None
             changed = True
         elif self.arranger != arranger:
             if not Arranger.objects.filter(name=arranger.name).exists():
                 arranger.save()
-                self.arranger_id = arranger.id
+                self.arranger_id = arranger.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
                 changed = True
 
         fields = [
@@ -204,4 +206,4 @@ class Score(models.Model):
         return hash((self.id, self.title))
 
     def __str__(self):
-        return (f'{self.slug} ({self.title})')
+        return f'{self.slug} ({self.title})'

@@ -41,8 +41,9 @@ class PublishView(View):
                 return HttpResponse(
                     'Database updated.', content_type='text/plain'
                 )
-            except Exception as e:
-                msg = f'Failed to update DB. {e}'
+
+            except Exception as exception:
+                msg = f'Failed to update DB. {exception}'
                 return HttpResponseServerError(msg, content_type='text/plain')
         else:
             return HttpResponseBadRequest()
@@ -51,11 +52,11 @@ class PublishView(View):
         if 'Authorization' in request.headers:
             header = request.headers.get('Authorization', 'None').split()
             return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
-        else:
-            return False
+
+        return False
 
     def _get_db_scores(self) -> set:
-        return set([score.slug for score in Score.objects.all()])
+        return {score.slug for score in Score.objects.all()}
 
     def _get_score_header(self, slug: str) -> dict:
         """Download source of score with given slug and return its header."""
@@ -73,14 +74,15 @@ class PublishView(View):
                 if '}' in line:
                     reading_header = False
                     break
-                elif '=' in line:
+
+                if '=' in line:
                     field, value = map(methodcaller('strip'), line.split('='))
                     if len(field) > 0 and len(value) > 0:
                         if '"' in value:
                             value = value.strip('"')
                         if len(value) > 0:
                             header[field.lower()] = value
-            elif '\header' in line:
+            elif r'\header' in line:
                 reading_header = True
         return header
 
@@ -88,18 +90,18 @@ class PublishView(View):
         scores_to_delete = self._get_db_scores().difference(self.repo_scores)
         if scores_to_delete:
             Score.objects.filter(slug__in=scores_to_delete).delete()
-            self.logger.info(f'Scores {scores_to_delete} deleted.')
+            self.logger.info('Scores %s deleted.', scores_to_delete)
 
     def _update_changed_scores(self) -> None:
         for slug in self._get_db_scores():
             header = self._get_score_header(slug)
             score = Score.objects.filter(slug=slug)[0]
             score.update_with_header(header)
-            self.logger.info(f"Score '{slug}' updated.")
+            self.logger.info("Score '%s' updated.", slug)
 
     def _create_scores_added_to_repo(self) -> None:
-        for slug in (self.repo_scores.difference(self._get_db_scores())):
+        for slug in self.repo_scores.difference(self._get_db_scores()):
             header = self._get_score_header(slug)
             score = Score(slug=slug)
             score.update_with_header(header)
-            self.logger.info(f"Score '{slug}' created.")
+            self.logger.info("Score '%s' created.", slug)
