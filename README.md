@@ -4,12 +4,28 @@
 [![codecov](https://codecov.io/gh/dmitrvk/mymusichere-app/branch/master/graph/badge.svg)](https://codecov.io/gh/dmitrvk/mymusichere-app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-MyMusicHere is a web application
-that compiles LilyPond sheet music from the
-[Github repository](http://github.com/dmitrvk/mymusichere)
-and publishes compiled scores on the
+The idea of MyMusicHere project is to automate the process
+of publishing sheet music that was typeset with the
+[LilyPond](http://lilypond.org) system.
+
+The project includes two repositories.
+This repository contains the source code of the
+[website](http://www.mymusichere.me).
+The [second repository](http://github.com/dmitrvk/mymusichere)
+contains the source code of sheet music.
+
+Once uploaded to the master branch of
+[mymusichere](http://github.com/dmitrvk/mymusichere)
+repository, a source code in the LilyPond format
+is compiled with
+[GitHub Actions](https://github.com/dmitrvk/mymusichere/actions).
+Resulting PDF files and PNG images are sent to the webserver
+where the application publishes new scores on the
 [website](http://www.mymusichere.me).
 
+Each score has a unique 'slug'.
+This allows to create a simple and readable URL for each score, for example,
+[https://www.mymusichere.me/june](https://www.mymusichere.me/june).
 
 ## To run locally
 
