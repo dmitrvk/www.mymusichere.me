@@ -1,10 +1,8 @@
 import copy
 import os
-import unittest
-from unittest.mock import MagicMock
 
 from django.conf import settings
-from django.test import Client, TestCase
+from django.test import TestCase
 from pyfakefs.fake_filesystem_unittest import patchfs
 
 from scores.models import Arranger, Composer, Instrument, Score

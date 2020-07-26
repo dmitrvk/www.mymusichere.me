@@ -36,6 +36,7 @@ static:
 test: migrations-check
 	@coverage run --source=mymusichere,scores manage.py test $(APPS)
 	@coverage xml
+	@flake8 $(APPS) --exclude 'migrations'
 
 watch-scss:
 	watchmedo shell-command --patterns=*.scss --recursive --command="make scss" $(SCSS)

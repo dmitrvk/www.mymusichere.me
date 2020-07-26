@@ -4,10 +4,14 @@ coverage==5.0.4
 Django==3.0.7
 django-debug-toolbar==2.2
 docutils==0.16
+flake8==3.8.3
 isort==4.3.21
 libsass==0.19.4
+mccabe==0.6.1
 pathtools==0.1.2
+pycodestyle==2.6.0
 pyfakefs==4.0.2
+pyflakes==2.2.0
 pytz==2019.3
 PyYAML==5.3.1
 six==1.14.0

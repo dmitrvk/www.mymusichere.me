@@ -11,7 +11,8 @@ class ScoreViewTest(TestCase):
         self.test_score.save()
 
     def test_view_score(self):
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
+        args = [self.test_score.slug]
+        response = self.client.get(reverse('scores:score', args=args))
 
         self.assertEqual(response.status_code, 200)
 
@@ -22,7 +23,8 @@ class ScoreViewTest(TestCase):
         self.assertEqual(response_score, self.test_score)
 
     def test_no_pages(self):
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
+        args = [self.test_score.slug]
+        response = self.client.get(reverse('scores:score', args=args))
 
         self.assertEqual(response.status_code, 200)
 
@@ -34,7 +36,9 @@ class ScoreViewTest(TestCase):
         pages_paths = response_score.pages_paths
 
         self.assertEqual(len(pages_paths), 0)
-        self.assertContains(response, 'Sorry, sheet music for this piece is not available.')
+
+        message = 'Sorry, sheet music for this piece is not available.'
+        self.assertContains(response, message)
 
     def test_increment_views(self):
         self.assertEquals(self.test_score.views, 0)
@@ -43,7 +47,8 @@ class ScoreViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get(reverse('scores:score', args=[self.test_score.slug]))
+        args = [self.test_score.slug]
+        response = self.client.get(reverse('scores:score', args=args))
 
         self.assertEqual(response.status_code, 200)
 

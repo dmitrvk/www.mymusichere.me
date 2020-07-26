@@ -1,15 +1,7 @@
-import os
-import unittest
-from unittest.mock import MagicMock
-
 from django.conf import settings
-from django.http import HttpRequest
 from django.test import Client, TestCase
-from django.urls import reverse
-from pyfakefs.fake_filesystem_unittest import patchfs
 
 from scores.models import Arranger, Composer, Instrument, Score
-from scores.views import PublishView
 
 
 class PublishViewTest(TestCase):
@@ -22,7 +14,7 @@ class PublishViewTest(TestCase):
         self.test_slugs = {'testscore1', 'testscore2', 'testscore3'}
 
         self.test_lilypond_header = """
-        \header {
+        \\header {
             title = "Test Score"
             subtitle = "Subtitle"
             composer = "Composed by Composer"
