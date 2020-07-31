@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from scores.models import Score
 
 
-class IndexView(ListView):    # pylint: disable=too-many-ancestors
+class IndexView(ListView):
     """Index page with all scores."""
 
     template_name = 'scores/index.html'
