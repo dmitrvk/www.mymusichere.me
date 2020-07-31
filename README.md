@@ -1,8 +1,8 @@
 # MyMusicHere
 
-![build](https://github.com/dmitrvk/mymusichere-app/workflows/build/badge.svg)
-[![codecov](https://codecov.io/gh/dmitrvk/mymusichere.me/branch/master/graph/badge.svg)](https://codecov.io/gh/dmitrvk/mymusichere.me)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![build](https://img.shields.io/github/workflow/status/dmitrvk/mymusichere.me/build?color=3e3e3e&style=flat-square)](https://github.com/dmitrvk/mymusichere.me/actions)
+[![codecov](https://img.shields.io/codecov/c/github/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square&token=NH8F6U8988)](https://codecov.io/gh/dmitrvk/mymusichere.me)
+[![License: MIT](https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square)](https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE)
 
 The idea of MyMusicHere project is to automate the process
 of publishing sheet music that was typeset with the
@@ -76,3 +76,9 @@ and want to publish your scores on
 please, visit
 [this repository](https://github.com/dmitrvk/mymusichere)
 and create pull request with your score.
+
+
+## Licensing
+
+This project is licensed under the
+[MIT License](https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE).
