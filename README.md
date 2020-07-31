@@ -1,7 +1,7 @@
 # MyMusicHere
 
 ![build](https://github.com/dmitrvk/mymusichere-app/workflows/build/badge.svg)
-[![codecov](https://codecov.io/gh/dmitrvk/mymusichere-app/branch/master/graph/badge.svg)](https://codecov.io/gh/dmitrvk/mymusichere-app)
+[![codecov](https://codecov.io/gh/dmitrvk/mymusichere.me/branch/master/graph/badge.svg)](https://codecov.io/gh/dmitrvk/mymusichere.me)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 The idea of MyMusicHere project is to automate the process
