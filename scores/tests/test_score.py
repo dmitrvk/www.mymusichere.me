@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 import copy
 import os
 
@@ -120,7 +122,7 @@ class ScoreTest(TestCase):
         self.assertTrue(score_one == score_two)
 
     def test__hash__(self):
-        expected = hash((self.test_score.id, self.test_score.title))
+        expected = hash((self.test_score.id, self.test_score.title))  # pylint: disable=no-member  # noqa: E501
         self.assertEqual(self.test_score.__hash__(), expected)
 
     def test__str__(self):

@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 import logging
 import os
 import urllib.request
@@ -56,7 +58,7 @@ class PublishView(View):
         return False
 
     def _get_db_scores(self) -> set:
-        return {score.slug for score in Score.objects.all()}
+        return {score.slug for score in Score.objects.all()}  # pylint: disable=no-member  # noqa: E501
 
     def _get_score_header(self, slug: str) -> dict:
         """Download source of score with given slug and return its header."""
@@ -89,13 +91,13 @@ class PublishView(View):
     def _delete_scores_removed_from_repo(self) -> None:
         scores_to_delete = self._get_db_scores().difference(self.repo_scores)
         if scores_to_delete:
-            Score.objects.filter(slug__in=scores_to_delete).delete()
+            Score.objects.filter(slug__in=scores_to_delete).delete()  # pylint: disable=no-member  # noqa: E501
             self.logger.info('Scores %s deleted.', scores_to_delete)
 
     def _update_changed_scores(self) -> None:
         for slug in self._get_db_scores():
             header = self._get_score_header(slug)
-            score = Score.objects.filter(slug=slug)[0]
+            score = Score.objects.filter(slug=slug)[0]  # pylint: disable=no-member  # noqa: E501
             score.update_with_header(header)
             self.logger.info("Score '%s' updated.", slug)
 

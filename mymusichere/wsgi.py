@@ -1,7 +1,8 @@
-"""
-WSGI config for mymusichere project.
+# Licensed under the MIT License
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+"""WSGI config for mymusichere project.
+
+It exposes the WSGI callable as a module-level variable named `application`.
 """
 
 import os

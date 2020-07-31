@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 from django.db import models
 
 

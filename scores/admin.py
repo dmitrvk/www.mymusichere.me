@@ -1,9 +1,11 @@
+# Licensed under the MIT License
+
 from django.contrib import admin
 
-from .models import Arranger, Composer, Instrument, Score
+from scores import models
 
-admin.site.register(Arranger)
-admin.site.register(Composer)
-admin.site.register(Instrument)
-admin.site.register(Score)
+admin.site.register(models.Arranger)
+admin.site.register(models.Composer)
+admin.site.register(models.Instrument)
+admin.site.register(models.Score)
 admin.site.site_header = 'MyMusicHere Administration'

@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 import os
 
 from django.conf import settings

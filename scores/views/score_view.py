@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 from django.views.generic import DetailView
 
 from scores.models import Score

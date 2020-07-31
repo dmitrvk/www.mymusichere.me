@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 from django.conf import settings
 from django.test import Client, TestCase
 

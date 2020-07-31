@@ -1,3 +1,5 @@
+# Licensed under the MIT License
+
 APPS = mymusichere scores
 SCSS = mymusichere/scss
 

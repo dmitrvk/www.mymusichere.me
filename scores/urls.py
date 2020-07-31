@@ -1,6 +1,8 @@
+# Licensed under the MIT License
+
 from django.urls import path
 
-from . import views
+from scores import views
 
 app_name = 'scores'  # pylint: disable=invalid-name
 

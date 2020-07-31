@@ -1,6 +1,6 @@
-"""
-mymusichere URL Configuration
-"""
+# Licensed under the MIT License
+
+"""mymusichere URL Configuration."""
 
 from django.conf import settings
 from django.conf.urls.static import static

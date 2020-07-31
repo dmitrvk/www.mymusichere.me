@@ -1,6 +1,6 @@
-"""
-Django settings for www.mymusichere.me
-"""
+# Licensed under the MIT License
+
+"""Django settings for www.mymusichere.me."""
 
 import os
 
@@ -71,7 +71,7 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME':
-            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # noqa: E501
+            'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',  # pylint: disable=line-too-long  # noqa: E501
     },
     {
         'NAME':
