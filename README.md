@@ -4,30 +4,29 @@
 [![codecov](https://img.shields.io/codecov/c/github/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square&token=NH8F6U8988)](https://codecov.io/gh/dmitrvk/mymusichere.me)
 [![License: MIT](https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square)](https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE)
 
+[GitHub Actions]: https://github.com/dmitrvk/mymusichere/actions
+[LilyPond]: http://lilypond.org
+[mymusichere]: https://github.com/dmitrvk/mymusichere
+[website]: https://www.mymusichere.me
+
 The idea of MyMusicHere project is to automate the process
-of publishing sheet music that was typeset with the
-[LilyPond](http://lilypond.org) system.
+of publishing sheet music that was typeset with the [LilyPond] system.
 
 The project includes two repositories.
-This repository contains the source code of the
-[website](http://www.mymusichere.me).
-The [second repository](http://github.com/dmitrvk/mymusichere)
-contains the source code of sheet music.
+This repository contains the source code of the [website].
+The [mymusichere] repository contains the source code of sheet music.
 
-![screenshot](screenshot.jpg)
+[![screenshot](screenshot.jpg)](https://www.mymusichere.me)
 
-Once uploaded to the master branch of
-[mymusichere](http://github.com/dmitrvk/mymusichere)
-repository, a source code in the LilyPond format
-is compiled with
-[GitHub Actions](https://github.com/dmitrvk/mymusichere/actions).
+Once uploaded to the master branch of [mymusichere] repository,
+a source code in the LilyPond format is compiled with [GitHub Actions].
 Resulting PDF files and PNG images are sent to the webserver
-where the application publishes new scores on the
-[website](http://www.mymusichere.me).
+where the application publishes new scores on the [website].
 
 Each score has a unique 'slug'.
 This allows to create a simple and readable URL for each score, for example,
 [https://www.mymusichere.me/june](https://www.mymusichere.me/june).
+
 
 ## To run locally
 
@@ -35,7 +34,7 @@ This allows to create a simple and readable URL for each score, for example,
 
 2. Install dependencies with `make install`
 
-3. Install [LilyPond](https://lilypond.org)
+3. Install [LilyPond]
 
 4. Provide the following environmental variables:
 
@@ -73,11 +72,9 @@ This enables auto-compilation every time SCSS is changed.
 ## Publishing sheet music
 
 If you use LilyPond to create sheet music
-and want to publish your scores on
-[mymusichere.me](https://www.mymusichere.me),
-please, visit
-[this repository](https://github.com/dmitrvk/mymusichere)
-and create pull request with your score.
+and want to publish your scores on the [website],
+please, visit the [mymusichere] repository
+and create a pull request with your score.
 
 
 ## Licensing
