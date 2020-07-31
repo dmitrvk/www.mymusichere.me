@@ -16,7 +16,7 @@ The project includes two repositories.
 This repository contains the source code of the [website].
 The [mymusichere] repository contains the source code of sheet music.
 
-[![screenshot](screenshot.jpg)](https://www.mymusichere.me)
+[![screenshot](https://raw.githubusercontent.com/dmitrvk/mymusichere.me/master/screenshot.jpg)](https://www.mymusichere.me)
 
 Once uploaded to the master branch of [mymusichere] repository,
 a source code in the LilyPond format is compiled with [GitHub Actions].
