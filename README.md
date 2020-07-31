@@ -14,6 +14,8 @@ This repository contains the source code of the
 The [second repository](http://github.com/dmitrvk/mymusichere)
 contains the source code of sheet music.
 
+![screenshot](screenshot.jpg)
+
 Once uploaded to the master branch of
 [mymusichere](http://github.com/dmitrvk/mymusichere)
 repository, a source code in the LilyPond format
