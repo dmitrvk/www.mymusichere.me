@@ -33,13 +33,13 @@ How it works
 
 
 Once uploaded to the master branch of `mymusichere`_ repository,
-a source code in the LilyPond format is compiled with `GitHub _Actions`.
+a source code in the LilyPond format is compiled with `GitHub Actions`_.
 Resulting PDF files and PNG images are sent to the webserver
 where the application publishes new scores on the `website`_.
 
 Each score has a unique 'slug'.
 This allows to create a simple and readable URL for each score, for example,
-`https://www.mymusichere.me/june <https://www.mymusichere.me/june>`_.
+https://www.mymusichere.me/june.
 
 
 Run locally
