@@ -4,7 +4,7 @@ MyMusicHere
 
 .. class:: no-web no-pdf
 
-    |build| |coverage| |license|
+    |build| |coverage| |license| |pyup|
 
 
 The idea of MyMusicHere project is to automate the process
@@ -129,3 +129,7 @@ This project is licensed runder the `MIT License`_.
 .. |license| image:: https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square
     :target: https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE
     :alt: GNU General Public License v3.0
+
+.. |pyup| image:: https://pyup.io/repos/github/dmitrvk/mymusichere.me/shield.svg
+     :target: https://pyup.io/repos/github/dmitrvk/mymusichere.me/
+     :alt: Updates
