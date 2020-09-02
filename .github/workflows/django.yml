@@ -62,4 +62,4 @@ jobs:
         ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop'
         ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && python manage.py migrate'
         ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make install && make css && make static'
-        curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload'
+        curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload
