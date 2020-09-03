@@ -138,6 +138,4 @@ MEDIA_URL = '/media/'
 
 GITHUB_SCORES_SOURCE_REPO = 'https://github.com/dmitrvk/mymusichere'
 
-SCORES_DIR = STATIC_ROOT / 'scores'
-
 PUBLISH_TOKEN = os.environ['PUBLISH_TOKEN']
