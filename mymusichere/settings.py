@@ -2,6 +2,7 @@
 
 """Django settings for www.mymusichere.me."""
 
+import json
 import os
 import pathlib
 
@@ -62,10 +63,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mymusichere.wsgi.application'
 
+try:
+    with (BASE_DIR / 'secrets.json').open() as handle:
+        SECRETS_JSON = json.load(handle)
+except OSError:
+    SECRETS_JSON = {}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mymusichere',
+        'USER': 'mymusichere',
+        'HOST': SECRETS_JSON.get('db_host', ''),
+        'PASSWORD': SECRETS_JSON.get('db_password', ''),
     }
 }
 

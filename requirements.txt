@@ -8,6 +8,7 @@ flake8==3.8.3
 isort==5.4.2
 libsass==0.20.1
 mccabe==0.6.1
+mysqlclient==2.0.1
 pathtools==0.1.2
 pycodestyle==2.6.0
 pyfakefs==4.1.0

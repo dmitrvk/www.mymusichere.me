@@ -21,10 +21,20 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Set Up MySQL
+      run: |
+        sudo service mysql start
+        sudo mysql --user='root' --password='root' --execute="create user 'mymusichere'@'%' identified by 'secretpass'"
+        sudo mysql --user='root' --password='root' --execute="create database mymusichere"
+        sudo mysql --user='root' --password='root' --execute='grant all privileges on *.* to "mymusichere"@"%"'
+        sudo mysql --user='root' --password='root' --execute='flush privileges'
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         make install
+    - name: Provide Secrets
+      run: |
+        echo '{ "db_host": "127.0.0.1", "db_password": "secretpass" }' > secrets.json
     - name: Run Tests
       run: |
         make test
@@ -36,21 +46,38 @@ jobs:
       with:
         file: ./coverage.xml
         name: codecov-mymusichere
-        
+<<<<<<< HEAD
+
   deploy:
-    
+
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    
+
     runs-on: ubuntu-latest
-  
+
+=======
+
+  deploy:
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    runs-on: ubuntu-latest
+
+>>>>>>> f6791ff... Use MySQL instead of SQLite
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.8]
-    
+<<<<<<< HEAD
+
     steps:
     - uses: actions/checkout@v2
-      
+
+=======
+
+    steps:
+    - uses: actions/checkout@v2
+
+>>>>>>> f6791ff... Use MySQL instead of SQLite
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
@@ -60,6 +87,7 @@ jobs:
     - name: Deploy
       run: |
         ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop'
+        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make install'
         ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && python manage.py migrate'
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make install && make css && make static'
+        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make css && make static'
         curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload
