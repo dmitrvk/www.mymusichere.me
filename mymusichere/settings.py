@@ -3,8 +3,9 @@
 """Django settings for www.mymusichere.me."""
 
 import os
+import pathlib
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parent.parent
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
@@ -45,7 +46,7 @@ ROOT_URLCONF = 'mymusichere.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'mymusichere', 'templates')],
+        'DIRS': [BASE_DIR / 'mymusichere' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,7 +65,7 @@ WSGI_APPLICATION = 'mymusichere.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -100,7 +101,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'mymusichere.log'),
+            'filename': BASE_DIR / 'mymusichere.log',
             'formatter': 'verbose'
         },
     },
@@ -122,21 +123,21 @@ USE_TZ = True
 
 SESSION_COOKIE_AGE = 600
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_DIRS = [
-    '%s/mymusichere/static' % BASE_DIR
+    BASE_DIR / 'mymusichere' / 'static',
 ]
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 MEDIA_URL = '/media/'
 
 
 GITHUB_SCORES_SOURCE_REPO = 'https://github.com/dmitrvk/mymusichere'
 
-SCORES_DIR = os.path.join(STATIC_ROOT, 'scores')
+SCORES_DIR = STATIC_ROOT / 'scores'
 
 PUBLISH_TOKEN = os.environ['PUBLISH_TOKEN']
