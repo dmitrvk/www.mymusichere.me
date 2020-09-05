@@ -34,7 +34,7 @@ How it works
 
 Once uploaded to the master branch of `mymusichere`_ repository,
 a source code in the LilyPond format is compiled with `GitHub Actions`_.
-Resulting PDF files and PNG images are sent to the webserver
+Resulting PDF files and PNG images are sent to the web server
 where the application publishes new scores on the `website`_.
 
 Each score has a unique
@@ -105,7 +105,7 @@ and create a pull request with your score.
 Licensing
 =========
 
-This project is licensed runder the `MIT License`_.
+This project is licensed under the `MIT License`_.
 
 
 .. _GitHub Actions: https://github.com/dmitrvk/mymusichere/actions
