@@ -2,11 +2,10 @@
 
 import os
 
+import scores.models
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-
-from scores.models import Arranger, Composer, Instrument
 
 
 class Score(models.Model):
@@ -125,9 +124,9 @@ class Score(models.Model):
             changed = True
 
         if 'mmh_composer' in header:
-            composer = Composer(name=header.get('mmh_composer'))
+            composer = scores.models.Composer(name=header.get('mmh_composer'))
         elif 'composer' in header:
-            composer = Composer(name=header.get('composer'))
+            composer = scores.models.Composer(name=header.get('composer'))
         else:
             composer = None
 
@@ -135,15 +134,16 @@ class Score(models.Model):
             self.composer = None
             changed = True
         elif self.composer != composer:
-            if not Composer.objects.filter(name=composer.name).exists():
+            if not scores.models.Composer.objects.filter(
+                    name=composer.name).exists():
                 composer.save()
                 self.composer_id = composer.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
                 changed = True
 
         if 'mmh_arranger' in header:
-            arranger = Arranger(name=header.get('mmh_arranger'))
+            arranger = scores.models.Arranger(name=header.get('mmh_arranger'))
         elif 'arranger' in header:
-            arranger = Arranger(name=header.get('arranger'))
+            arranger = scores.models.Arranger(name=header.get('arranger'))
         else:
             arranger = None
 
@@ -151,7 +151,8 @@ class Score(models.Model):
             self.arranger = None
             changed = True
         elif self.arranger != arranger:
-            if not Arranger.objects.filter(name=arranger.name).exists():
+            if not scores.models.Arranger.objects.filter(
+                    name=arranger.name).exists():
                 arranger.save()
                 self.arranger_id = arranger.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
                 changed = True
@@ -169,13 +170,14 @@ class Score(models.Model):
 
         if instruments:
             for name in instruments:
-                if Instrument.objects.filter(name=name).exists():
-                    instrument = Instrument.objects.filter(name=name)[0]
+                if scores.models.Instrument.objects.filter(name=name).exists():
+                    instrument = scores.models.Instrument.objects.filter(
+                        name=name)[0]
                     self.save()
                     self.instruments.add(instrument)
                     changed = True
                 else:
-                    instrument = Instrument(name=name)
+                    instrument = scores.models.Instrument(name=name)
                     instrument.save()
                     self.save()
                     self.instruments.add(instrument)

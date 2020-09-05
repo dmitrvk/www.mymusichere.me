@@ -3,10 +3,10 @@
 import copy
 import os
 
-from django.conf import settings
-from django.test import TestCase
 from pyfakefs.fake_filesystem_unittest import patchfs
 
+from django.conf import settings
+from django.test import TestCase
 from scores.models import Arranger, Composer, Instrument, Score
 
 

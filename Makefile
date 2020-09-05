@@ -24,7 +24,7 @@ install:
 	@npm install
 
 isort:
-	isort -rc --atomic $(APPS)
+	isort --atomic $(APPS)
 
 migrations-check:
 	@./manage.py makemigrations --check --dry-run

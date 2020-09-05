@@ -1,7 +1,7 @@
 # Licensed under the MIT License
 
-from django.apps import AppConfig
+from django import apps
 
 
-class ScoresConfig(AppConfig):
+class ScoresConfig(apps.AppConfig):
     name = 'scores'

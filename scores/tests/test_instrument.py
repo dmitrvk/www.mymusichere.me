@@ -1,7 +1,6 @@
 # Licensed under the MIT License
 
 from django.test import TestCase
-
 from scores.models import Instrument
 
 

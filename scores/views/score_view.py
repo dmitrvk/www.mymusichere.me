@@ -1,14 +1,13 @@
 # Licensed under the MIT License
 
-from django.views.generic import DetailView
+from django.views import generic
+from scores import models
 
-from scores.models import Score
 
-
-class ScoreView(DetailView):  # pylint: disable=too-few-public-methods
+class ScoreView(generic.DetailView):  # pylint: disable=too-few-public-methods
     """Page with sheet music for a score."""
 
-    model = Score
+    model = models.Score
     template_name = 'scores/score.html'
 
     def get_object(self):

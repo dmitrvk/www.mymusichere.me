@@ -1,7 +1,6 @@
 # Licensed under the MIT License
 
 from django.contrib import admin
-
 from scores import models
 
 admin.site.register(models.Arranger)
