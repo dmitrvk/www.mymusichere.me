@@ -2,7 +2,6 @@
 
 import os
 
-import scores.models
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -107,86 +106,6 @@ class Score(models.Model):
             return settings.GITHUB_SCORES_SOURCE_REPO
 
         return 'https://github.com/'
-
-    def update_with_header(self, header: dict) -> None:
-        """Change score fields according to new lilypond header."""
-        changed = False
-
-        if 'mmh_title' in header:
-            new_title = header.get('mmh_title')
-        elif 'title' in header:
-            new_title = header.get('title')
-        else:
-            new_title = None
-
-        if new_title and self.title != new_title:
-            self.title = new_title
-            changed = True
-
-        if 'mmh_composer' in header:
-            composer = scores.models.Composer(name=header.get('mmh_composer'))
-        elif 'composer' in header:
-            composer = scores.models.Composer(name=header.get('composer'))
-        else:
-            composer = None
-
-        if composer is None:
-            self.composer = None
-            changed = True
-        elif self.composer != composer:
-            if not scores.models.Composer.objects.filter(
-                    name=composer.name).exists():
-                composer.save()
-                self.composer_id = composer.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
-                changed = True
-
-        if 'mmh_arranger' in header:
-            arranger = scores.models.Arranger(name=header.get('mmh_arranger'))
-        elif 'arranger' in header:
-            arranger = scores.models.Arranger(name=header.get('arranger'))
-        else:
-            arranger = None
-
-        if arranger is None:
-            self.arranger = None
-            changed = True
-        elif self.arranger != arranger:
-            if not scores.models.Arranger.objects.filter(
-                    name=arranger.name).exists():
-                arranger.save()
-                self.arranger_id = arranger.id  # pylint: disable=attribute-defined-outside-init  # noqa: E501
-                changed = True
-
-        fields = [
-            'mmh_instruments', 'mmh_instrument', 'instruments', 'instrument'
-        ]
-
-        instruments = None
-
-        for field in fields:
-            if field in header:
-                instruments = header.get(field).split(',')
-                break
-
-        if instruments:
-            for name in instruments:
-                if scores.models.Instrument.objects.filter(name=name).exists():
-                    instrument = scores.models.Instrument.objects.filter(
-                        name=name)[0]
-                    self.save()
-                    self.instruments.add(instrument)
-                    changed = True
-                else:
-                    instrument = scores.models.Instrument(name=name)
-                    instrument.save()
-                    self.save()
-                    self.instruments.add(instrument)
-                    changed = True
-        else:
-            self.instruments.all().delete()
-
-        if changed:
-            self.save()
 
     def save(self, *args, **kwargs):
         """Set timestamp when first created."""
