@@ -1,9 +1,9 @@
 # Licensed under the MIT License
 
+import json
 import logging
 import operator
-import os
-import urllib.request
+from typing import List
 
 from django import http, views
 from django.conf import settings
@@ -12,96 +12,127 @@ from scores import models
 
 
 class PublishView(views.View):
-    """Publish scores on the website.
-
-    Publishing includes copying assets to static files dir and
-    updating the database."""
+    """Publish scores on the website."""
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-
-        self.repo_scores = set()
-        with os.scandir(settings.MEDIA_ROOT) as dir_entries:
-            for entry in dir_entries:
-                if entry.is_dir():
-                    self.repo_scores.add(entry.name)
 
     @method_decorator(views.decorators.csrf.csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super(PublishView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request):
-        if self._is_request_valid(request):
-            try:
-                self._delete_scores_removed_from_repo()
-                self._update_changed_scores()
-                self._create_scores_added_to_repo()
-                return http.HttpResponse(
-                    'Database updated.', content_type='text/plain'
-                )
-
-            except Exception as exception:
-                msg = f'Failed to update DB. {exception}'
-                return http.HttpResponseServerError(
-                    msg, content_type='text/plain')
-        else:
+        if 'Authorization' not in request.headers:
             return http.HttpResponseBadRequest()
 
-    def _is_request_valid(self, request) -> bool:
-        if 'Authorization' in request.headers:
-            header = request.headers.get('Authorization', 'None').split()
-            return header[0] == 'Token' and header[1] == settings.PUBLISH_TOKEN
+        auth_header = request.headers.get('Authorization', 'None')
 
-        return False
+        if auth_header == f'Token {settings.PUBLISH_TOKEN}':
+            scores_headers = json.loads(request.body.decode())
+            slugs = list(map(
+                operator.itemgetter('slug'), scores_headers))
 
-    def _get_db_scores(self) -> set:
-        return {score.slug for score in models.Score.objects.all()}  # pylint: disable=no-member  # noqa: E501
+            # Delete scores which were removed from repository
+            models.Score.objects.exclude(slug__in=slugs).delete()
+            self.logger.info('Redundant scores deleted.')
 
-    def _get_score_header(self, slug: str) -> dict:
-        """Download source of score with given slug and return its header."""
-        header = dict()
+            # Update scores or create new ones
+            for score_header in scores_headers:
+                self.logger.info("Processing score '%s'", score_header['slug'])
+                self._create_or_update_score(score_header)
 
-        base_url = 'https://raw.githubusercontent.com'
-        url = f'{base_url}/dmitrvk/mymusichere/master/{slug}/{slug}.ly'
-        ly_file = urllib.request.urlopen(url)
+        self.logger.info("Published successfully.")
+        return http.HttpResponse('Scores published.')
 
-        reading_header = False
+    def _create_or_update_score(self, score_header: List[dict]) -> None:
+        score_properties = score_header.copy()
 
-        for line in ly_file:
-            line = bytes.decode(line).strip()
-            if reading_header:
-                if '}' in line:
-                    reading_header = False
-                    break
+        # Default assignment in many-to-many is restricted,
+        # so handle instruments later, when score already exists
+        del score_properties['instruments']
 
-                if '=' in line:
-                    field, value = map(
-                        operator.methodcaller('strip'), line.split('='))
-                    if len(field) > 0 and len(value) > 0:
-                        if '"' in value:
-                            value = value.strip('"')
-                        if len(value) > 0:
-                            header[field.lower()] = value
-            elif r'\header' in line:
-                reading_header = True
-        return header
+        if 'composer' in score_header:
+            composer = self._get_or_create_composer(score_header['composer'])
+            score_properties['composer'] = composer
 
-    def _delete_scores_removed_from_repo(self) -> None:
-        scores_to_delete = self._get_db_scores().difference(self.repo_scores)
-        if scores_to_delete:
-            models.Score.objects.filter(slug__in=scores_to_delete).delete()  # pylint: disable=no-member  # noqa: E501
-            self.logger.info('Scores %s deleted.', scores_to_delete)
+        if 'arranger' in score_header:
+            arranger = self._get_or_create_arranger(score_header['arranger'])
+            score_properties['arranger'] = arranger
 
-    def _update_changed_scores(self) -> None:
-        for slug in self._get_db_scores():
-            header = self._get_score_header(slug)
-            score = models.Score.objects.filter(slug=slug)[0]  # pylint: disable=no-member  # noqa: E501
-            score.update_with_header(header)
-            self.logger.info("Score '%s' updated.", slug)
+        score, created = models.Score.objects.get_or_create(
+            slug=score_header['slug'], defaults=score_properties,
+        )
 
-    def _create_scores_added_to_repo(self) -> None:
-        for slug in self.repo_scores.difference(self._get_db_scores()):
-            header = self._get_score_header(slug)
-            score = models.Score(slug=slug)
-            score.update_with_header(header)
-            self.logger.info("Score '%s' created.", slug)
+        if created:
+            print('Score', score.slug, 'created')
+            self.logger.info("Score '%s' created", score.slug)
+        else:
+            score.title = score_properties['title']
+
+            if 'composer' in score_properties:
+                score.composer = score_properties['composer']
+
+            if 'arranger' in score_properties:
+                score.arranger = score_properties['arranger']
+
+            self.logger.info("Score '%s' updated", score.slug)
+
+        if 'instruments' in score_header:
+            instruments = self._get_or_create_instruments(
+                score_header['instruments'])
+            score.instruments.set(instruments)
+
+        self.logger.info("Instruments for score '%s' updated", score.slug)
+
+        score.save()
+
+    def _get_or_create_composer(
+            self, score_header_composer: dict) -> models.Composer:
+        composer_name = score_header_composer
+
+        composer, created = models.Composer.objects.get_or_create(
+            name=composer_name
+        )
+
+        if created:
+            self.logger.info("Composer '%s' created", composer.name)
+        else:
+            self.logger.info("Composer '%s' already exists", composer.name)
+
+        return composer
+
+    def _get_or_create_arranger(
+            self, score_header_arranger: dict) -> models.Arranger:
+        arranger_name = score_header_arranger
+
+        arranger, created = models.Arranger.objects.get_or_create(
+            name=arranger_name
+        )
+
+        if created:
+            self.logger.info("Arranger '%s' created", arranger.name)
+        else:
+            self.logger.info("Arranger '%s' already exists", arranger.name)
+
+        return arranger
+
+    def _get_or_create_instruments(
+            self, score_header_instruments: str) -> list:
+        instruments_names = score_header_instruments
+
+        instruments = []
+
+        for instrument_name in instruments_names.split():
+            instrument, created = models.Instrument.objects.get_or_create(
+                name=instrument_name
+            )
+
+            if created:
+                self.logger.info("Instrument '%s' created", instrument.name)
+            else:
+                message = "Instrument '%s' already exists"
+                self.logger.info(message, instrument.name)
+
+            instruments.append(instrument)
+
+        return instruments

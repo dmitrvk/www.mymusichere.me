@@ -24,7 +24,7 @@ class Score(models.Model):
         null=True
     )
     instruments = models.ManyToManyField('Instrument', blank=True)
-    datetime_created = models.DateTimeField(editable=False)
+    timestamp = models.DateTimeField(editable=False)
     views = models.PositiveIntegerField(default=0)
 
     @property
@@ -191,7 +191,7 @@ class Score(models.Model):
     def save(self, *args, **kwargs):
         """Set timestamp when first created."""
         if not self.id:
-            self.datetime_created = timezone.now()
+            self.timestamp = timezone.now()
 
         return super(Score, self).save(*args, **kwargs)
 

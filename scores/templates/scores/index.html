@@ -47,10 +47,10 @@
                 </div>
               </div>
               <div class="row no-gutters">
-                <div class="score-datetime-created col">
+                <div class="score-timestamp col">
                   <p>
-                    <time datetime="{{ score.datetime_created|date:"c" }}">
-                      {{ score.datetime_created|naturalday:"M j, Y"|default:"date unknown"}}
+                    <time datetime="{{ score.timestamp|date:"c" }}">
+                      {{ score.timestamp|naturalday:"M j, Y"|default:"date unknown"}}
                     </time>
                   </p>
                 </div>
