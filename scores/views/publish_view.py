@@ -27,19 +27,21 @@ class PublishView(views.View):
 
         auth_header = request.headers.get('Authorization', 'None')
 
-        if auth_header == f'Token {settings.PUBLISH_TOKEN}':
-            scores_headers = json.loads(request.body.decode())
-            slugs = list(map(
-                operator.itemgetter('slug'), scores_headers))
+        if auth_header != f'Token {settings.PUBLISH_TOKEN}':
+            return http.HttpResponseBadRequest()
 
-            # Delete scores which were removed from repository
-            models.Score.objects.exclude(slug__in=slugs).delete()
-            self.logger.info('Redundant scores deleted.')
+        scores_headers = json.loads(request.body.decode())
+        slugs = list(map(
+            operator.itemgetter('slug'), scores_headers))
 
-            # Update scores or create new ones
-            for score_header in scores_headers:
-                self.logger.info("Processing score '%s'", score_header['slug'])
-                self._create_or_update_score(score_header)
+        # Delete scores which were removed from repository
+        models.Score.objects.exclude(slug__in=slugs).delete()
+        self.logger.info('Redundant scores deleted.')
+
+        # Update scores or create new ones
+        for score_header in scores_headers:
+            self.logger.info("Processing score '%s'", score_header['slug'])
+            self._create_or_update_score(score_header)
 
         self.logger.info("Published successfully.")
         return http.HttpResponse('Scores published.')
