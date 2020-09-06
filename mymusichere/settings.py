@@ -73,7 +73,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mymusichere',
-        'USER': 'mymusichere',
+        'USER': SECRETS_JSON.get('db_user', ''),
         'HOST': SECRETS_JSON.get('db_host', ''),
         'PASSWORD': SECRETS_JSON.get('db_password', ''),
     }
