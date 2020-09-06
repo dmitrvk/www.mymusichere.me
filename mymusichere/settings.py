@@ -72,7 +72,7 @@ except OSError:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mymusichere',
+        'NAME': SECRETS_JSON.get('db_name', ''),
         'USER': SECRETS_JSON.get('db_user', ''),
         'HOST': SECRETS_JSON.get('db_host', ''),
         'PASSWORD': SECRETS_JSON.get('db_password', ''),

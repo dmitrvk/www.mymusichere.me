@@ -34,7 +34,7 @@ jobs:
         make install
     - name: Provide Secrets
       run: |
-        echo '{ "db_host": "127.0.0.1", "db_user": "mymusichere", "db_password": "secretpass" }' > secrets.json
+        echo '{ "db_host": "127.0.0.1", "db_name": "mymusichere", "db_user": "mymusichere", "db_password": "secretpass" }' > secrets.json
     - name: Run Tests
       run: |
         make test
