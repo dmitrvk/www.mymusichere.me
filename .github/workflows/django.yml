@@ -51,6 +51,8 @@ jobs:
 
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
+    needs: build
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -69,8 +71,5 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop'
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make install'
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && python manage.py migrate'
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && workon mymusichere && make css && make static'
+        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop && make install && python manage.py migrate && make css && make static'
         curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload
