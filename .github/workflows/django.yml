@@ -71,5 +71,5 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop && make install && python manage.py migrate && make css && make static'
+        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop && workon mymusichere && make install && python manage.py migrate && make css && make static'
         curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload
