@@ -48,7 +48,11 @@ Run locally
 
 1. Create a Python 3.8 virtualenv
 
-2. Install dependencies with ``make install``
+2. Install dependencies:
+
+.. code-block:: bash
+
+    make install
 
 3. Install `LilyPond`_
 
@@ -66,15 +70,49 @@ Run locally
 | ``SECRET_KEY``         | Django's app secret key                    |
 +------------------------+--------------------------------------------+
 
-5. Create a superuser with ``./manage.py createsuperuser``
+5. Create a MySQL database
 
-6. Set up the database with ``./manage.py migrate``
+6. Create a ``secrets.json`` file in the project's root directory
+   containing the information needed to connect to the database:
 
-7. Compile CSS with ``make css``
+.. code-block:: json
 
-8. Collect static files with ``make static``
+    {
+        "db_host": "localhost",
+        "db_name": "mymusichere",
+        "db_user": "mymusichere",
+        "db_password": "secretpass"
+    }
 
-9. Run dev server with ``make run``
+7. Apply migrations:
+
+.. code-block:: bash
+
+    ./manage.py migrate
+
+8. Create a superuser:
+
+.. code-block:: bash
+
+    ./manage.py createsuperuser
+
+9. Compile CSS:
+
+.. code-block:: bash
+
+    make css
+
+10. Collect static files:
+
+.. code-block:: bash
+
+    make static
+
+11. Run dev server:
+
+.. code-block:: bash
+
+    make run
 
 The website should be available at http://localhost:8000/
 
