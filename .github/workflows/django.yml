@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -46,30 +46,3 @@ jobs:
       with:
         file: ./coverage.xml
         name: codecov-mymusichere
-
-  deploy:
-
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    needs: build
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_KEY }}
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
-    - name: Deploy
-      run: |
-        ssh ${{ secrets.USER }}@${{ secrets.HOST }} 'cd ~/mymusichere.me && git stash && git pull && git stash pop && workon mymusichere && make install && python manage.py migrate && make css && make static'
-        curl -H 'Authorization: Token ${{ secrets.TOKEN }}' -X POST https://www.pythonanywhere.com/api/v0/user/${{ secrets.USER }}/webapps/www.mymusichere.me/reload
