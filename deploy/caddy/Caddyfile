@@ -1,0 +1,7 @@
+mymusichere.me {
+    redir https://www.mymusichere.me{uri}
+}
+
+www.mymusichere.me {
+    respond "www.mymusichere.me"
+}

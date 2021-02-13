@@ -43,3 +43,11 @@ test: migrations-check
 watch-scss:
 	watchmedo shell-command --patterns=*.scss --recursive --command="make scss" $(SCSS)
 
+image:
+	docker build -t ghcr.io/dmitrvk/mymusichere_caddy:latest deploy/caddy
+	docker push ghcr.io/dmitrvk/mymusichere_caddy:latest
+
+deploy:
+	docker stack deploy --with-registry-auth --compose-file=deploy/docker-stack.yml mymusichere
+
+.PHONY: deploy

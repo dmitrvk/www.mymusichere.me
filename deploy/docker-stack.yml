@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  caddy:
+    image: ghcr.io/dmitrvk/mymusichere_caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_config:/config
+      - caddy_data:/data
+
+volumes:
+  caddy_config:
+  caddy_data:

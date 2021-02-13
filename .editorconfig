@@ -25,3 +25,5 @@ indent_style = tab
 [{package.json,django.yml}]
 indent_size = 2
 
+[*.yml]
+indent_size = 2
