@@ -1,6 +1,22 @@
 version: "3.8"
 
 services:
+  web:
+    image: ghcr.io/dmitrvk/mymusichere:latest
+    volumes:
+      - ../static:/code/static
+    secrets:
+      - mymusichere_secret_key
+      - mymusichere_db_name
+      - mymusichere_db_user
+      - mymusichere_db_password
+    environment:
+      DEBUG: 0
+      BASE_DIR: /code
+      MYMUSICHERE_REMOTE: https://github.com/dmitrvk/mymusichere
+      PUBLISH_TOKEN: token
+      MYMUSICHERE_DB_HOST: db
+
   caddy:
     image: ghcr.io/dmitrvk/mymusichere_caddy:latest
     ports:
@@ -9,7 +25,32 @@ services:
     volumes:
       - caddy_config:/config
       - caddy_data:/data
+      - ../static:/srv/static
+
+  db:
+    image: postgres:13.2
+    volumes:
+      - mymusichere_postgres_data:/var/lib/postgresql/data/
+    secrets:
+      - mymusichere_db_name
+      - mymusichere_db_user
+      - mymusichere_db_password
+    environment:
+      POSTGRES_DB_FILE: /run/secrets/mymusichere_db_name
+      POSTGRES_USER_FILE: /run/secrets/mymusichere_db_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/mymusichere_db_password
 
 volumes:
   caddy_config:
   caddy_data:
+  mymusichere_postgres_data:
+
+secrets:
+  mymusichere_secret_key:
+    external: true
+  mymusichere_db_name:
+    external: true
+  mymusichere_db_user:
+    external: true
+  mymusichere_db_password:
+    external: true

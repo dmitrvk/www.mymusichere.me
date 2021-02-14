@@ -2,15 +2,17 @@
 
 """Django settings for www.mymusichere.me."""
 
-import json
 import os
 import pathlib
 
+from mymusichere import env
+
+
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parent.parent
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = env.get_secret('mymusichere_secret_key')
 
-DEBUG = True
+DEBUG = bool(int(env.get_config('debug', '0')))
 
 ALLOWED_HOSTS = ['*']
 
@@ -63,19 +65,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mymusichere.wsgi.application'
 
-try:
-    with (BASE_DIR / 'secrets.json').open() as handle:
-        SECRETS_JSON = json.load(handle)
-except OSError:
-    SECRETS_JSON = {}
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': SECRETS_JSON.get('db_name', ''),
-        'USER': SECRETS_JSON.get('db_user', ''),
-        'HOST': SECRETS_JSON.get('db_host', ''),
-        'PASSWORD': SECRETS_JSON.get('db_password', ''),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': env.get_config('mymusichere_db_host'),
+        'NAME': env.get_secret('mymusichere_db_name'),
+        'USER': env.get_secret('mymusichere_db_user'),
+        'PASSWORD': env.get_secret('mymusichere_db_password'),
     }
 }
 

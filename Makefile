@@ -33,7 +33,7 @@ run:
 	./manage.py runserver 0:8000
 
 static:
-	./manage.py collectstatic --clear --noinput
+	./manage.py collectstatic --noinput
 
 test: migrations-check
 	@coverage run --source=mymusichere,scores manage.py test $(APPS)
@@ -44,7 +44,9 @@ watch-scss:
 	watchmedo shell-command --patterns=*.scss --recursive --command="make scss" $(SCSS)
 
 image:
+	docker build -f deploy/Dockerfile -t ghcr.io/dmitrvk/mymusichere:latest .
 	docker build -t ghcr.io/dmitrvk/mymusichere_caddy:latest deploy/caddy
+	docker push ghcr.io/dmitrvk/mymusichere:latest
 	docker push ghcr.io/dmitrvk/mymusichere_caddy:latest
 
 deploy:

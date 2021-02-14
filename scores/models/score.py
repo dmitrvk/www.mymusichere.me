@@ -72,7 +72,9 @@ class Score(models.Model):
             return int(path.split('page')[1].split('.')[0])
 
         if self.slug:
-            pages_dir = os.path.join(settings.MEDIA_ROOT, self.slug)
+            pages_dir = os.path.join(
+                settings.BASE_DIR, 'static', 'scores', self.slug,
+            )
 
             if os.path.exists(pages_dir) and os.path.isdir(pages_dir):
                 dir_entries = filter(dir_entry_is_page, os.scandir(pages_dir))
