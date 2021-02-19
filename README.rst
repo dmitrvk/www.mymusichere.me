@@ -4,7 +4,7 @@ MyMusicHere
 
 .. class:: no-web no-pdf
 
-    |build| |license|
+    |license|
 
 
 The idea of MyMusicHere project is to automate the process
@@ -155,10 +155,6 @@ This project is licensed under the `MIT License`_.
 .. _mymusichere: https://github.com/dmitrvk/mymusichere
 
 .. _website: https://www.mymusichere.me
-
-.. |build| image:: https://img.shields.io/github/workflow/status/dmitrvk/mymusichere.me/build?color=3e3e3e&style=flat-square
-    :target: https://github.com/dmitrvk/mymusichere.me/actions
-    :alt: Build status
 
 .. |license| image:: https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square
     :target: https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE
