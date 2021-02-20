@@ -45,7 +45,7 @@ class ScoreTest(TestCase):
     @patchfs
     def test_pages_paths(self, fs):
         pages_dir_path = os.path.join(
-            settings.MEDIA_ROOT, self.test_score.slug
+            settings.BASE_DIR, 'static', 'scores', self.test_score.slug
         )
 
         expected_paths = []
