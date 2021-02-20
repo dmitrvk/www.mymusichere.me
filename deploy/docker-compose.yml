@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.local
+    command: gunicorn --reload mymusichere.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ..:/code
+    expose:
+      - "8000"
+    environment:
+      DEBUG: 1
+      BASE_DIR: /code
+      MYMUSICHERE_REMOTE: https://github.com/dmitrvk/mymusichere
+      PUBLISH_TOKEN: token
+      MYMUSICHERE_DB_HOST: db
+      MYMUSICHERE_DB_NAME: mymusichere
+      MYMUSICHERE_DB_USER: mymusichere
+      MYMUSICHERE_DB_PASSWORD: mymusichere
+      MYMUSICHERE_SECRET_KEY: secret
+
+  caddy:
+    build:
+      context: ../deploy/caddy
+      dockerfile: Dockerfile.local
+    ports:
+      - "443:443"
+    volumes:
+      - mymusichere_caddy_config:/config
+      - mymusichere_caddy_data:/data
+      - ../static:/srv/static
+
+  db:
+    image: postgres:13.2
+    volumes:
+      - mymusichere_postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: mymusichere
+      POSTGRES_USER: mymusichere
+      POSTGRES_PASSWORD: mymusichere
+
+volumes:
+  mymusichere_caddy_config:
+  mymusichere_caddy_data:
+  mymusichere_postgres_data:

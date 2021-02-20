@@ -1,0 +1,10 @@
+localhost {
+    rewrite /favicon.ico /static/img/favicon.ico
+
+    handle /static/* {
+        root * /srv
+        file_server
+    }
+
+    reverse_proxy http://web:8000
+}

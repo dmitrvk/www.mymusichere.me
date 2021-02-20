@@ -3,7 +3,7 @@
 APPS = mymusichere scores
 SCSS = mymusichere/scss
 
-.PHONY: css help install isort migrations-check run static test watch-scss
+.PHONY: css help install isort migrations-check build run static test watch-scss
 
 help:
 	@echo "Please, use \`make <target>\` where <target> is one of the following:"
@@ -11,7 +11,8 @@ help:
 	@echo "  install             install dependencies with pip and npm"
 	@echo "  isort               sort imports in .py files"
 	@echo "  migrations-check    check migrations issues"
-	@echo "  run                 start development server"
+	@echo '  build               build with Docker Compose'
+	@echo '  run                 run with Docker Compose'
 	@echo "  static              collect static files for deployment"
 	@echo "  test                run tests"
 	@echo "  watch-scss          compile CSS every time SCSS is updated"
@@ -29,8 +30,11 @@ isort:
 migrations-check:
 	@./manage.py makemigrations --check --dry-run
 
+build:
+	docker-compose --file=deploy/docker-compose.yml build
+
 run:
-	./manage.py runserver 0:8000
+	docker-compose --file=deploy/docker-compose.yml up --detach
 
 static:
 	./manage.py collectstatic --noinput
