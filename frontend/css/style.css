@@ -153,5 +153,21 @@
 .footer {
   grid-column: 1;
   grid-row: 5;
-  height: 96px;
+  height: 110px;
+  background-color: #373737;
+  color: white;
+  font-family: 'Roboto Condensed', sans-serif;
+  text-align: center;
+  font-weight: 400;
+  font-size: 18px;
+  display: grid;
+}
+
+.footer-content {
+  margin: auto;
+}
+
+.license-icon {
+  width: 24px;
+  height: 24px;
 }
