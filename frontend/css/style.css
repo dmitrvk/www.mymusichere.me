@@ -63,6 +63,10 @@
   display: grid;
 }
 
+.title-content a {
+  text-decoration: none;
+}
+
 .title-name {
   grid-row: 1;
   height: 32px;
