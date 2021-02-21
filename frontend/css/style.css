@@ -97,7 +97,6 @@
 .info {
   grid-column: 1;
   grid-row: 3;
-  height: 240px;
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 20px;
   text-align: center;
@@ -125,9 +124,28 @@
 .scores {
   grid-column: 1;
   grid-row: 4;
+  margin: 24px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  height: 360px;
+  grid-template-columns: 1fr;
+  grid-row-gap: 24px;
+}
+
+@media (min-width: 576px) {
+  .scores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .scores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .scores {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .score {
@@ -149,12 +167,16 @@
   font-size: 18px;
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 400;
+  color: #373737;
+  padding-left: 4px;
 }
 
 .score-caption p {
   font-size: 14px;
   font-family: 'Roboto Condensed', sans-serif;
   font-weight: 300;
+  color: #373737;
+  padding-left: 4px;
 }
 
 .footer {
