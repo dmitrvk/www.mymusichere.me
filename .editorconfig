@@ -16,7 +16,7 @@ max_line_length = 79
 [*.html]
 indent_size = 2
 
-[*.scss]
+[*.{css,scss}]
 indent_size = 2
 
 [Makefile]
