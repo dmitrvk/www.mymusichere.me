@@ -98,6 +98,28 @@
   grid-column: 1;
   grid-row: 3;
   height: 240px;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 20px;
+  text-align: center;
+  color: #373737;
+}
+
+.info h1 {
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.info a {
+  color: #550000;
+  text-decoration: none;
+}
+
+.info p {
+  font-weight: 300;
+}
+
+.info-email {
+  font-weight: 400;
 }
 
 .scores {
