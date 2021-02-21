@@ -3,6 +3,7 @@
 .site {
   display: grid;
   grid-template-columns: 1fr;
+  background-color: #f0f0f0;
 }
 
 .header {
@@ -24,7 +25,26 @@
 .title {
   grid-column: 1;
   grid-row: 2;
+  display: grid;
   height: 480px;
+  background-blend-mode: overlay;
+  background-image: url("../img/photo.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #5e5e5e;
+  text-align: center;
+}
+
+.title-main {
+  margin: auto;
+  background-color: #ffffff;
+}
+
+.title-name {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 40px;
 }
 
 .info {
