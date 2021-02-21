@@ -36,15 +36,61 @@
   text-align: center;
 }
 
-.title-main {
+.title-outer-circle {
   margin: auto;
-  background-color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  height: 452px;
+  width: 452px;
+  border-radius: 50%;
+  display: grid;
+}
+
+.title-inner-circle {
+  margin: auto;
+  background: rgba(255, 255, 255, 0.7);
+  height: 420px;
+  width: 420px;
+  border-radius: 50%;
+  display: grid;
+}
+
+.title-content {
+  margin: auto;
+  height: 240px;
+  width: 420px;
+  border-radius: 50%;
+  display: grid;
 }
 
 .title-name {
+  grid-row: 1;
+  height: 32px;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   font-size: 40px;
+  color: #373737;
+}
+
+.title-caption {
+  grid-row: 2;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 24px;
+  color: #373737;
+}
+
+.title-social {
+  grid-row: 3;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+}
+
+.title-social-icon {
+  width: 28px;
+  height: 28px;
+  margin: 8px;
+  filter: invert(22%) sepia(24%) saturate(7%) hue-rotate(8deg) brightness(92%) contrast(100%);
 }
 
 .info {
