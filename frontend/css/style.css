@@ -40,8 +40,8 @@
 .title-outer-circle {
   margin: auto;
   border: 2px solid rgba(255, 255, 255, 0.7);
-  height: 452px;
-  width: 452px;
+  height: 300px;
+  width: 300px;
   border-radius: 50%;
   display: grid;
 }
@@ -49,16 +49,16 @@
 .title-inner-circle {
   margin: auto;
   background: rgba(255, 255, 255, 0.7);
-  height: 420px;
-  width: 420px;
+  height: 280px;
+  width: 280px;
   border-radius: 50%;
   display: grid;
 }
 
 .title-content {
   margin: auto;
-  height: 240px;
-  width: 420px;
+  height: 190px;
+  width: 280px;
   border-radius: 50%;
   display: grid;
 }
@@ -69,10 +69,9 @@
 
 .title-name {
   grid-row: 1;
-  height: 32px;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
-  font-size: 40px;
+  font-size: 30px;
   color: #373737;
 }
 
@@ -80,7 +79,7 @@
   grid-row: 2;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
-  font-size: 24px;
+  font-size: 18px;
   color: #373737;
 }
 
@@ -107,7 +106,9 @@
   grid-row: 3;
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 20px;
-  text-align: center;
+  margin: auto;
+  padding-left: 16px;
+  padding-right: 16px;
   color: #373737;
 }
 
@@ -141,6 +142,34 @@
 @media (min-width: 576px) {
   .scores {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .title-outer-circle {
+    width: 450px;
+    height: 450px;
+  }
+
+  .title-inner-circle {
+    width: 420px;
+    height: 420px;
+  }
+
+  .title-content {
+    height: 240px;
+    width: 420px;
+  }
+
+  .title-name {
+    height: 32px;
+    font-size: 40px;
+  }
+
+  .title-caption {
+    font-size: 24px;
+  }
+
+  .title-social {
+    font-size: 18px;
   }
 }
 
