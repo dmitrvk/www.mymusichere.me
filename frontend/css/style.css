@@ -91,6 +91,10 @@
   font-size: 18px;
 }
 
+.title-social a {
+  outline: none;
+}
+
 .title-social-icon {
   width: 28px;
   height: 28px;
@@ -152,8 +156,25 @@
   }
 }
 
+.score-container a {
+  text-decoration: none;
+  outline: none;
+}
+
 .score {
   display: grid;
+  -webkit-transition-property: transform;
+  -ms-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.25s;
+  -ms-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+}
+
+.score:hover, .score:focus, .score:active {
+  -webkit-transform: scale(1.05);
+  -ms-transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .score img {
@@ -200,6 +221,11 @@
 
 .footer-content {
   margin: auto;
+}
+
+.footer-content a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .license-icon {
