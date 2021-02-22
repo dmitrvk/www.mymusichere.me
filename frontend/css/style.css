@@ -276,8 +276,13 @@
   justify-self: end;
 }
 
+#toggle:checked ~ #menu-wrapper {
+  display: block;
+}
+
 #menu-wrapper {
   grid-column: 1 / 3;
+  display: none;
 }
 
 #menu {
@@ -339,6 +344,7 @@
 
   #menu-wrapper {
     grid-column: 4;
+    display: block;
   }
 
   #menu {
