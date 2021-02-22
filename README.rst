@@ -156,6 +156,6 @@ This project is licensed under the `MIT License`_.
 
 .. _website: https://www.mymusichere.me
 
-.. |license| image:: https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=3e3e3e&style=flat-square
+.. |license| image:: https://img.shields.io/github/license/dmitrvk/mymusichere.me?color=373737&style=flat-square
     :target: https://github.com/dmitrvk/mymusichere.me/blob/master/LICENSE
     :alt: GNU General Public License v3.0
