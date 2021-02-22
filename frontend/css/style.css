@@ -264,6 +264,11 @@
 
 .score-section {
   text-align: center;
+  line-height: 0;
+}
+
+.score-section img {
+  max-width: 100%;
 }
 
 .score-section hr {
