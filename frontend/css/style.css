@@ -23,6 +23,20 @@
   z-index: 0;
 }
 
+.header a {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.header svg {
+  fill: white;
+}
+
+.header svg:hover {
+  fill: #f0f0f0;
+}
+
 .title {
   grid-column: 1;
   grid-row: 2;
