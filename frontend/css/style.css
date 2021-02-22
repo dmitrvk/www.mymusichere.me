@@ -145,52 +145,6 @@
   grid-row-gap: 24px;
 }
 
-@media (min-width: 576px) {
-  .scores {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .title-outer-circle {
-    width: 450px;
-    height: 450px;
-  }
-
-  .title-inner-circle {
-    width: 420px;
-    height: 420px;
-  }
-
-  .title-content {
-    height: 240px;
-    width: 420px;
-  }
-
-  .title-name {
-    height: 32px;
-    font-size: 40px;
-  }
-
-  .title-caption {
-    font-size: 24px;
-  }
-
-  .title-social {
-    font-size: 18px;
-  }
-}
-
-@media (min-width: 768px) {
-  .scores {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 992px) {
-  .scores {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 .score-container a {
   text-decoration: none;
   outline: none;
@@ -285,7 +239,7 @@
 .header-score {
   grid-column: 1;
   grid-row: 1;
-  height: 56px;
+  height: auto;
   background-color: #373737;
   color: white;
   line-height: 56px;
@@ -318,16 +272,93 @@
   fill: #f0f0f0;
 }
 
+#toggle {
+  justify-self: end;
+}
+
+#menu-wrapper {
+  grid-column: 1 / 3;
+}
+
 #menu {
   margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, 92px);
-  justify-content: end;
-  justify-items: center;
+  grid-template-columns: auto;
+  justify-content: start;
+  justify-items: start;
+  padding-left: 16px;
 }
 
 #menu a:hover {
   color: #f0f0f0;
+}
+
+@media (min-width: 576px) {
+  .scores {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .title-outer-circle {
+    width: 450px;
+    height: 450px;
+  }
+
+  .title-inner-circle {
+    width: 420px;
+    height: 420px;
+  }
+
+  .title-content {
+    height: 240px;
+    width: 420px;
+  }
+
+  .title-name {
+    height: 32px;
+    font-size: 40px;
+  }
+
+  .title-caption {
+    font-size: 24px;
+  }
+
+  .title-social {
+    font-size: 18px;
+  }
+
+  .header-score {
+    grid-template-columns: 56px 128px auto 370px;
+    height: 56px;
+  }
+
+  #toggle {
+    display: none;
+  }
+
+  #menu-wrapper {
+    grid-column: 4;
+  }
+
+  #menu {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, 92px);
+    justify-content: end;
+    justify-items: center;
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .scores {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .scores {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
