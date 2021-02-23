@@ -2,95 +2,61 @@
 
 {% load humanize %}
 
+{% block header %}
+  <header class="header"><a href="#">MyMusicHere</a></header>
+{% endblock header %}
 {% block content %}
-  <section class="jumbotron">
-    <div class="container">
-      <h1 class="jumbotron-heading">Sheet music collection</h1>
-    </div>
-  </section>
-
-  <main class="container">
-    {% if score_list %}
-    <div class="container">
-      <div class="row">
-        {% for score in score_list %}
-        <figure class="score col-6 col-sm-4 col-lg-3">
-          <a href="{% url 'scores:score' score.slug %}" class="stretched-link">
-            <img class="img-fluid" src="/static/scores/{{ score.thumbnail_path }}" alt="{{ score.title|default:"Untitled" }}" style="width:180px"/>
-          </a>
-          <figcaption class="score-caption img-fluid">
-            <div class="score-caption-top container-fluid px-2">
-              <div class="row pt-1 mb-1">
-                <div class="score-title col-12">
-                    <p>{{ score.title|default:"Untitled" }}</p>
-                </div>
-              </div>
-              {% if score.composer %}
-              <div class="row">
-                <div class="score-composer col-12">
-                  <p>{{ score.composer }}</p>
-                </div>
-              </div>
-              {% endif %}
-              {% if score.arranger %}
-              <div class="row">
-                <div class="score-arranger col-12">
-                  <p>{{ score.arranger }}</p>
-                </div>
-              </div>
-              {% endif %}
-            </div>
-            <div class="score-caption-bottom container-fluid">
-              <div class="row">
-                <div class="score-instrument col-12">
-                  <p>{{ score.instruments.all|join:", "|default:"instrument unknown" }}</p>
-                </div>
-              </div>
-              <div class="row no-gutters">
-                <div class="score-timestamp col">
-                  <p>
-                    <time datetime="{{ score.timestamp|date:"c" }}">
-                      {{ score.timestamp|naturalday:"M j, Y"|default:"date unknown"}}
-                    </time>
-                  </p>
-                </div>
-                <div class="score-views col">
-                  <p>{{ score.views|default:0 }} view{{ score.views|default:0|pluralize }}</p>
-                </div>
-              </div>
-            </div>
-          </figcaption>
-        </figure>
-        {% endfor %}
-      </div>
-    </div>
-    {% else %}
-    <p class="pb-3">No scores are available.</p>
-    {% endif %}
-
-    <hr>
-
-    <section class="container text-left">
-      <header class="row">
-        <div class="col">
-          <h3>Hi there!</h3>
-        </div>
-      </header>
-      <div class="row">
-        <div class="col">
-          <p>My name is Dmitry Kalyukov.
-
-          Here you will find sheet music to compositions and arrangements I create.
-
-          You can hear the music on my
-          <a class="text-secondary" href="https://instagram.com/dmitry.kalyukov" target="_blank">Instagram</a>.
-
-          For technical details, see
-          <a class="text-secondary" href="https://github.com/dmitrvk/mymusichere.me" target="_blank">GitHub</a>.
-
-          <p>To contact me, please use the following address: <b>dmitry (at) mymusichere.me</b><p>
+    <section class="title">
+      <div class="title-outer-circle">
+        <div class="title-inner-circle">
+          <div class="title-content">
+            <p class="title-name">Dmitry Kalyukov</p>
+            <p class="title-caption">Compositions & Arrangements</p>
+            <p class="title-social">
+              <a href="https://instagram.com/dmitry.kalyukov" target="_blank">
+                <img class="title-social-icon" src="https://simpleicons.org/icons/instagram.svg" alt="Instagram"/>
+              </a>
+              <a href="https://github.com/dmitrvk" target="_blank">
+                <img class="title-social-icon" src="https://simpleicons.org/icons/github.svg" alt="GitHub"/>
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </section>
-  </main>
+    <section class="info">
+      <h1 class="info-hi">Hi there!</h1>
+      <p>
+        My name is Dmitry Kalyukov.<br>
+        Here you will find sheet music to compositions and arrangements I create.<br>
+        You can hear the music on my
+        <a href="https://instagram.com/dmitry.kalyukov" target="_blank">Instagram</a>.
+        For technical details, see
+        <a href="https://github.com/dmitrvk/mymusichere" target="_blank">GitHub</a>.
+      </p>
+      <p>
+        To contact me, please use the following address:
+        <span class="info-email">dmitry (at) mymusichere.me</span>
+      </p>
+    </section>
+    <section class="scores">
+      {% for score in score_list %}
+      <div class="score-container">
+        <a href="{% url 'scores:score' score.slug %}">
+          <div class="score">
+            <img src="/static/scores/{{ score.thumbnail_path }}" alt="{{ score.title|default:"Untitled" }}"/>
+            <div class="score-caption">
+              <h2>{{ score.title|default:"Untitled" }}</h2>
+              <p>{{ score.composer }}</p>
+              <p>
+                <time datetime="{{ score.timestamp|date:"c" }}">
+                  {{ score.timestamp|naturalday:"M j, Y"|default:"date unknown"}}
+                </time>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </section>
 {% endblock content %}

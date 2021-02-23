@@ -4,8 +4,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <meta name="description" content="{% block description %}Sheet music collection typeset with LilyPond{% endblock %}"/>
-  <meta name="keywords" content="sheet music, score, notation, lilypond"/>
+
+  <meta name="description" content="Dmitry Kalyukov | Compositions & Arrangements"/>
+  <meta name="keywords" content="sheet music, music, score, notation, lilypond, composer, piano"/>
 
   <title>{% block title %}MyMusicHere{% endblock %}</title>
 
@@ -14,39 +15,26 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}"/>
   <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}"/>
   <link rel="manifest" href="{% static 'img/site.webmanifest' %}"/>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700&display=swap"/>
+
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}"/>
   <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
-
-  {% block head_extra %}{% endblock %}
 </head>
-<body class="bg-light">
-  {% block navbar %}
-  <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">MyMusicHere</a>
-  </nav>
-  {% endblock %}
-
-  {% block content %}{% endblock %}
-
-  <footer class="footer">
-    <div class="container mt-3">
-      <div class="row">
-        <div class="col footer-license">
-          <p>&copy; 2020-2021 MyMusicHere</p>
-          <p>
-             <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
-               <img alt="Creative Commons License" src="https://creativecommons.org/images/deed/cc_icon_white_x2.png" style="width:24px;height:24px;"/>
-               <img alt="Creative Commons License" src="https://creativecommons.org/images/deed/attribution_icon_white_x2.png" style="width:24px;height:24px;"/>
-               <img alt="Creative Commons License" src="https://creativecommons.org/images/deed/sa_white_x2.png" style="width:24px;height:24px;"/>
-             </a>
-          </p>
-        </div>
+<body>
+  <div class="site">
+    {% block header %}{% endblock %}
+    {% block content %}{% endblock %}
+    <footer class="footer">
+      <div class="footer-content">
+        <p>&copy; 2020-2021 MyMusichere</p>
+        <p>
+           <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+             <img class="license-icon" alt="Creative Commons License" src="https://creativecommons.org/images/deed/cc_icon_white_x2.png"/>
+             <img class="license-icon" alt="Creative Commons License" src="https://creativecommons.org/images/deed/attribution_icon_white_x2.png"/>
+             <img class="license-icon" alt="Creative Commons License" src="https://creativecommons.org/images/deed/sa_white_x2.png"/>
+           </a>
+        </p>
       </div>
-    </div>
-  </footer>
-
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    </footer>
+  </div>
 </body>
 </html>
